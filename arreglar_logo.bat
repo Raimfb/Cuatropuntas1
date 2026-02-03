@@ -1,19 +1,30 @@
 @echo off
 cd public
-echo Buscando archivo de logo...
-if exist "Logo.jpg.png" (
-    ren "Logo.jpg.png" "logo.png"
-    echo [EXITO] Renombrado Logo.jpg.png a logo.png
-) else (
-    echo [INFO] No encontre Logo.jpg.png, quizas ya se llama logo.png?
-)
-
-if exist "logo.jpg" (
-    ren "logo.jpg" "logo.png"
-    echo [EXITO] Renombrado logo.jpg a logo.png
-)
+echo ============================================
+echo   ARCHIVOS ANTES DEL CAMBIO:
+echo ============================================
+dir /b L*
 
 echo.
-echo LISTO! Ahora ejecuta "subir_a_github.bat"
-time /t
+echo Intentando arreglar el nombre...
+echo.
+
+:: Intento 1: Caso exacto detectado
+if exist "Logo.jpg.png" ren "Logo.jpg.png" "logo.png"
+
+:: Intento 2: Minusculas
+if exist "logo.jpg.png" ren "logo.jpg.png" "logo.png"
+
+:: Intento 3: Nombre simple
+if exist "Logo.jpg" ren "Logo.jpg" "logo.png"
+
+echo.
+echo ============================================
+echo   ARCHIVOS DESPUES (Deberia verse 'logo.png'):
+echo ============================================
+dir /b l*
+
+echo.
+echo Si ves 'logo.png' arriba, dale doble clic a 'subir_a_github.bat'
+echo Si NO lo ves, avísame.
 pause
