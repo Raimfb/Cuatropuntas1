@@ -1,0 +1,9 @@
+# Dependencias (muy pesadas, se instalan solas en la nube)
+node_modules/
+
+# Seguridad (TU CLAVE SECRETA - NUNCA SUBIR)
+.env
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

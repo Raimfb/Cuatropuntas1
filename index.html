@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuatropuntas | Constructora e Inmobiliaria - Garantía Legal y Técnica</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a202c', // Dark Slate
+                        secondary: '#c05621', // Brick/Construction Accent
+                        accent: '#f7fafc', // Light Gray
+                        'legal-gold': '#b7791f',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-overlay {
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased text-gray-800 bg-white">
+
+    <!-- Navbar -->
+    <nav
+        class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-20">
+                <div class="flex items-center">
+                    <span class="font-bold text-2xl tracking-tighter text-primary">CUATRO<span
+                            class="text-secondary">PUNTAS</span></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#inicio" class="text-gray-600 hover:text-primary transition-colors font-medium">Inicio</a>
+                    <a href="#servicios"
+                        class="text-gray-600 hover:text-primary transition-colors font-medium">Servicios</a>
+                    <a href="#precios"
+                        class="text-gray-600 hover:text-primary transition-colors font-medium">Precios</a>
+                    <a href="#garantia"
+                        class="text-gray-600 hover:text-primary transition-colors font-medium">Trámites</a>
+                    <a href="#contacto"
+                        class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg transform hover:-translate-y-0.5">Cotizar
+                        Proyecto</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
+        <!-- Background Image -->
+        <img src="./casa_solida_moderna_1770071499659.png" alt="Casa Sólida Moderna Cuatropuntas"
+            class="absolute inset-0 w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 hero-overlay"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left pt-20">
+            <h1 class="text-5xl md:text-7xl font-serif font-bold text-white leading-tight mb-6 animate-fade-in-up">
+                Construimos con Solidez. <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-200">Respaldo
+                    Integral.</span>
+            </h1>
+            <p class="mt-4 text-xl text-gray-200 max-w-2xl font-light mb-10">
+                Ejecución experta en Albañilería, Metalcom y Terminaciones Premium. Su proyecto, respaldado técnicamente
+                desde el primer ladrillo hasta la recepción final.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4">
+                <a href="#contacto"
+                    class="inline-flex items-center justify-center px-8 py-4 border border-transparent text-lg font-bold rounded-sm text-white bg-secondary hover:bg-orange-800 transition shadow-xl">
+                    Iniciar Proyecto
+                </a>
+                <a href="#servicios"
+                    class="inline-flex items-center justify-center px-8 py-4 border border-white text-lg font-medium rounded-sm text-white hover:bg-white hover:text-primary transition">
+                    Ver Servicios
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Authority / About Section -->
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="text-secondary font-bold tracking-widest uppercase text-sm">Nuestra Misión</span>
+                <h2 class="mt-2 text-3xl font-serif font-bold text-primary">Construimos Espacios que Trascienden</h2>
+                <div class="mt-3 flex flex-wrap gap-2">
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                        <svg class="mr-1.5 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Constructores Civiles Certificados
+                    </span>
+                    <span
+                        class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
+                        <svg class="mr-1.5 h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Inscritos en MINVU (Subsidios)
+                    </span>
+                </div>
+                <p class="mt-4 text-gray-600 leading-relaxed">
+                    Transformar la inversión de nuestros clientes en patrimonio tangible y seguro. En <span
+                        class="font-bold text-primary">Cuatropuntas</span>, no solo edificamos estructuras; cimentamos
+                    confianza mediante el cumplimiento estricto de la normativa LGUC/OGUC y la excelencia material.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-primary mb-2">Edificación Certificada</h3>
+                    <p class="text-gray-500 text-sm">Construcción bajo estrictos estándares técnicos y materiales de
+                        primera calidad.</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-primary mb-2">Gestión de Permisos</h3>
+                    <p class="text-gray-500 text-sm">Nos encargamos de toda la tramitación municipal y Recepción Final.
+                    </p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-primary mb-2">Transparencia Total</h3>
+                    <p class="text-gray-500 text-sm">Presupuestos claros en UF, sin letra chica ni costos ocultos.</p>
+                </div>
+            </div>
+            <!-- Feature 4 (Subsidies) -->
+            <div class="bg-blue-50 p-8 rounded-xl shadow-sm border border-blue-100 hover:shadow-md transition">
+                <div class="w-12 h-12 bg-blue-200 rounded-full flex items-center justify-center mb-6">
+                    <svg class="w-6 h-6 text-blue-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                        </path>
+                    </svg>
+                </div>
+                <h3 class="text-lg font-bold text-blue-900 mb-2">Subsidios MINVU</h3>
+                <p class="text-blue-700 text-sm">Expertos en Construcción en Sitio Propio (DS1, DS49). Gestión técnica
+                    completa.</p>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="servicios" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-serif font-bold text-center text-primary mb-16">Nuestras Especialidades</h2>
+
+            <div class="space-y-20">
+                <!-- Service 1: Edificación -->
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="./casa_solida_moderna_1770071499659.png" alt="Edificación Casas"
+                            class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h3 class="text-2xl font-bold text-primary mb-4">Edificación: Casas y 2dos Pisos</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Su hogar merece una estructura definitiva. Nos especializamos en <span
+                                class="font-semibold">Albañilería Armada</span> y estructuras mixtas, asegurando
+                            resistencia sísmica y aislación térmica superior. Ya sea la casa de sus sueños o esa
+                            ampliación necesaria, entregamos obra gruesa y terminaciones listas para habitar.
+                        </p>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Albañilería Armada & Hormigón</li>
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Estructuras Metálicas (Metalcom)</li>
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Aislación Térmica EIFS</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Service 2: Recreativos/Quinchos -->
+                <div class="flex flex-col-reverse lg:flex-row items-center gap-12">
+                    <div class="w-full lg:w-1/2">
+                        <h3 class="text-2xl font-bold text-primary mb-4">Espacios Recreativos: Quinchos Premium</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            El centro social de su hogar. Diseñamos y construimos quinchos de alto estándar que se
+                            integran a la arquitectura existente. Desde parrillas en obra con tiraje perfecto hasta
+                            barras de hormigón pulido y cubiertas de madera nativa.
+                        </p>
+                        <ul class="space-y-2 mb-8">
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Parrillas en Obra</li>
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Hornos y Spiedos Integrados</li>
+                            <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span>
+                                Iluminación Ambiental</li>
+                        </ul>
+                    </div>
+                    <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="./quincho_premium_chile_1770071485791.png" alt="Quincho Premium"
+                            class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
+                    </div>
+                </div>
+
+                <!-- Service 3: Modificaciones Before/After -->
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
+                        <img src="./ampliacion_antes_despues_1770071514924.png" alt="Antes y Después Ampliación"
+                            class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
+                    </div>
+                    <div class="w-full lg:w-1/2">
+                        <h3 class="text-2xl font-bold text-primary mb-4">Modificaciones y Terminaciones</h3>
+                        <p class="text-gray-600 mb-6 leading-relaxed">
+                            Revitalice su propiedad. Realizamos cambios estructurales, actualizaciones de fachada y
+                            terminaciones finas. Convertimos espacios obsoletos en ambientes modernos y funcionales con
+                            un acabado de revista.
+                        </p>
+                        <a href="#contacto" class="text-secondary font-bold hover:underline">Solicitar Evaluación
+                            &rarr;</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="precios" class="py-20 bg-gray-50 border-t border-gray-200">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-serif font-bold text-primary mb-6">Valores Transparentes</h2>
+            <p class="text-lg text-gray-600 mb-12 max-w-2xl mx-auto">
+                La calidad tiene un valor real. Trabajamos con precios base claros para clientes que valoran la
+                seguridad y la durabilidad de su inversión.
+            </p>
+
+            <div class="overflow-x-auto bg-white rounded-lg shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-primary text-white">
+                            <th class="py-4 px-6 font-semibold uppercase text-sm tracking-wider">Tipo de Construcción
+                            </th>
+                            <th class="py-4 px-6 font-semibold uppercase text-sm tracking-wider hidden sm:table-cell">
+                                Materialidad Principal</th>
+                            <th class="py-4 px-6 font-semibold uppercase text-sm tracking-wider text-right">Valor
+                                Referencial*</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <!-- Solid Construction Row -->
+                        <tr class="group hover:bg-orange-50 transition cursor-pointer relative"
+                            onclick="openModal('./material_solido_albanileria_1770072436347.png', 'Construcción Sólida: Albañilería Armada')">
+                            <td class="py-5 px-6 font-medium text-gray-900">
+                                <div class="flex items-center">
+                                    Construcción Sólida
+                                    <span
+                                        class="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full group-hover:bg-secondary group-hover:text-white transition flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        Ver ejemplo
+                                    </span>
+                                </div>
+                            </td>
+                            <td
+                                class="py-5 px-6 text-gray-600 hidden sm:table-cell group-hover:text-primary transition">
+                                Albañilería Armada (Ladrillo/Hormigón)</td>
+                            <td
+                                class="py-5 px-6 text-right font-bold text-xl text-primary group-hover:text-secondary transition">
+                                25 UF/m² <span class="text-sm font-normal text-gray-500">+IVA</span></td>
+                        </tr>
+                        <!-- Semi-Light Row -->
+                        <tr class="group hover:bg-orange-50 transition cursor-pointer relative"
+                            onclick="openModal('./material_semi_ligero_sip_1770072450181.png', 'Material Semi-Ligero: Paneles SIP/Covintec')">
+                            <td class="py-5 px-6 font-medium text-gray-900">
+                                <div class="flex items-center">
+                                    Material Semi-Ligero
+                                    <span
+                                        class="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full group-hover:bg-secondary group-hover:text-white transition flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        Ver ejemplo
+                                    </span>
+                                </div>
+                            </td>
+                            <td
+                                class="py-5 px-6 text-gray-600 hidden sm:table-cell group-hover:text-primary transition">
+                                Covintec / Paneles SIP (Térmico)</td>
+                            <td
+                                class="py-5 px-6 text-right font-bold text-xl text-primary group-hover:text-secondary transition">
+                                18 UF/m² <span class="text-sm font-normal text-gray-500">+IVA</span></td>
+                        </tr>
+                        <!-- Light Row -->
+                        <tr class="group hover:bg-orange-50 transition cursor-pointer relative"
+                            onclick="openModal('./material_ligero_metalcom_1770072463386.png', 'Material Ligero: Metalcom/Vulcometal')">
+                            <td class="py-5 px-6 font-medium text-gray-900">
+                                <div class="flex items-center">
+                                    Material Ligero
+                                    <span
+                                        class="ml-2 text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full group-hover:bg-secondary group-hover:text-white transition flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                            </path>
+                                        </svg>
+                                        Ver ejemplo
+                                    </span>
+                                </div>
+                            </td>
+                            <td
+                                class="py-5 px-6 text-gray-600 hidden sm:table-cell group-hover:text-primary transition">
+                                Vulcometal / Tabiquería Estructural</td>
+                            <td
+                                class="py-5 px-6 text-right font-bold text-xl text-primary group-hover:text-secondary transition">
+                                13 UF/m² <span class="text-sm font-normal text-gray-500">+IVA</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 text-left rounded-r-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-yellow-800">
+                            <strong>Nota Importante:</strong> Los valores son referenciales ("Desde") expresados en
+                            Unidades de Fomento (UF) más IVA. El costo final dependerá de la topografía, terminaciones
+                            específicas y complejidades del proyecto.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- UF Calculator -->
+            <div id="calculadora"
+                class="max-w-xl mx-auto mt-12 bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 mb-8 relative z-10">
+                <div class="bg-primary p-6 text-center">
+                    <h3 class="text-xl font-bold text-white font-serif">Calculadora de Proyecto</h3>
+                    <p class="text-gray-300 text-sm">Estimación Referencial (UF + IVA)</p>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Superficie (m²)</label>
+                        <input type="number" id="calcArea" placeholder="Ej: 40" min="10"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary outline-none font-bold text-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Materialidad</label>
+                        <select id="calcMaterial"
+                            class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary outline-none bg-white">
+                            <option value="25">Sólida (25 UF/m²)</option>
+                            <option value="18">Semi-Ligero (18 UF/m²)</option>
+                            <option value="13">Ligero (13 UF/m²)</option>
+                        </select>
+                    </div>
+                    <button onclick="calculateUF()"
+                        class="w-full bg-secondary text-white font-bold py-3 rounded-lg hover:bg-orange-700 transition shadow-md">
+                        Calcular
+                    </button>
+                    <div id="calcResult"
+                        class="hidden mt-6 bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
+                        <p class="text-sm text-gray-500 font-semibold mb-1">Costo Estimado</p>
+                        <div class="text-3xl font-bold text-primary"><span id="ufTotal">0</span> UF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Legal Guarantee -->
+    <section id="garantia" class="py-20 bg-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h2 class="text-3xl font-serif font-bold mb-4">Gestión Municipal y Técnica</h2>
+                    <h3 class="text-lg text-orange-200 mb-6 font-semibold">"Nos encargamos de la burocracia para que
+                        disfrutes el resultado."</h3>
+                    <p class="text-gray-400 mb-6 leading-relaxed">
+                        Construir tranquilo es posible. Nuestro equipo técnico gestiona todos los trámites necesarios
+                        ante la Dirección de Obras (DOM), asegurando que tu inversión esté siempre en regla.
+                    </p>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <span
+                                class="bg-green-500 p-1 rounded-full mr-3 mt-1 flex-shrink-0 w-5 h-5 flex items-center justify-center text-xs">✓</span>
+                            <span>Tramitación de <strong>Permiso de Edificación</strong>.</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span
+                                class="bg-green-500 p-1 rounded-full mr-3 mt-1 flex-shrink-0 w-5 h-5 flex items-center justify-center text-xs">✓</span>
+                            <span>Gestión de <strong>Recepción Final</strong> municipal.</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="md:w-5/12 bg-white/5 p-8 rounded-lg border border-white/10 backdrop-blur-sm">
+                    <h4 class="text-xl font-bold mb-4 border-b border-gray-700 pb-2">Gestión Integral Incluida</h4>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="bg-orange-500/20 p-3 rounded-md mr-4 text-orange-400 font-bold">01</div>
+                            <div>
+                                <h5 class="font-bold">Permiso de Edificación</h5>
+                                <p class="text-sm text-gray-400">Carpeta técnica ante la DOM.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-orange-500/20 p-3 rounded-md mr-4 text-orange-400 font-bold">02</div>
+                            <div>
+                                <h5 class="font-bold">Recepción Final</h5>
+                                <p class="text-sm text-gray-400">Certificación legal de su propiedad.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="bg-blue-500/20 p-3 rounded-md mr-4 text-blue-400 font-bold">03</div>
+                            <div>
+                                <h5 class="font-bold">Subsidios MINVU</h5>
+                                <p class="text-sm text-gray-400">Somos Contratistas del Estado (Sitio Propio).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section id="contacto" class="py-20 bg-white">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-serif font-bold text-primary">Inicie su Proyecto</h2>
+                <p class="mt-2 text-gray-500">Contáctenos para coordinar una visita técnica o evaluación de
+                    factibilidad.</p>
+            </div>
+
+            <form class="space-y-6 bg-white p-8 border border-gray-200 shadow-xl rounded-xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
+                        <input type="text"
+                            class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"
+                            placeholder="Juan Pérez">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+                        <input type="tel"
+                            class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"
+                            placeholder="+56 9 1234 5678">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Proyecto</label>
+                        <select
+                            class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white">
+                            <option>Construcción Casa Nueva</option>
+                            <option>Segundo Piso / Ampliación</option>
+                            <option>Quincho / Terraza</option>
+                            <option>Remodelación / Terminaciones</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Comuna de la Obra</label>
+                        <input type="text"
+                            class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Detalles del Proyecto (m² estimados,
+                        materiales, dudas)</label>
+                    <textarea rows="4"
+                        class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"></textarea>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full py-4 bg-primary text-white font-bold rounded-md hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-0.5">
+                        Solicitar Cotización Formal
+                    </button>
+                    <p class="text-xs text-center text-gray-400 mt-4">Al enviar, acepta ser contactado para fines
+                        comerciales estrictamente relacionados a su proyecto.</p>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-gray-800 pt-16 pb-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+                <div class="col-span-1 md:col-span-2">
+                    <span class="font-bold text-2xl tracking-tighter text-white">CUATRO<span
+                            class="text-secondary">PUNTAS</span></span>
+                    <p class="text-gray-400 mt-4 max-w-sm">Especialistas en construcción sólida y cumplimiento
+                        normativo. Transformando proyectos en patrimonio seguro desde hace más de 10 años.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Servicios</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-secondary transition">Construcción Sólida</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">Ampliaciones</a></li>
+                        <li><a href="#" class="hover:text-secondary transition">Quinchos Premium</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Contacto</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>Santiago, Chile</li>
+                        <li>contacto@cuatropuntas.cl</li>
+                        <li>+56 2 2345 6789</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
+                &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. Cumplimiento LGUC/OGUC
+                garantizado.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Image Modal -->
+    <div id="imageModal" class="fixed inset-0 z-[60] hidden" role="dialog" aria-modal="true">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0" id="modalBackdrop"
+            onclick="closeModal()"></div>
+
+        <!-- Modal Content -->
+        <div class="relative flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-2xl overflow-hidden max-w-4xl w-full transform transition-all scale-95 opacity-0"
+                id="modalPanel">
+                <div class="relative">
+                    <!-- Close Button -->
+                    <button onclick="closeModal()"
+                        class="absolute top-4 right-4 bg-white/10 hover:bg-white/30 text-white rounded-full p-2 z-10 transition backdrop-blur-md">
+                        <svg class="w-6 h-6 shadow-sm" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+
+                    <!-- Image -->
+                    <img id="modalImage" src="" alt="Referencia Constructiva"
+                        class="w-full h-auto max-h-[80vh] object-cover">
+
+                    <!-- Caption -->
+                    <div
+                        class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 to-transparent p-6 pt-12">
+                        <h3 id="modalTitle" class="text-white text-xl font-bold font-serif">Título de la Imagen</h3>
+                        <p class="text-gray-300 text-sm mt-1">Referencia visual del sistema constructivo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('imageModal');
+        const backdrop = document.getElementById('modalBackdrop');
+        const panel = document.getElementById('modalPanel');
+        const modalImg = document.getElementById('modalImage');
+        const modalTitle = document.getElementById('modalTitle');
+
+        function openModal(imageSrc, title) {
+            modalImg.src = imageSrc;
+            modalTitle.textContent = title;
+
+            // Show modal container
+            modal.classList.remove('hidden');
+
+            // Animate in (small delay to allow display:block to apply)
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                panel.classList.remove('scale-95', 'opacity-0');
+                panel.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            // Prevent scroll
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            // Animate out
+            backdrop.classList.add('opacity-0');
+            panel.classList.remove('scale-100', 'opacity-100');
+            panel.classList.add('scale-95', 'opacity-0');
+
+            // Hide after animation matches transition duration (300ms typically)
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modalImg.src = ''; // Clear source
+                document.body.style.overflow = ''; // Restore scroll
+            }, 300);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', function (event) {
+            if (event.key === "Escape" && !modal.classList.contains('hidden')) {
+                closeModal();
+            }
+        });
+    </script>
+
+    <!-- Chat Widget -->
+    <!-- Floating Button -->
+    <button id="chatToggle" onclick="toggleChat()"
+        class="fixed bottom-6 right-6 z-50 bg-secondary hover:bg-orange-700 text-white p-4 rounded-full shadow-2xl transition-all duration-300 transform hover:scale-110 flex items-center justify-center group">
+        <span
+            class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full animate-bounce">1</span>
+        <!-- Chat Icon -->
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z">
+            </path>
+        </svg>
+    </button>
+
+    <!-- Chat Window (Glassmorphism) -->
+    <div id="chatWindow"
+        class="fixed bottom-24 right-6 z-[55] w-96 max-w-[90vw] h-[500px] bg-white/90 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl flex flex-col transition-all duration-300 transform translate-y-10 opacity-0 pointer-events-none origin-bottom-right">
+
+        <!-- Header -->
+        <div class="bg-primary/95 text-white p-4 rounded-t-2xl flex justify-between items-center backdrop-blur-sm">
+            <div class="flex items-center">
+                <div class="relative">
+                    <div class="w-10 h-10 bg-gray-200 rounded-full overflow-hidden border-2 border-secondary">
+                        <!-- AI Avatar Placeholder -->
+                        <svg class="w-full h-full text-gray-500 bg-gray-300 p-1" fill="currentColor"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" />
+                        </svg>
+                    </div>
+                    <span
+                        class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
+                </div>
+                <div class="ml-3">
+                    <h4 class="font-bold text-sm">Asistente Cuatropuntas</h4>
+                    <span class="text-xs text-orange-200">En línea | IA Expert</span>
+                </div>
+            </div>
+            <button onclick="toggleChat()" class="text-gray-300 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-50/50 scroll-smooth">
+            <!-- Welcome Message -->
+            <div class="flex items-start">
+                <div
+                    class="bg-white border border-gray-200 text-gray-900 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-sm leading-relaxed">
+                    <p>Hola, soy el asistente virtual de Cuatropuntas.</p>
+                    <p class="mt-2">¿Tienes dudas sobre tu proyecto, valores UF o necesitas orientación sobre permisos
+                        municipales?</p>
+                </div>
+            </div>
+            <!-- Quick Actions -->
+            <div class="flex gap-2 flex-wrap">
+                <button onclick="sendQuickMessage('Ver valores UF')"
+                    class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
+                    Ver precios</button>
+                <button onclick="sendQuickMessage('Requisitos legales')"
+                    class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
+                    Legalidad</button>
+                <button onclick="sendQuickMessage('Cotizar ahora')"
+                    class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
+                    Cotizar</button>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="p-4 bg-white rounded-b-2xl border-t border-gray-100">
+            <div class="flex items-center bg-gray-100 rounded-full px-4 py-2">
+                <input type="text" id="chatInput" placeholder="Escribe tu consulta..."
+                    class="flex-1 bg-transparent outline-none text-sm text-gray-900">
+                <button onclick="sendMessage()" class="ml-2 text-secondary hover:text-orange-700 transition p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="text-[10px] text-center text-gray-400 mt-2">
+                Impulsado por IA. Si necesita respuesta humana, escriba "Humano" y un experto le contactará.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Chat Widget Logic ---
+        const chatWindow = document.getElementById('chatWindow');
+        const chatToggle = document.getElementById('chatToggle');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        let isChatOpen = false;
+
+        // Toggle Chat
+        function toggleChat() {
+            const w = document.getElementById('chatWindow');
+            const icon = document.querySelector('#chatToggle span');
+            if (w) {
+                w.classList.toggle('opacity-0');
+                w.classList.toggle('pointer-events-none');
+                w.classList.toggle('translate-y-10');
+            }
+            if (icon) icon.style.display = 'none';
+        }
+
+        // Enter Key Support
+        // chatInput already defined above
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        }
+
+        function sendQuickMessage(text) {
+            if (chatInput) {
+                chatInput.value = text;
+                sendMessage();
+            }
+        }
+
+        // Calculator Logic
+        function calculateUF() {
+            const area = parseFloat(document.getElementById('calcArea').value);
+            const price = parseInt(document.getElementById('calcMaterial').value);
+            if (area > 0) {
+                const total = area * price;
+                document.getElementById('ufTotal').textContent = total.toLocaleString('es-CL');
+                document.getElementById('calcResult').classList.remove('hidden');
+            } else {
+                alert('Ingrese superficie válida');
+            }
+        }
+
+        function closeChatOnLink() {
+            toggleChat();
+        }
+
+        function appendMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = isUser ? "flex justify-end" : "flex items-start";
+
+            let contentClass = isUser
+                ? "bg-secondary text-white rounded-br-none"
+                : "bg-white border border-gray-200 text-gray-900 rounded-tl-none shadow-sm";
+
+            div.innerHTML = `
+                <div class="${contentClass} p-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${isUser ? '' : 'prose prose-sm'}">
+                    ${text}
+                </div>
+            `;
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // 1. User Message
+            appendMessage(text, true);
+            chatInput.value = '';
+
+            // 2. Typing Indicator
+            const typingId = 'typing-' + Date.now();
+            const chatMessages = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.id = typingId;
+            typingDiv.className = "flex items-start";
+            typingDiv.innerHTML = `
+                <div class="bg-gray-100 text-gray-500 p-3 rounded-2xl rounded-tl-none shadow-sm text-xs flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0s"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.2s"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0.4s"></span>
+                </div>`;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // 3. Secure Server Call
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text }) // Enviamos solo el mensaje actual
+                });
+
+                const data = await response.json();
+
+                // Remove typing
+                document.getElementById(typingId).remove();
+
+                if (data.reply) {
+                    appendMessage(data.reply, false);
+                } else {
+                    appendMessage("Lo siento, hubo un error técnico.", false);
+                }
+
+            } catch (error) {
+                if (document.getElementById(typingId)) document.getElementById(typingId).remove();
+                appendMessage("Error de conexión.", false);
+                console.error(error);
+            }
+        }
+
+        // Enter Key to Send
+        chatInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Helper: Append Message
+        function appendMessage(text, isUser) {
+            const div = document.createElement('div');
+            div.className = isUser ? "flex items-end justify-end" : "flex items-start";
+
+            const contentClass = isUser
+                ? "bg-secondary text-white rounded-br-none shadow-md"
+                : "bg-white border border-gray-200 text-gray-900 rounded-tl-none shadow-sm";
+
+            div.innerHTML = `
+                <div class="${contentClass} p-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${isUser ? '' : 'prose prose-sm'}">
+                    ${text}
+                </div>
+            `;
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.appendChild(div);
+            // Auto scroll
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+
+
+    </script>
+</body>
+
+</html>
