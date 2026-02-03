@@ -847,6 +847,8 @@
 
                 if (data.reply) {
                     appendMessage(data.reply, false);
+                } else if (data.error || data.details) {
+                    appendMessage("⚠️ Error: " + (data.details || data.error), false);
                 } else {
                     appendMessage("Lo siento, hubo un error técnico.", false);
                 }
