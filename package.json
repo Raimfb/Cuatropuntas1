@@ -1,0 +1,12 @@
+{
+  "name": "cuatropuntas-secure",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo 'Static build'"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "nodemailer": "^8.0.2",
+    "dotenv": "^17.3.1"
+  }
+}
