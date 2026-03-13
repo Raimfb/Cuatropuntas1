@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cuatropuntas | Constructora e Inmobiliaria - Garantía Legal y Técnica</title>
+    <title>Cuatropuntas | Constructora e Inmobiliaria - Metalcom, Albañilería y Terminaciones en Chile</title>
+    <meta name="description" content="Especialistas en construcción sólida y en Metalcom. Casas nuevas, segundos pisos y quinchos premium en Chile. Calidad, garantía y normativa vigente. Cotice su proyecto hoy.">
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fonts -->
@@ -34,6 +35,26 @@
             background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
         }
     </style>
+    <!-- Structured Data (JSON-LD) for SEO & AI -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "GeneralContractor",
+      "name": "Constructora Cuatropuntas SpA",
+      "image": "https://cuatropuntas.com/logo.png",
+      "url": "https://cuatropuntas.com",
+      "telephone": "+56979092027",
+      "email": "contacto@cuatropuntas.com",
+      "description": "Empresa especialista en construcción sólida (albañilería armada) y ligera (Metalcom, Paneles SIP). Ofrecemos servicios de remodelación, segundos pisos, casas nuevas y gestión técnica municipal en Chile.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Santiago",
+        "addressRegion": "Región Metropolitana",
+        "addressCountry": "CL"
+      },
+      "priceRange": "$$$"
+    }
+    </script>
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-white">
@@ -240,7 +261,7 @@
                 <!-- Service 3: Modificaciones Before/After -->
                 <div class="flex flex-col lg:flex-row items-center gap-12">
                     <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
-                        <img src="./ampliacion_antes_despues_1770071514924.png" alt="Antes y Después Ampliación"
+                        <img src="./ampliacion_antes_despues_realista.png" alt="Antes y Después Ampliación"
                             class="w-full h-full object-cover transform hover:scale-105 transition duration-700">
                     </div>
                     <div class="w-full lg:w-1/2">
@@ -334,7 +355,7 @@
                         </tr>
                         <!-- Light Row -->
                         <tr class="group hover:bg-orange-50 transition cursor-pointer relative"
-                            onclick="openModal('./material_ligero_metalcom_1770072463386.png', 'Material Ligero: Metalcom/Vulcometal')">
+                            onclick="openModal('./material_ligero_metalcom_realista.png', 'Material Ligero: Metalcom/Vulcometal')">
                             <td class="py-5 px-6 font-medium text-gray-900">
                                 <div class="flex items-center">
                                     Material Ligero
@@ -481,17 +502,17 @@
                     factibilidad.</p>
             </div>
 
-            <form class="space-y-6 bg-white p-8 border border-gray-200 shadow-xl rounded-xl">
+            <form id="contactForm" class="space-y-6 bg-white p-8 border border-gray-200 shadow-xl rounded-xl">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                        <input type="text"
+                        <input type="text" id="formName" required
                             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"
                             placeholder="Juan Pérez">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
-                        <input type="tel"
+                        <input type="tel" id="formPhone" required
                             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"
                             placeholder="+56 9 1234 5678">
                     </div>
@@ -500,7 +521,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de Proyecto</label>
-                        <select aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto"
+                        <select id="formType" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto"
                             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white">
                             <option>Construcción Casa Nueva</option>
                             <option>Segundo Piso / Ampliación</option>
@@ -510,7 +531,7 @@
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Comuna de la Obra</label>
-                        <input type="text" aria-label="Comuna donde se realizará la obra" placeholder="Ej: Las Condes"
+                        <input type="text" id="formCommune" required aria-label="Comuna donde se realizará la obra" placeholder="Ej: Las Condes"
                             class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition">
                     </div>
                 </div>
@@ -518,18 +539,19 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-1">Detalles del Proyecto (m² estimados,
                         materiales, dudas)</label>
-                    <textarea rows="4" aria-label="Detalles adicionales del proyecto"
-                        placeholder="Cuéntenos más sobre su proyecto..."
+                    <textarea id="formDetails" rows="4" aria-label="Detalles adicionales del proyecto"
+                        placeholder="Cuéntenos más sobre su proyecto..." required
                         class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition"></textarea>
                 </div>
 
                 <div class="pt-4">
-                    <button type="submit"
+                    <button type="submit" id="formSubmitBtn"
                         class="w-full py-4 bg-primary text-white font-bold rounded-md hover:bg-gray-800 transition shadow-lg transform hover:-translate-y-0.5">
                         Solicitar Cotización Formal
                     </button>
+                    <p id="formStatus" class="hidden text-sm text-center font-bold mt-4"></p>
                     <p class="text-xs text-center text-gray-400 mt-4">Al enviar, acepta ser contactado para fines
-                        comerciales estrictamente relacionados a su proyecto.</p>
+                        comerciales estrictamente relacionados a su proyecto. Conozca nuestra <a href="/politicas.html" class="underline hover:text-gray-600">Política de Privacidad</a>.</p>
                 </div>
             </form>
         </div>
@@ -558,13 +580,16 @@
                     <ul class="space-y-2 text-gray-400">
                         <li>Santiago, Chile</li>
                         <li>contacto@cuatropuntas.com</li>
-                        <li>+56 2 2345 6789</li>
+                        <li>+56 9 7909 2027</li>
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm">
-                &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. Cumplimiento LGUC/OGUC
-                garantizado.
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm flex flex-col items-center">
+                <p>&copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. Cumplimiento LGUC/OGUC garantizado.</p>
+                <div class="mt-2 space-x-4">
+                    <a href="/politicas.html" class="hover:text-gray-300 transition">Políticas de Privacidad</a>
+                    <a href="/politicas.html" class="hover:text-gray-300 transition">Términos y Condiciones</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -893,7 +918,53 @@
         }
 
 
+        // --- Form Submission Logic ---
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
 
+                const btn = document.getElementById('formSubmitBtn');
+                const status = document.getElementById('formStatus');
+                btn.disabled = true;
+                btn.innerText = 'Enviando...';
+                status.classList.add('hidden');
+
+                const payload = {
+                    name: document.getElementById('formName').value,
+                    phone: document.getElementById('formPhone').value,
+                    type: document.getElementById('formType').value,
+                    commune: document.getElementById('formCommune').value,
+                    details: document.getElementById('formDetails').value
+                };
+
+                try {
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (response.ok) {
+                        status.innerText = '¡Solicitud enviada con éxito! Nos comunicaremos a la brevedad.';
+                        status.classList.remove('hidden', 'text-red-600');
+                        status.classList.add('text-green-600');
+                        e.target.reset();
+                    } else {
+                        const err = await response.json();
+                        throw new Error(err.error || 'Error al enviar');
+                    }
+                } catch (error) {
+                    status.innerText = 'Hubo un error al enviar el correo. Por favor intente nuevamente.';
+                    status.classList.remove('hidden', 'text-green-600');
+                    status.classList.add('text-red-600');
+                    console.error(error);
+                } finally {
+                    btn.disabled = false;
+                    btn.innerText = 'Solicitar Cotización Formal';
+                }
+            });
+        }
     </script>
 </body>
 
