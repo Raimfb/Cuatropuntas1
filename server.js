@@ -20,11 +20,22 @@ app.use(express.json());
 // Sirve los archivos desde la carpeta 'public'
 app.use(express.static(path.join(__dirname, 'public')));
 
+const contactHandler = require('./api/contact');
+
 app.post('/api/chat', async (req, res) => {
     try {
         await chatHandler(req, res);
     } catch (error) {
         console.error("Error en el local:", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.post('/api/contact', async (req, res) => {
+    try {
+        await contactHandler(req, res);
+    } catch (error) {
+        console.error("Error en local (contact):", error);
         res.status(500).json({ error: error.message });
     }
 });
