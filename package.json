@@ -4,7 +4,8 @@
     "description": "Sitio seguro de Cuatropuntas",
     "main": "server.js",
     "scripts": {
-        "dev": "node server.js"
+        "dev": "node server.js",
+        "start": "node server.js"
     },
     "dependencies": {
         "@google/generative-ai": "^0.21.0",
@@ -12,5 +13,18 @@
         "dotenv": "^16.3.1",
         "express": "^4.18.2",
         "nodemailer": "^8.0.2"
-    }
+    },
+    "devDependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Raimfb/Cuatropuntas1.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/Raimfb/Cuatropuntas1/issues"
+    },
+    "homepage": "https://github.com/Raimfb/Cuatropuntas1#readme"
 }
