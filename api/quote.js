@@ -118,9 +118,16 @@ module.exports = async (req, res) => {
 
         doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso \u2014 Agenda tu Visita a Terreno');
         if (calendarUrl) {
-            doc.fontSize(12).fillColor('#4a5568').text('Haz clic en el siguiente enlace para agendar tu visita t\u00e9cnica gratuita. Disponible de Lunes a Viernes de 11:00 a 19:00 y S\u00e1bados hasta las 16:00.');
-            doc.moveDown(0.5);
-            doc.fontSize(12).fillColor('#c05621').text('\u2192 Agendar visita en: ' + calendarUrl, { link: calendarUrl, underline: true });
+            doc.fontSize(11).fillColor('#4a5568').text('Para formalizar este presupuesto, necesitamos realizar una visita t\u00e9cnica gratuita al terreno.');
+            doc.moveDown(0.8);
+            
+            // Simular un bot\u00f3n en el PDF
+            doc.rect(doc.x, doc.y, 180, 25).fill('#c05621');
+            doc.fillColor('#ffffff').fontSize(10).text('AGENDAR MI VISITA AHORA', doc.x + 30, doc.y - 17, {
+                link: calendarUrl,
+                underline: false
+            });
+            doc.moveDown(1.5);
         } else {
             doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu visita t\u00e9cnica gratuita, responde a este correo o escr\u00edbenos al WhatsApp.');
         }
@@ -163,9 +170,9 @@ module.exports = async (req, res) => {
                     <p style="margin: 5px 0 0 0;">Para darte un precio final cerrado y exacto, necesitamos hacer una visita técnica y ver el terreno.</p>
                 </div>
                 ${calendarUrl 
-                    ? `<div style="text-align:center; margin: 24px 0;">
-                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:14px 28px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:15px; display:inline-block;">📅 Agendar Visita a Terreno Ahora</a>
-                        <p style="font-size:11px; color:#718096; margin-top:8px;">Lunes a Viernes 11:00\u201319:00 \u00b7 Sábados hasta las 16:00</p>
+                    ? `<div style="text-align:center; margin: 30px 0;">
+                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:16px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📅 Agendar Mi Visita Ahora</a>
+                        <p style="font-size:12px; color:#718096; margin-top:10px;">Lunes a Viernes 11:00\u201319:00 \u00b7 Sábados hasta las 16:00</p>
                        </div>` 
                     : `<p>Puedes responder a este correo o hablarnos por WhatsApp al <a href="https://wa.me/56994998748">+56 9 9499 8748</a> para agendar la visita.</p>`
                 }
