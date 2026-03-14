@@ -35,7 +35,8 @@ module.exports = async (req, res) => {
         const preciosBase = {
             'Albanileria': 25,  // Construcción Sólida (Albañilería)
             'Mixto':       21,  // Mixto (ponderado entre Sólido y SIP)
-            'SIP':         18,  // Semi-Ligero (SIP Panel / Covintec)
+            'Covintec':    19,  // Covintec (estructura tridimensional estucada)
+            'SIP':         18,  // Panel SIP (núcleo EPS y OSB)
             'Metalcon':    13   // Material Ligero (Metalcon / Vulcometal)
         };
 
