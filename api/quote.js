@@ -47,11 +47,18 @@ module.exports = async (req, res) => {
         if (pisos >= 2) penalizaciones += 0.08;   // Segundo piso: escaleras, losa, refuerzos
         if (area < 40)  penalizaciones += 0.12;   // Escala pequeña: costos fijos se distribuyen en menos m²
 
-        // Logística según sector de la obra
-        let logistica = 0;
-        if (comuna === 'Oriente' || comuna === 'Periferia') logistica = 0.05;
+        // Logística y ajuste socio-económico según Tier de la comuna
+        let factorComuna = 1.0;
+        const tiers = {
+            'Tier1': 1.10, // Sector Oriente: Vitacura, Las Condes, etc (+10% por logística y estándares zona)
+            'Tier2': 1.05, // Residencial: Ñuñoa, Macul, La Florida, etc (+5%)
+            'Tier3': 1.00, // Eje Central / Poniente: Santiago, Maipú, etc (Base)
+            'Tier4': 0.97, // En Crecimiento: Renca, La Pintana, etc (-3%)
+            'Tier5': 0.95  // Rural / Periferia: Colina, Lampa, etc (-5% ajuste de escala/operación)
+        };
+        factorComuna = tiers[comuna] || 1.0;
 
-        const costoM2Final = costoM2Base * (1 + penalizaciones + logistica);
+        const costoM2Final = costoM2Base * (1 + penalizaciones) * factorComuna;
         const totalEstimado = costoM2Final * area;
 
         // Rango referencial: ±8% sobre el total estimado
