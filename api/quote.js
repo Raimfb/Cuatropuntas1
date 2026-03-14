@@ -32,9 +32,10 @@ module.exports = async (req, res) => {
         let valorBaseM2 = 15.0;
 
         // Paso 2: Materialidad
-        let multMaterial = 1.0;
-        if (sistema === 'Mixto') multMaterial = 0.92;
-        if (sistema === 'Metalcon') multMaterial = 0.85;
+        let multMaterial = 1.0;       // 100% Sólido (Albañilería)
+        if (sistema === 'Mixto')    multMaterial = 0.90; // Tarifa ponderada (blended rate)
+        if (sistema === 'SIP')      multMaterial = 0.87; // SIP Panel / Covintec
+        if (sistema === 'Metalcon') multMaterial = 0.82; // 100% Ligero
 
         // Paso 3: Terminaciones
         let multTerminaciones = 1.0;
