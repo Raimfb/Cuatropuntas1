@@ -717,7 +717,7 @@
                 </div>
                 <div class="ml-3">
                     <h4 class="font-bold text-sm">Asistente Cuatropuntas</h4>
-                    <span class="text-xs text-orange-200">En línea | IA Expert</span>
+                    <span class="text-xs text-orange-200">En línea | Respuesta inmediata</span>
                 </div>
             </div>
             <button onclick="toggleChat()" aria-label="Cerrar chat" title="Cerrar chat"
@@ -735,29 +735,28 @@
             <div class="flex items-start">
                 <div
                     class="bg-white border border-gray-200 text-gray-900 p-3 rounded-2xl rounded-tl-none shadow-sm max-w-[85%] text-sm leading-relaxed">
-                    <p>Hola, soy el asistente virtual de Cuatropuntas.</p>
-                    <p class="mt-2">¿Tienes dudas sobre tu proyecto, valores UF o necesitas orientación sobre permisos
-                        municipales?</p>
+                    <p>¡Hola! Soy tu asesor de Cuatropuntas 👋</p>
+                    <p class="mt-2">¿Estás pensando en construir, ampliar o remodelar? Pregúntame lo que necesites, estoy aquí para ayudarte.</p>
                 </div>
             </div>
             <!-- Quick Actions -->
             <div class="flex gap-2 flex-wrap">
-                <button onclick="sendQuickMessage('Ver valores UF')"
+                <button onclick="sendQuickMessage('¿Cuánto cuesta construir?')"
                     class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
-                    Ver precios</button>
-                <button onclick="sendQuickMessage('Requisitos legales')"
+                    💰 Ver precios</button>
+                <button onclick="sendQuickMessage('¿Qué incluye el servicio?')"
                     class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
-                    Legalidad</button>
-                <button onclick="sendQuickMessage('Cotizar ahora')"
+                    📋 ¿Qué incluye?</button>
+                <button onclick="sendQuickMessage('Quiero cotizar mi proyecto')"
                     class="bg-white border border-secondary/30 text-secondary text-xs px-3 py-1.5 rounded-full hover:bg-secondary hover:text-white transition">
-                    Cotizar</button>
+                    🏠 Cotizar gratis</button>
             </div>
         </div>
 
         <!-- Input Area -->
         <div class="p-4 bg-white rounded-b-2xl border-t border-gray-100">
             <div class="flex items-center bg-gray-100 rounded-full px-4 py-2">
-                <input type="text" id="chatInput" placeholder="Escribe tu consulta..."
+                <input type="text" id="chatInput" placeholder="Pregúntame lo que quieras..."
                     class="flex-1 bg-transparent outline-none text-sm text-gray-900">
                 <button onclick="sendMessage()" aria-label="Enviar mensaje" title="Enviar mensaje"
                     class="ml-2 text-secondary hover:text-orange-700 transition p-1">
@@ -768,7 +767,7 @@
                 </button>
             </div>
             <div class="text-[10px] text-center text-gray-400 mt-2">
-                Asistente Virtual 24/7 - Expertos en Construcción y Normativa.
+                Disponible 24/7 para resolver tus dudas 🏗️
             </div>
         </div>
     </div>
