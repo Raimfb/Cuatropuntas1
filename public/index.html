@@ -438,11 +438,121 @@
                         class="hidden mt-6 bg-gray-50 rounded-xl p-4 border border-gray-200 text-center">
                         <p class="text-sm text-gray-500 font-semibold mb-1">Tu proyecto costaría aprox.</p>
                         <div class="text-3xl font-bold text-primary"><span id="ufTotal">0</span> UF <span class="text-sm font-normal text-gray-400">+IVA</span></div>
+                        <p class="text-xs text-gray-400 mt-2">Promedio nacional. El valor puede variar según la comuna de tu proyecto.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ Accordion -->
+            <div class="max-w-xl mx-auto mt-10 space-y-3 mb-8">
+                <h3 class="text-xl font-serif font-bold text-primary text-center mb-6">Preguntas Frecuentes</h3>
+
+                <!-- FAQ 1: Qué incluye -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+                        <span class="font-semibold text-primary text-sm">¿Qué incluye el precio base?</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                            <p class="mb-3">Nuestro precio base incluye todo lo necesario para que tu espacio sea <strong>100% habitable desde el día uno</strong>:</p>
+                            <ul class="space-y-1.5 mb-3">
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Estructura completa lista para habitar</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Puertas y ventanas estándar instaladas</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Terminaciones exteriores con pintura</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Piso cerámico neutro (gris o blanco) en todos los ambientes</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Baño completamente terminado con revestimientos</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">✓</span> Pintura blanca interior con guardapolvos en todos los espacios</li>
+                            </ul>
+                            <p class="text-gray-500">¿Quieres pisos de madera, revestimientos especiales o terminaciones premium? <strong>Todo es posible.</strong> Solo se suman al valor base y te lo detallamos en tu cotización personalizada.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2: Variación por comuna -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+                        <span class="font-semibold text-primary text-sm">¿Por qué el precio puede variar según la comuna?</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                            <p>Los valores que ves son un <strong>promedio a nivel nacional en Chile</strong>. El costo real depende de factores locales como:</p>
+                            <ul class="mt-2 space-y-1.5">
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">•</span> <strong>Acceso al terreno</strong> y condiciones del suelo</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">•</span> <strong>Normativas municipales</strong> específicas de tu comuna</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">•</span> <strong>Distancia de la obra</strong> y logística de materiales</li>
+                            </ul>
+                            <p class="mt-3">Hay comunas donde el valor puede ser más accesible y otras donde puede ser un poco más alto. Por eso cada proyecto merece su propia cotización: <a href="#contacto" class="text-secondary font-semibold hover:underline">solicita la tuya gratis aquí</a>.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3: Plazos -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+                        <span class="font-semibold text-primary text-sm">¿Cuánto tiempo toma construir?</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                            <p>Los plazos dependen del tamaño y tipo de proyecto, pero como referencia:</p>
+                            <ul class="mt-2 space-y-1.5">
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">🏠</span> <strong>Casa nueva (50-80 m²)</strong>: entre 3 y 5 meses</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">📐</span> <strong>Segundo piso o ampliación</strong>: entre 2 y 4 meses</li>
+                                <li class="flex items-start"><span class="text-secondary mr-2 mt-0.5">🔥</span> <strong>Quincho completo</strong>: entre 1 y 2 meses</li>
+                            </ul>
+                            <p class="mt-3">Estos tiempos incluyen la obra completa hasta la entrega. Los permisos municipales se tramitan en paralelo para no perder tiempo.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4: Subsidio -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+                        <span class="font-semibold text-primary text-sm">¿Puedo construir con subsidio MINVU?</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                            <p>¡Sí! Somos contratistas habilitados para trabajar con subsidios de <strong>Construcción en Sitio Propio</strong> (DS1 y DS49). Si ya ganaste tu subsidio, nosotros nos encargamos de todo el proceso técnico para que puedas construir tu casa.</p>
+                            <p class="mt-2">¿Todavía no lo tienes? También te podemos orientar sobre cómo postular. <a href="#contacto" class="text-secondary font-semibold hover:underline">Conversemos</a>.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
+
+    <script>
+        function toggleFaq(button) {
+            const content = button.nextElementSibling;
+            const arrow = button.querySelector('.faq-arrow');
+            const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
+
+            // Close all others
+            document.querySelectorAll('.faq-content').forEach(el => {
+                el.style.maxHeight = '0px';
+            });
+            document.querySelectorAll('.faq-arrow').forEach(el => {
+                el.style.transform = 'rotate(0deg)';
+            });
+
+            // Toggle current
+            if (!isOpen) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+    </script>
 
     <!-- Legal Guarantee -->
     <section id="garantia" class="py-20 bg-primary text-white">
