@@ -33,14 +33,14 @@ module.exports = async (req, res) => {
         // --- LÓGICA DE PRECIOS CUATROPUNTAS ---
         // Precios base publicados en la página (sin IVA), por sistema constructivo
         const preciosBase = {
-            'Albanileria': 25,  // Construcción Sólida (Albañilería)
-            'Mixto':       21,  // Mixto (ponderado entre Sólido y SIP)
-            'Covintec':    19,  // Covintec (estructura tridimensional estucada)
-            'SIP':         18,  // Panel SIP (núcleo EPS y OSB)
-            'Metalcon':    13   // Material Ligero (Metalcon / Vulcometal)
+            'Albanileria': 27,  // Construcción Sólida (Albañilería)
+            'Mixto':       23,  // Mixto (ponderado entre Sólido y SIP)
+            'Covintec':    21,  // Covintec (estructura tridimensional estucada)
+            'SIP':         20,  // Panel SIP (núcleo EPS y OSB)
+            'Metalcon':    15   // Material Ligero (Metalcon / Vulcometal)
         };
 
-        const costoM2Base = preciosBase[sistema] || 18;
+        const costoM2Base = preciosBase[sistema] || 20;
 
         // Ajuste por escala: proyectos pequeños tienen mayor costo relativo
         let penalizaciones = 0;
