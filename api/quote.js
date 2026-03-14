@@ -28,39 +28,30 @@ module.exports = async (req, res) => {
         }
 
         // --- LÓGICA DE PRECIOS CUATROPUNTAS ---
-        // Paso 1: Base de 15 UF / m2 (estándar sólido básico)
-        let valorBaseM2 = 15.0;
+        // Precios base publicados en la página (sin IVA), por sistema constructivo
+        const preciosBase = {
+            'Albanileria': 25,  // Construcción Sólida (Albañilería)
+            'Mixto':       21,  // Mixto (ponderado entre Sólido y SIP)
+            'SIP':         18,  // Semi-Ligero (SIP Panel / Covintec)
+            'Metalcon':    13   // Material Ligero (Metalcon / Vulcometal)
+        };
 
-        // Paso 2: Materialidad
-        let multMaterial = 1.0;       // 100% Sólido (Albañilería)
-        if (sistema === 'Mixto')    multMaterial = 0.90; // Tarifa ponderada (blended rate)
-        if (sistema === 'SIP')      multMaterial = 0.87; // SIP Panel / Covintec
-        if (sistema === 'Metalcon') multMaterial = 0.82; // 100% Ligero
+        const costoM2Base = preciosBase[sistema] || 18;
 
-        // Paso 3: Terminaciones
-        let multTerminaciones = 1.0;
-        if (terminaciones === 'Estandar') multTerminaciones = 1.15;
-        if (terminaciones === 'Premium') multTerminaciones = 1.40;
-
-        // Costo M2 Ajustado
-        let costoM2 = valorBaseM2 * multMaterial * multTerminaciones;
-
-        // Paso 4: Mult Piso y Escala
+        // Ajuste por escala: proyectos pequeños tienen mayor costo relativo
         let penalizaciones = 0;
-        if (pisos >= 2) penalizaciones += 0.08;
-        if (area < 40) penalizaciones += 0.12;
-        
-        // Paso 5: Logística Comuna
-        let logística = 0;
-        if (comuna === 'Oriente' || comuna === 'Periferia') logística = 0.05;
+        if (pisos >= 2) penalizaciones += 0.08;   // Segundo piso: escaleras, losa, refuerzos
+        if (area < 40)  penalizaciones += 0.12;   // Escala pequeña: costos fijos se distribuyen en menos m²
 
-        costoM2 = costoM2 * (1 + penalizaciones + logística);
+        // Logística según sector de la obra
+        let logistica = 0;
+        if (comuna === 'Oriente' || comuna === 'Periferia') logistica = 0.05;
 
-        // Subtotal y Total neto estimado
-        const totalEstimado = costoM2 * area;
+        const costoM2Final = costoM2Base * (1 + penalizaciones + logistica);
+        const totalEstimado = costoM2Final * area;
 
-        // Paso 6: Rango de Precios
-        const minUF_raw = Math.round(totalEstimado * 0.95);
+        // Rango referencial: ±8% sobre el total estimado
+        const minUF_raw = Math.round(totalEstimado * 0.97);
         const maxUF_raw = Math.round(totalEstimado * 1.08);
 
         const formatter = new Intl.NumberFormat('es-CL');
@@ -92,20 +83,21 @@ module.exports = async (req, res) => {
            .text(`Proyecto: ${tipo} en sector ${comuna}`);
         doc.moveDown(1.5);
 
-        doc.fontSize(14).fillColor('#1a202c').text('1. Resumen de Requerimientos');
+        doc.fontSize(14).fillColor('#1a202c').text('1. Resumen del Proyecto');
         doc.fontSize(12).fillColor('#4a5568')
+           .text(`• Tipo: ${tipo}`)
+           .text(`• Sistema Constructivo: ${sistema}`)
            .text(`• Superficie estimada: ${area} m²`)
            .text(`• Pisos: ${pisos}`)
-           .text(`• Sistema Constructivo: ${sistema}`)
-           .text(`• Nivel de Terminaciones: ${terminaciones}`);
+           .text(`• Sector de la obra: ${comuna}`);
         doc.moveDown(1.5);
 
-        doc.fontSize(14).fillColor('#1a202c').text('2. Estimación Comercial (Neto + Gastos Generales)');
+        doc.fontSize(14).fillColor('#1a202c').text('2. Estimación Referencial (Estructura Habitable, Sin IVA)');
         doc.fontSize(12).fillColor('#4a5568')
-           .text('En base a los parámetros proporcionados y los valores actuales de mercado (T.C.U MINVU / Rendimientos Constructivos), el valor estimado referencial para construir tu proyecto se encuentra en el siguiente rango:');
+           .text('Este rango cubre la obra gruesa hasta entrega habitable, con terminaciones estándar (cerámico, pintura interior, puertas y ventanas estándar). Variaciones en terminaciones, instalaciones especiales o paisajismo se cotizan de forma personalizada.');
         doc.moveDown(1);
         
-        doc.fontSize(18).fillColor('#c05621').text(`${minUF} UF  -  ${maxUF} UF (+ IVA)`, { align: 'center', stroke: true });
+        doc.fontSize(18).fillColor('#c05621').text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, { align: 'center', stroke: true });
         doc.moveDown(1.5);
 
         doc.fontSize(14).fillColor('#1a202c').text('3. Disclaimer Legal Importante');
@@ -148,7 +140,7 @@ module.exports = async (req, res) => {
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
                 <h2 style="color: #c05621;">¡Hola, ${nombre}!</h2>
                 <p>Adjunto encontrarás la estimación comercial para tu proyecto de <strong>${tipo} (${area} m²)</strong> calculada por nuestro sistema según la información que nos entregaste.</p>
-                <p>El rango de inversión estimado es de <strong>${minUF} a ${maxUF} UF</strong> (+ IVA).</p>
+                <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>Este valor considera la estructura habitable con terminaciones estándar según el sistema constructivo que elegiste.</p>
                 <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #c05621; border-radius: 4px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>¿Listo para el siguiente paso?</strong></p>
                     <p style="margin: 5px 0 0 0;">Para darte un precio final cerrado y exacto, necesitamos hacer una visita técnica y ver el terreno.</p>
