@@ -27,6 +27,9 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'Faltan campos obligatorios en el formulario.' });
         }
 
+        // Variable de entorno: URL del calendario Cal.com (NEXT_PUBLIC_CALENDAR_URL en Vercel)
+        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || null;
+
         // --- LÓGICA DE PRECIOS CUATROPUNTAS ---
         // Precios base publicados en la página (sin IVA), por sistema constructivo
         const preciosBase = {
@@ -105,8 +108,14 @@ module.exports = async (req, res) => {
            .text('Este documento constituye una estimación paramétrica comercial (Clase 5). NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere obligatoriamente una visita técnica a terreno para evaluar la mecánica de suelos, las condiciones topográficas, el empalme de servicios y accesibilidad.', { align: 'justify' });
         doc.moveDown(2);
 
-        doc.fontSize(14).fillColor('#1a202c').text('Siguiente Paso:');
-        doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu visita a terreno gratuita y formalizar este presupuesto, responde a este correo o escríbenos a nuestro WhatsApp.');
+        doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso \u2014 Agenda tu Visita a Terreno');
+        if (calendarUrl) {
+            doc.fontSize(12).fillColor('#4a5568').text('Haz clic en el siguiente enlace para agendar tu visita t\u00e9cnica gratuita. Disponible de Lunes a Viernes de 11:00 a 19:00 y S\u00e1bados hasta las 16:00.');
+            doc.moveDown(0.5);
+            doc.fontSize(12).fillColor('#c05621').text('\u2192 Agendar visita en: ' + calendarUrl, { link: calendarUrl, underline: true });
+        } else {
+            doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu visita t\u00e9cnica gratuita, responde a este correo o escr\u00edbenos al WhatsApp.');
+        }
 
         doc.end();
 
@@ -145,7 +154,13 @@ module.exports = async (req, res) => {
                     <p style="margin: 0;"><strong>¿Listo para el siguiente paso?</strong></p>
                     <p style="margin: 5px 0 0 0;">Para darte un precio final cerrado y exacto, necesitamos hacer una visita técnica y ver el terreno.</p>
                 </div>
-                <p>Puedes responder a este correo o hablarnos por WhatsApp al <a href="https://wa.me/56994998748">+56 9 9499 8748</a> para agendar la visita.</p>
+                ${calendarUrl 
+                    ? `<div style="text-align:center; margin: 24px 0;">
+                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:14px 28px; border-radius:6px; text-decoration:none; font-weight:bold; font-size:15px; display:inline-block;">📅 Agendar Visita a Terreno Ahora</a>
+                        <p style="font-size:11px; color:#718096; margin-top:8px;">Lunes a Viernes 11:00\u201319:00 \u00b7 Sábados hasta las 16:00</p>
+                       </div>` 
+                    : `<p>Puedes responder a este correo o hablarnos por WhatsApp al <a href="https://wa.me/56994998748">+56 9 9499 8748</a> para agendar la visita.</p>`
+                }
                 <p>Un saludo cordial,<br><strong>Equipo Cuatropuntas</strong></p>
             </div>
             `,
@@ -192,7 +207,11 @@ module.exports = async (req, res) => {
             transporter.sendMail(mailToAdmin)
         ]);
 
-        res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
+        res.status(200).json({ 
+            success: true, 
+            message: 'Cotización generada y enviada correctamente',
+            calendarUrl: calendarUrl || null
+        });
 
     } catch (error) {
         console.error('Error generando o enviando cotización:', error);

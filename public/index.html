@@ -689,7 +689,31 @@
                         </button>
                     </div>
                     <p id="quoteStatus" class="hidden text-sm text-center font-bold mt-4"></p>
-                    <p class="text-xs text-center text-gray-500 mt-4">Toda tu información es confidencial. Recibirás un PDF detallado al correo indicado en 2 minutos. Los valores estimados son referenciales y <strong>no incluyen IVA</strong>.</p>
+                </div>
+
+                <!-- Success State (CTA Agendamiento) -->
+                <div id="stepSuccess" class="step-container hidden transition-opacity duration-300 opacity-0 text-center py-8">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-6">
+                        <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">¡Cotización enviada con éxito!</h3>
+                    <p class="text-gray-600 mb-8">Revisa tu bandeja de entrada o spam. Hemos enviado un presupuesto referencial en PDF a tu correo electrónico.</p>
+                    
+                    <div id="calendarCTAContainer" class="bg-orange-50 p-6 rounded-lg border border-orange-100 hidden">
+                        <h4 class="text-lg font-bold text-primary mb-2">Siguiente Paso: Visita a Terreno</h4>
+                        <p class="text-sm text-gray-700 mb-6">Para darte un precio cerrado, necesitamos evaluar el terreno gratuitamente.</p>
+                        <a href="#" id="calendarBtnLink" target="_blank" rel="noopener noreferrer" class="inline-block w-full sm:w-auto px-8 py-4 bg-secondary text-white font-bold text-lg rounded-md hover:bg-orange-600 transition shadow-lg mb-2">
+                            📅 Agendar Visita Ahora
+                        </a>
+                        <p class="text-xs text-gray-500">Lunes a Viernes 11:00-19:00 · Sábados 11:00-16:00</p>
+                    </div>
+
+                    <div id="fallbackCTAContainer" class="bg-gray-50 p-6 rounded-lg border border-gray-200 hidden">
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">Te contactaremos pronto</h4>
+                        <p class="text-sm text-gray-600">Nuestro equipo comercial se pondrá en contacto contigo para coordinar una visita a terreno gratuita.</p>
+                    </div>
+
+                    <p id="quoteStatus" class="hidden text-sm text-center font-bold mt-4"></p>
                 </div>
             </form>
         </div>
@@ -1121,11 +1145,32 @@
                     });
 
                     if (response.ok) {
-                        status.innerText = '¡Cotización enviada con éxito a tu correo! 📥 Revisando...';
-                        status.classList.remove('hidden', 'text-red-600');
-                        status.classList.add('text-green-600');
+                        const data = await response.json();
+                        
+                        // Hide steps and progress bar
+                        document.querySelectorAll('.step-container').forEach(el => el.classList.add('hidden', 'opacity-0'));
+                        document.getElementById('progressBar').parentElement.parentElement.classList.add('hidden');
+                        
+                        // Show Success Screen
+                        const successStep = document.getElementById('stepSuccess');
+                        successStep.classList.remove('hidden');
+                        setTimeout(() => successStep.classList.remove('opacity-0'), 10);
+
+                        // Handle Calendar CTA Fallback Logic
+                        const calContainer = document.getElementById('calendarCTAContainer');
+                        const fallbackContainer = document.getElementById('fallbackCTAContainer');
+                        const calLink = document.getElementById('calendarBtnLink');
+
+                        if (data.calendarUrl && data.calendarUrl.trim() !== "") {
+                            calLink.href = data.calendarUrl;
+                            calContainer.classList.remove('hidden');
+                            fallbackContainer.classList.add('hidden');
+                        } else {
+                            calContainer.classList.add('hidden');
+                            fallbackContainer.classList.remove('hidden');
+                        }
+
                         e.target.reset();
-                        setTimeout(() => nextStep(1), 5000); // reset UI after 5s
                     } else {
                         const err = await response.json();
                         throw new Error(err.error || 'Error al enviar');
