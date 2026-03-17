@@ -41,6 +41,11 @@
         .hero-overlay {
             background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
         }
+        .hp-field {
+            display: none !important;
+            visibility: hidden;
+            pointer-events: none;
+        }
     </style>
     <!-- Structured Data (JSON-LD) for SEO & AI -->
     <script type="application/ld+json">
@@ -613,7 +618,7 @@
                             </select>
                         </div>
                         <!-- Honeypot field (hidden from users, bot trap) -->
-                        <div style="display:none !important;" aria-hidden="true">
+                        <div class="hp-field" aria-hidden="true">
                             <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" placeholder="Tú sitio web aquí">
                         </div>
                         <div>
