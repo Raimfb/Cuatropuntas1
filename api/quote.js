@@ -21,10 +21,38 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono } = req.body;
+        const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono, website_url } = req.body;
 
-        if (!tipo || !sistema || !area || !pisos || !terminaciones || !comuna || !nombre || !email || !telefono) {
+        // 1. Honeypot check: Si 'website_url' está presente, es un bot.
+        // Respondemos 200 OK para que el bot crea que tuvo éxito, pero no procesamos nada.
+        if (website_url) {
+            console.log('Bot detected via Honeypot. Aborting silently.');
+            return res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
+        }
+
+        // 2. Validación de campos obligatorios
+        if (!tipo || !sistema || area === undefined || pisos === undefined || !terminaciones || !comuna || !nombre || !email || !telefono) {
             return res.status(400).json({ error: 'Faltan campos obligatorios en el formulario.' });
+        }
+
+        // 3. Saneamiento y Límites Estrictos
+        const areaNum = parseFloat(area);
+        const pisosNum = parseInt(pisos);
+
+        // Validar m2 (Límite comercial sensato: 10m2 a 5000m2)
+        if (isNaN(areaNum) || areaNum < 10 || areaNum > 5000) {
+            return res.status(400).json({ error: 'La superficie ingresada no es válida. Por favor ingresa un valor entre 10 y 5000 m².' });
+        }
+
+        // Validar pisos (1 a 4 máximo)
+        if (isNaN(pisosNum) || pisosNum < 1 || pisosNum > 4) {
+            return res.status(400).json({ error: 'El número de pisos debe estar entre 1 y 4.' });
+        }
+
+        // Validar Email (Regex robusta)
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailRegex.test(email) || email.length > 100) {
+            return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
         // Variable de entorno: URL del calendario Cal.com (NEXT_PUBLIC_CALENDAR_URL en Vercel)
