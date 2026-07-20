@@ -1,8 +1,5 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// En memoria simple para tracking de estado por número (Vercel warm containers)
-const userSessions = new Map();
-
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody) {
     const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSM28Xbe2cpwsThD6r8rdwxxiyQc6AEGNfVNgIZBegdORmqWJivsiYKF7p2YqcaEjRFRkF4AGaQFjTE7AFRvql2nSF8lCTAbqL4UxV9vExktwsmZABFm6ae2iGaAyDErqOTv3kVHeyR6LvU7NAwk0T2ZCBiLu1jqF1EPduJQZAeW9WUAeV9izkIcfcI7v8GmPX4KUhKodO9YWOMh99ZBfHSjl51b4ZC7WkuW7auqlXfkq0flT5RE1VM8PyLZCEldwOi1ZAj18H4IEFmZBMGTnsRwXA";
@@ -53,7 +50,7 @@ async function classifyIntentWithAI(userMessage) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
         const textLower = userMessage.toLowerCase();
-        if (textLower.includes("postular") || textLower.includes("ganarme")) return "ROUTE_3";
+        if (textLower.includes("postular") || textLower.includes("ganarme") || textLower.includes("cómo postulo")) return "ROUTE_3";
         if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49")) return "ROUTE_1";
         return "ROUTE_2";
     }
@@ -64,21 +61,23 @@ async function classifyIntentWithAI(userMessage) {
 
         const prompt = `
 Eres un clasificador semántico para una constructora en Chile (Cuatropuntas).
-Analiza el mensaje del usuario y clasifícalo en EXACTAMENTE una de las siguientes 3 categorías.
-Devuelve ÚNICAMENTE el código de la categoría: RUTA_1, RUTA_2 o RUTA_3.
+Analiza el mensaje del usuario y clasifícalo en EXACTAMENTE una de las siguientes 4 categorías.
+Devuelve ÚNICAMENTE el código de la categoría: SALUDO_INICIAL, RUTA_1, RUTA_2 o RUTA_3.
 
 Categorías:
-- RUTA_1: El usuario menciona que YA TIENE o YA SE GANÓ un subsidio adjudicado/vigente (DS1, DS49, subsidio estatal para terreno propio).
+- SALUDO_INICIAL: El usuario solo dice un saludo genérico o el texto por defecto de inicio (ej: "hola", "buenas tardes", "hola, estoy interesado en cotizar con ustedes un proyecto", "hola cuatropuntas").
+- RUTA_1: El usuario menciona que YA TIENE, GANÓ o TIENE ADJUDICADO un subsidio habitacional (DS1, DS49, subsidio estatal para sitio propio).
 - RUTA_2: El usuario desea construir o remodelar un proyecto particular/privado en sitio propio (casa nueva, parcela, segundo piso, ampliación, quincho, remodelación sin subsidio).
 - RUTA_3: El usuario pregunta sobre CÓMO POSTULAR, cómo obtener, ganarse o tramitar un subsidio desde cero con el Serviu/MINVU.
 
 Mensaje del usuario: "${userMessage}"
 
-Respuesta (solo escribe RUTA_1, RUTA_2 o RUTA_3):`;
+Respuesta (solo escribe SALUDO_INICIAL, RUTA_1, RUTA_2 o RUTA_3):`;
 
         const result = await model.generateContent(prompt);
         const responseText = (await result.response.text()).trim();
 
+        if (responseText.includes("SALUDO_INICIAL")) return "SALUDO_INICIAL";
         if (responseText.includes("RUTA_1")) return "ROUTE_1";
         if (responseText.includes("RUTA_3")) return "ROUTE_3";
         return "ROUTE_2";
@@ -87,6 +86,7 @@ Respuesta (solo escribe RUTA_1, RUTA_2 o RUTA_3):`;
         const textLower = userMessage.toLowerCase();
         if (textLower.includes("postular") || textLower.includes("ganarme")) return "ROUTE_3";
         if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49")) return "ROUTE_1";
+        if (textLower === "hola" || textLower.includes("cotizar")) return "SALUDO_INICIAL";
         return "ROUTE_2";
     }
 }
@@ -137,31 +137,25 @@ module.exports = async (req, res) => {
 
                             console.log(`📩 Mensaje procesado de ${from}: "${userText}"`);
 
-                            const textLower = userText.toLowerCase();
-                            const isGreeting = textLower.includes("hola") || textLower.includes("cotizar") || textLower.includes("interesado") || !userSessions.has(from);
+                            // Clasificación dinámica con Gemini IA (100% stateless serverless ready)
+                            const intent = await classifyIntentWithAI(userText);
+                            let responseMsg = "";
 
-                            if (isGreeting && !userSessions.get(from)?.askedProject) {
-                                // PASO 2: Primera interacción del Bot
-                                const welcomeMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para ayudarte de la manera más rápida y precisa, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
-                                
-                                await sendWhatsAppMessage(from, welcomeMsg);
-                                userSessions.set(from, { step: 'awaiting_project_type', askedProject: true, timestamp: Date.now() });
+                            if (intent === "SALUDO_INICIAL") {
+                                // PASO 2: Bienvenida e indagación
+                                responseMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para ayudarte de la manera más rápida y precisa, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
+                            } else if (intent === "ROUTE_1") {
+                                // Ruta 1: Subsidio Adjudicado
+                                responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
+                            } else if (intent === "ROUTE_2") {
+                                // Ruta 2: Proyectos Particulares
+                                responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
                             } else {
-                                // PASO 3: Análisis y Enrutamiento con IA
-                                const route = await classifyIntentWithAI(userText);
-                                let responseMsg = "";
-
-                                if (route === "ROUTE_1") {
-                                    responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
-                                } else if (route === "ROUTE_2") {
-                                    responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
-                                } else {
-                                    responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
-                                }
-
-                                await sendWhatsAppMessage(from, responseMsg);
-                                userSessions.delete(from);
+                                // Ruta 3: Descarte de Postulaciones
+                                responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
                             }
+
+                            await sendWhatsAppMessage(from, responseMsg);
                         }
                     }
                 }
