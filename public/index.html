@@ -178,6 +178,10 @@
     }
     </script>
 
+    <!-- ===== Preload de Imagen Hero para Optimizar LCP ===== -->
+    <link rel="preload" as="image" href="/casa_solida_moderna_hero_mobile.webp" type="image/webp" media="(max-width: 768px)" fetchpriority="high">
+    <link rel="preload" as="image" href="/casa_solida_moderna_1770071499659.webp" type="image/webp" media="(min-width: 769px)" fetchpriority="high">
+
     <!-- ===== Estilos Compilados Estáticos ===== -->
     <link rel="stylesheet" href="/tailwind.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -264,9 +268,10 @@
     <!-- ===== Hero Section ===== -->
     <header id="inicio" class="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
         <picture class="absolute inset-0 w-full h-full">
-            <source srcset="/casa_solida_moderna_1770071499659.webp" type="image/webp">
+            <source media="(max-width: 768px)" srcset="/casa_solida_moderna_hero_mobile.webp" type="image/webp">
+            <source media="(min-width: 769px)" srcset="/casa_solida_moderna_1770071499659.webp" type="image/webp">
             <img src="/casa_solida_moderna_1770071499659.png" alt="Casa sólida moderna construida por Constructora Cuatropuntas en Santiago de Chile"
-                class="w-full h-full object-cover opacity-60" width="1920" height="1080">
+                class="w-full h-full object-cover opacity-60" width="1920" height="1080" fetchpriority="high" decoding="async">
         </picture>
         <div class="absolute inset-0 hero-overlay"></div>
 
