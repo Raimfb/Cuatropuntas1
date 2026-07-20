@@ -5,7 +5,7 @@ const userSessions = new Map();
 
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody) {
-    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSPsi9HwKouVGQlAinXEGU0a2SpgfYcNy8fpIrutmj6FybCmcnFkjsS7A0Y6mDJD5Np4beuUq3tfohzvTMWVzXR2dlZCyk4XM1XD1sCkwn2ZAOcJ2Bo1bxvDisCgN8EqZCZBGhUB6XS06kDm69iy9HPgRPSc3pgE63j8BcXE1FZAjvNZCHegg3X1ZBtKEGhqa14ClHAl9d2A2ZBj7ZBnbWETacvSR44S4zHYxbYfu60AxdLkTv8VV62rrrp4o93UZBDWkGRyf0He83s01zLxQoAlp8ZD";
+    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSM28Xbe2cpwsThD6r8rdwxxiyQc6AEGNfVNgIZBegdORmqWJivsiYKF7p2YqcaEjRFRkF4AGaQFjTE7AFRvql2nSF8lCTAbqL4UxV9vExktwsmZABFm6ae2iGaAyDErqOTv3kVHeyR6LvU7NAwk0T2ZCBiLu1jqF1EPduJQZAeW9WUAeV9izkIcfcI7v8GmPX4KUhKodO9YWOMh99ZBfHSjl51b4ZC7WkuW7auqlXfkq0flT5RE1VM8PyLZCEldwOi1ZAj18H4IEFmZBMGTnsRwXA";
     const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
 
     if (!token) {
