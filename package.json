@@ -2,7 +2,8 @@
   "name": "cuatropuntas-secure",
   "version": "1.0.0",
   "scripts": {
-    "build": "echo 'Static build'"
+    "build": "echo 'Static build'",
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/tailwind.min.css --minify"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

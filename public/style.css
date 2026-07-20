@@ -100,7 +100,7 @@ a {
 }
 
 /* Header */
-header {
+header.site-header {
   position: fixed;
   top: 0;
   left: 0;
@@ -114,7 +114,7 @@ header {
   align-items: center;
 }
 
-header .container {
+header.site-header .container {
   width: 100%;
   display: flex;
   justify-content: space-between;
