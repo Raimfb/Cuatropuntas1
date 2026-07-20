@@ -9,12 +9,15 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
     const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
 
     if (!token) {
-        console.error("❌ ERROR: WHATSAPP_TOKEN no configurado en entorno");
+        console.error("❌ ERROR: WHATSAPP_TOKEN no configurado");
         return false;
     }
 
     const url = `https://graph.facebook.com/v20.0/${phoneId}/messages`;
-    
+    const cleanNumber = recipientNumber.replace(/[^0-9]/g, '');
+
+    console.log(`📤 Enviando respuesta por Meta API a ${cleanNumber}...`);
+
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -25,7 +28,7 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
             body: JSON.stringify({
                 messaging_product: "whatsapp",
                 recipient_type: "individual",
-                to: recipientNumber,
+                to: cleanNumber,
                 type: "text",
                 text: { body: textBody }
             })
@@ -33,14 +36,14 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
 
         const data = await response.json();
         if (!response.ok) {
-            console.error("❌ Error enviando mensaje por Meta API:", data);
+            console.error("❌ Error devuelto por Meta Graph API:", JSON.stringify(data));
             return false;
         }
 
-        console.log(`✅ Mensaje enviado exitosamente a ${recipientNumber}`);
+        console.log(`✅ Mensaje enviado exitosamente a ${cleanNumber}`);
         return true;
     } catch (err) {
-        console.error("❌ Excepción al conectar con Meta Graph API:", err.message);
+        console.error("❌ Excepción conectando a Meta Graph API:", err.message);
         return false;
     }
 }
@@ -49,14 +52,9 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
 async function classifyIntentWithAI(userMessage) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-        // Fallback básico con RegEx si no hay API Key de Gemini
         const textLower = userMessage.toLowerCase();
-        if (textLower.includes("cómo postulo") || textLower.includes("como postular") || textLower.includes("ganarme un subsidio") || textLower.includes("obtener subsidio")) {
-            return "ROUTE_3";
-        }
-        if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49") || textLower.includes("adjudicado")) {
-            return "ROUTE_1";
-        }
+        if (textLower.includes("postular") || textLower.includes("ganarme")) return "ROUTE_3";
+        if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49")) return "ROUTE_1";
         return "ROUTE_2";
     }
 
@@ -120,61 +118,59 @@ module.exports = async (req, res) => {
             let body = req.body;
             if (typeof body === 'string') {
                 try { body = JSON.parse(body); } catch(e) {}
+            } else if (Buffer.isBuffer(body)) {
+                try { body = JSON.parse(body.toString('utf-8')); } catch(e) {}
             }
 
-            if (body && body.object === 'whatsapp_business_account') {
-                const entry = body.entry?.[0];
-                const changes = entry?.changes?.[0];
-                const value = changes?.value;
-                const messageObj = value?.messages?.[0];
+            if (body && body.entry && Array.isArray(body.entry)) {
+                for (const entry of body.entry) {
+                    const changes = entry.changes || [];
+                    for (const change of changes) {
+                        const value = change.value;
+                        const messages = value?.messages || [];
 
-                if (messageObj && messageObj.type === 'text') {
-                    const from = (messageObj.from || "").replace('+', '').trim(); // Número sin signo +
-                    const userText = messageObj.text?.body?.trim() || "";
+                        for (const messageObj of messages) {
+                            const from = messageObj.from || "";
+                            const userText = messageObj.text?.body?.trim() || messageObj.caption?.trim() || "";
 
-                    console.log(`📩 Mensaje recibido de ${from}: "${userText}"`);
+                            if (!from || !userText) continue;
 
-                    const textLower = userText.toLowerCase();
+                            console.log(`📩 Mensaje procesado de ${from}: "${userText}"`);
 
-                    // Detectar si es el primer mensaje / disparador
-                    const isGreeting = textLower.includes("hola") || textLower.includes("cotizar") || textLower.includes("interesado") || !userSessions.has(from);
+                            const textLower = userText.toLowerCase();
+                            const isGreeting = textLower.includes("hola") || textLower.includes("cotizar") || textLower.includes("interesado") || !userSessions.has(from);
 
-                    if (isGreeting && !userSessions.get(from)?.askedProject) {
-                        // PASO 2: Primera interacción del Bot
-                        const welcomeMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para ayudarte de la manera más rápida y precisa, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
-                        
-                        await sendWhatsAppMessage(from, welcomeMsg);
-                        userSessions.set(from, { step: 'awaiting_project_type', askedProject: true, timestamp: Date.now() });
-                    } else {
-                        // PASO 3: Análisis y Enrutamiento con IA
-                        const route = await classifyIntentWithAI(userText);
-                        let responseMsg = "";
+                            if (isGreeting && !userSessions.get(from)?.askedProject) {
+                                // PASO 2: Primera interacción del Bot
+                                const welcomeMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para ayudarte de la manera más rápida y precisa, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
+                                
+                                await sendWhatsAppMessage(from, welcomeMsg);
+                                userSessions.set(from, { step: 'awaiting_project_type', askedProject: true, timestamp: Date.now() });
+                            } else {
+                                // PASO 3: Análisis y Enrutamiento con IA
+                                const route = await classifyIntentWithAI(userText);
+                                let responseMsg = "";
 
-                        if (route === "ROUTE_1") {
-                            // Ruta 1: Subsidio Adjudicado
-                            responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
-                        } else if (route === "ROUTE_2") {
-                            // Ruta 2: Proyectos Particulares
-                            responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
-                        } else {
-                            // Ruta 3: Descarte de Postulaciones
-                            responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
+                                if (route === "ROUTE_1") {
+                                    responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
+                                } else if (route === "ROUTE_2") {
+                                    responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
+                                } else {
+                                    responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
+                                }
+
+                                await sendWhatsAppMessage(from, responseMsg);
+                                userSessions.delete(from);
+                            }
                         }
-
-                        await sendWhatsAppMessage(from, responseMsg);
-                        // Limpiar sesión para permitir futuras consultas
-                        userSessions.delete(from);
                     }
                 }
-
-                // Meta exige HTTP 200 OK de inmediato
-                return res.status(200).send('EVENT_RECEIVED');
             }
 
-            return res.status(404).send('Not Found');
+            return res.status(200).send('EVENT_RECEIVED');
         } catch (error) {
             console.error("❌ Error en Webhook WhatsApp:", error);
-            return res.status(200).send('EVENT_RECEIVED'); // Responder 200 siempre a Meta
+            return res.status(200).send('EVENT_RECEIVED');
         }
     }
 
