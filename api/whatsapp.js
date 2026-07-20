@@ -117,16 +117,19 @@ module.exports = async (req, res) => {
     // --- PROCESAMIENTO DE MENSAJES ENTRANTES (POST) ---
     if (req.method === 'POST') {
         try {
-            const body = req.body;
+            let body = req.body;
+            if (typeof body === 'string') {
+                try { body = JSON.parse(body); } catch(e) {}
+            }
 
-            if (body.object === 'whatsapp_business_account') {
+            if (body && body.object === 'whatsapp_business_account') {
                 const entry = body.entry?.[0];
                 const changes = entry?.changes?.[0];
                 const value = changes?.value;
                 const messageObj = value?.messages?.[0];
 
                 if (messageObj && messageObj.type === 'text') {
-                    const from = messageObj.from; // Número del remitente (ej: 56912345678)
+                    const from = (messageObj.from || "").replace('+', '').trim(); // Número sin signo +
                     const userText = messageObj.text?.body?.trim() || "";
 
                     console.log(`📩 Mensaje recibido de ${from}: "${userText}"`);
