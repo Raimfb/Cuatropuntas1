@@ -158,13 +158,15 @@
     <!-- ===== Navbar ===== -->
     <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20">
+            <div class="flex justify-between items-center h-20">
                 <div class="flex items-center">
                     <a href="/" aria-label="Ir al Inicio de Cuatropuntas" class="flex items-center gap-3">
                         <img src="/logo_cuatropuntas.jpg" alt="Logo Constructora Cuatropuntas SpA Santiago" class="h-12 w-auto rounded-md shadow-sm border border-gray-200">
                         <span class="font-bold text-xl md:text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></span>
                     </a>
                 </div>
+                
+                <!-- Desktop Navigation -->
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="/" class="text-gray-600 hover:text-secondary font-medium transition">Inicio</a>
                     <a href="/servicios/casas-nuevas" class="text-secondary font-bold transition">Casas Nuevas</a>
@@ -173,11 +175,48 @@
                     <a href="/servicios/remodelaciones" class="text-gray-600 hover:text-secondary font-medium transition">Remodelaciones</a>
                     <a href="/subsidio-minvu-sitio-propio" class="text-gray-600 hover:text-secondary font-medium transition">Subsidio MINVU</a>
                     <a href="/precios" class="text-gray-600 hover:text-secondary font-medium transition">Precios</a>
-                    <a href="#contacto" class="bg-secondary hover:bg-orange-700 text-white font-bold px-5 py-2.5 rounded-md transition shadow-md hover:shadow-lg">Cotizar Ahora</a>
+                    <a href="#contacto" class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg">Cotizar Gratis</a>
+                </div>
+
+                <!-- Mobile Menu Button (Hamburger) -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" type="button" aria-label="Abrir menú de navegación" class="text-gray-700 hover:text-primary focus:outline-none p-2">
+                        <svg id="hamburgerIcon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="closeIcon" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3 shadow-xl">
+            <a href="/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Inicio</a>
+            <a href="/servicios/casas-nuevas" onclick="toggleMobileMenu()" class="block text-secondary font-bold py-2 border-b border-gray-100">Casas Nuevas</a>
+            <a href="/servicios/segundos-pisos" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Segundos Pisos</a>
+            <a href="/servicios/quinchos" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Quinchos</a>
+            <a href="/servicios/remodelaciones" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Remodelaciones</a>
+            <a href="/subsidio-minvu-sitio-propio" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Subsidio MINVU</a>
+            <a href="/precios" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Precios</a>
+            <a href="#contacto" onclick="toggleMobileMenu()" class="block bg-secondary text-white text-center font-bold py-3 rounded-md shadow-md mt-4">Cotizar Gratis</a>
+        </div>
     </nav>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('hamburgerIcon');
+            const close = document.getElementById('closeIcon');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                hamburger.classList.toggle('hidden');
+                close.classList.toggle('hidden');
+            }
+        }
+    </script>
 
     <div class="h-20"></div>
 
