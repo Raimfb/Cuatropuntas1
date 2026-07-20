@@ -5,7 +5,7 @@ const userSessions = new Map();
 
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody) {
-    const token = process.env.WHATSAPP_TOKEN;
+    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSMk4v8AD0dp1A9bXyZCLupTZBkZCNMZBYu1o7prGJfek3s23BW443dMAHrc23K4pWH1vFKATbheqwFixvO1kjXBK210yeFTsBzry6nPEn3QLPdMwI1ZAI2YZAZAXZC7BwMqVqQceZBvxfz9BZCoyCAIPZCn28sZBwSBKBgdx9JqZB4JMvMdZCzeeX8QFbeZAeNZB18WeoN0QEgEbix5QFYmYSqXVGBUphO8OYu3Lq5psyA6kSAZC1DJIeuXudKSnEEtXkUHeDtOiUj3rZBAifDUos6COwrB6wZD";
     const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
 
     if (!token) {
