@@ -57,7 +57,7 @@
           "url": "https://cuatropuntas.com/",
           "telephone": "+56979092027",
           "email": "contacto@cuatropuntas.com",
-          "description": "Constructora en Santiago especialista en construcción sólida (albañilería armada) y ligera (Metalcom, Paneles SIP). Casas nuevas, segundos pisos, ampliaciones, quinchos y remodelaciones con gestión técnica municipal y subsidios MINVU.",
+          "description": "Constructora en Santiago especialista en visitas técnicas a terreno y construcción residencial en sitio propio (albañilería armada, Metalcom, Paneles SIP). Casas nuevas, segundos pisos, ampliaciones y quinchos con gestión técnica municipal DOM y subsidios MINVU.",
           "priceRange": "$$",
           "currenciesAccepted": "CLF, CLP",
           "address": {
@@ -71,10 +71,31 @@
             "latitude": -33.448890,
             "longitude": -70.669265
           },
-          "areaServed": {
-            "@type": "AdministrativeArea",
-            "name": "Región Metropolitana de Chile"
-          },
+          "areaServed": [
+            { "@type": "AdministrativeArea", "name": "Región Metropolitana de Santiago" },
+            { "@type": "City", "name": "La Florida" },
+            { "@type": "City", "name": "Puente Alto" },
+            { "@type": "City", "name": "Maipú" },
+            { "@type": "City", "name": "Colina" },
+            { "@type": "City", "name": "Peñalolén" },
+            { "@type": "City", "name": "San Bernardo" },
+            { "@type": "City", "name": "Las Condes" },
+            { "@type": "City", "name": "Pudahuel" },
+            { "@type": "City", "name": "Lampa" },
+            { "@type": "City", "name": "La Reina" },
+            { "@type": "City", "name": "Huechuraba" },
+            { "@type": "City", "name": "Talagante" },
+            { "@type": "City", "name": "Melipilla" }
+          ],
+          "knowsAbout": [
+            "Visitas técnicas a terreno en Santiago",
+            "Construcción en sitio propio",
+            "Construcción ligera en Metalcom",
+            "Construcción aislante en Panel SIP",
+            "Construcción sólida en Albañilería Armada",
+            "Gestión de Permisos DOM y Recepción Final Municipal",
+            "Subsidios MINVU DS1 y DS49 para Sitio Propio"
+          ],
           "openingHoursSpecification": [
             {
               "@type": "OpeningHoursSpecification",
@@ -93,8 +114,8 @@
         {
           "@type": "Service",
           "@id": "https://cuatropuntas.com/#service-catalogo",
-          "name": "Construcción de casas, ampliaciones, segundos pisos, quinchos y remodelaciones",
-          "serviceType": "Construcción residencial llave en mano",
+          "name": "Construcción a terreno de casas, ampliaciones, segundos pisos y quinchos en Santiago",
+          "serviceType": "Construcción residencial a terreno llave en mano",
           "provider": { "@id": "https://cuatropuntas.com/#business" },
           "areaServed": { "@type": "AdministrativeArea", "name": "Región Metropolitana de Chile" },
           "offers": {
@@ -111,6 +132,14 @@
           "@type": "FAQPage",
           "@id": "https://cuatropuntas.com/#faq",
           "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "¿Cómo funciona la visita técnica a terreno en Santiago y comunas?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Atendemos 100% a terreno en todas las comunas de la Región Metropolitana (La Florida, Puente Alto, Maipú, Colina, Peñalolén, San Bernardo, etc.). Nuestro equipo técnico se desplaza a tu propiedad para evaluar deslindes, mecánica de suelo preliminar y normativa de la DOM municipal antes de iniciar la obra."
+              }
+            },
             {
               "@type": "Question",
               "name": "¿Cuánto cuesta construir una casa en Santiago?",
@@ -471,6 +500,21 @@
             <h2 class="text-4xl font-serif font-bold text-center text-primary mb-10">Preguntas Frecuentes</h2>
 
             <div class="space-y-3 mb-8">
+                <!-- FAQ 0: Visitas a Terreno -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                    <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
+                        <span class="font-semibold text-primary text-sm">¿Cómo funciona la visita técnica a terreno en Santiago y comunas?</span>
+                        <svg class="w-5 h-5 text-gray-400 transition-transform duration-300 faq-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="faq-content max-h-0 overflow-hidden transition-all duration-300 ease-in-out">
+                        <div class="px-6 pb-5 text-sm text-gray-600 leading-relaxed">
+                            <p>Operamos <strong>100% con atención a terreno</strong> en todas las comunas de la Región Metropolitana (La Florida, Puente Alto, Maipú, Colina, Peñalolén, San Bernardo, etc.). Tras realizar tu cotización online inicial, nuestro equipo profesional acude directamente a tu terreno o propiedad para evaluar deslindes, mecánica preliminar de suelo, orientación y los requisitos de la Dirección de Obras Municipales (DOM) antes de la firma.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- FAQ 1: Precios -->
                 <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
                     <button onclick="toggleFaq(this)" class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition">
@@ -567,6 +611,148 @@
             }
         }
     </script>
+
+    <!-- ===== Cobertura de Visitas a Terreno por Comunas (SEO Local & GEO) ===== -->
+    <section id="cobertura" class="py-20 bg-gray-50 border-t border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="text-secondary font-bold text-sm uppercase tracking-wider">Atención 100% a Terreno en la RM</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-primary mt-2">Visitas Técnicas a Terreno en Santiago y Comunas</h2>
+                <p class="mt-4 text-gray-600 text-base md:text-lg leading-relaxed">
+                    No necesitas trasladarte a una oficina. Evaluamos la factibilidad técnica, orientación solar, deslindes y normativa municipal (DOM) directamente en tu terreno o casa actual.
+                </p>
+            </div>
+
+            <!-- Flujo de Visita a Terreno -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm relative hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-orange-100 text-secondary font-bold rounded-lg flex items-center justify-center text-xl mb-5">1</div>
+                    <h3 class="font-bold text-lg text-primary mb-2">Cotización Digital Inmediata</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Calculas la estimación de valor por m² según tu tipo de proyecto, sistema constructivo y comuna desde nuestra plataforma.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm relative hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-orange-100 text-secondary font-bold rounded-lg flex items-center justify-center text-xl mb-5">2</div>
+                    <h3 class="font-bold text-lg text-primary mb-2">Visita Técnica a Terreno</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Coordinamos la visita de un profesional a tu propiedad para medir, revisar deslindes y definir el presupuesto definitivo.</p>
+                </div>
+                <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm relative hover:shadow-md transition">
+                    <div class="w-12 h-12 bg-orange-100 text-secondary font-bold rounded-lg flex items-center justify-center text-xl mb-5">3</div>
+                    <h3 class="font-bold text-lg text-primary mb-2">Ejecución & Permisos DOM</h3>
+                    <p class="text-sm text-gray-600 leading-relaxed">Construimos en tu terreno con control de plazos y gestionamos el Permiso de Edificación y la Recepción Final municipal.</p>
+                </div>
+            </div>
+
+            <!-- Cobertura por Sectores y Comunas -->
+            <div class="bg-white rounded-2xl border border-gray-200 p-8 md:p-10 shadow-sm">
+                <h3 class="text-xl font-bold text-primary mb-6 flex items-center">
+                    <svg class="w-6 h-6 text-secondary mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    Comunas con Servicio de Construcción y Visita Técnica
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-sm">
+                    <div>
+                        <h4 class="font-bold text-secondary mb-3 uppercase text-xs tracking-wider">Sector Sur & Suroriente</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• <strong>La Florida:</strong> Casas y 2do pisos</li>
+                            <li>• <strong>Puente Alto:</strong> Ampliaciones y sitio propio</li>
+                            <li>• <strong>Peñalolén:</strong> Quinchos y casas</li>
+                            <li>• <strong>San Bernardo:</strong> Subsidios DS1 y DS49</li>
+                            <li>• <strong>Macul / San Miguel:</strong> Remodelaciones</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-secondary mb-3 uppercase text-xs tracking-wider">Sector Poniente & Norte</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• <strong>Maipú:</strong> Segundos pisos y Metalcom</li>
+                            <li>• <strong>Pudahuel:</strong> Casas aisladas y quinchos</li>
+                            <li>• <strong>Quilicura:</strong> Estructuras SIP y ampliaciones</li>
+                            <li>• <strong>Huechuraba / Recoleta:</strong> Albañilería</li>
+                            <li>• <strong>Estación Central:</strong> Remodelaciones</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-secondary mb-3 uppercase text-xs tracking-wider">Periferia & Parcelas RM</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• <strong>Colina (Chicureo):</strong> Casas de alto estándar</li>
+                            <li>• <strong>Lampa / Batuco:</strong> Terrenos y parcelas</li>
+                            <li>• <strong>Buin / Paine:</strong> Construcción en sitio propio</li>
+                            <li>• <strong>Talagante / Peñaflor:</strong> Casas nuevas</li>
+                            <li>• <strong>Melipilla:</strong> Subsidio y llave en mano</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-secondary mb-3 uppercase text-xs tracking-wider">Sector Oriente & Centro</h4>
+                        <ul class="space-y-2 text-gray-600">
+                            <li>• <strong>Las Condes:</strong> Ampliaciones de nivel</li>
+                            <li>• <strong>La Reina:</strong> Casas y quinchos premium</li>
+                            <li>• <strong>Providencia / Ñuñoa:</strong> Remodelaciones integrales</li>
+                            <li>• <strong>Santiago Centro:</strong> Regularizaciones DOM</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Casos Reales y Garantía Técnica E-E-A-T ===== -->
+    <section id="casos-reales" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-14">
+                <span class="text-secondary font-bold text-sm uppercase tracking-wider">Experiencia Técnica en Terreno</span>
+                <h2 class="text-3xl md:text-4xl font-serif font-bold text-primary mt-2">Casos Reales y Proyectos Ejecutados</h2>
+                <p class="mt-4 text-gray-600">Proyectos llave en mano con datos duros de ejecución, materiales y regularización municipal.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Caso 1 -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                    <img src="/casa_solida_moderna_1770071499659.png" alt="Casa Nueva en La Florida sitio propio" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <span class="bg-orange-100 text-secondary text-xs font-bold px-3 py-1 rounded-full uppercase">Casa Nueva 78 m²</span>
+                        <h3 class="font-bold text-lg text-primary mt-3 mb-2">Proyecto Sitio Propio — La Florida</h3>
+                        <ul class="text-xs text-gray-600 space-y-2 mb-4">
+                            <li>• <strong>Sistema:</strong> Metalcom Estructural Súper-Aislante</li>
+                            <li>• <strong>Plazo de Obra:</strong> 4 meses completos</li>
+                            <li>• <strong>Comuna:</strong> La Florida (Visita a terreno previa)</li>
+                            <li>• <strong>Estado:</strong> Recepción Final DOM Aprobada</li>
+                        </ul>
+                        <p class="text-xs text-gray-500 border-t border-gray-200 pt-3">Entregada 100% terminada con baños, piso cerámico y pintura interior.</p>
+                    </div>
+                </div>
+
+                <!-- Caso 2 -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                    <img src="/material_semi_ligero_sip_1770072450181.png" alt="Ampliación segundo piso en Puente Alto" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <span class="bg-orange-100 text-secondary text-xs font-bold px-3 py-1 rounded-full uppercase">Segundo Piso 54 m²</span>
+                        <h3 class="font-bold text-lg text-primary mt-3 mb-2">Ampliación Familiar — Puente Alto</h3>
+                        <ul class="text-xs text-gray-600 space-y-2 mb-4">
+                            <li>• <strong>Sistema:</strong> Panel SIP de alta eficiencia térmica</li>
+                            <li>• <strong>Plazo de Obra:</strong> 2.5 meses de ejecución</li>
+                            <li>• <strong>Comuna:</strong> Puente Alto (Evaluación de losa a terreno)</li>
+                            <li>• <strong>Estado:</strong> Permiso de Edificación al día</li>
+                        </ul>
+                        <p class="text-xs text-gray-500 border-t border-gray-200 pt-3">Construido sin interrumpir la habitabilidad del primer piso.</p>
+                    </div>
+                </div>
+
+                <!-- Caso 3 -->
+                <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition">
+                    <img src="/quincho_premium_chile_1770071485791.png" alt="Quincho completo en Maipú" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <span class="bg-orange-100 text-secondary text-xs font-bold px-3 py-1 rounded-full uppercase">Quincho Premium 36 m²</span>
+                        <h3 class="font-bold text-lg text-primary mt-3 mb-2">Quincho y Terraza — Maipú</h3>
+                        <ul class="text-xs text-gray-600 space-y-2 mb-4">
+                            <li>• <strong>Sistema:</strong> Albañilería armada + Vigas de pino oregón</li>
+                            <li>• <strong>Plazo de Obra:</strong> 1.5 meses</li>
+                            <li>• <strong>Comuna:</strong> Maipú (Medición en terreno)</li>
+                            <li>• <strong>Estado:</strong> Llave en mano con campana de acero</li>
+                        </ul>
+                        <p class="text-xs text-gray-500 border-t border-gray-200 pt-3">Incluye mesones de granito, parrilla a medida y luminarias LED.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- ===== Legal Guarantee ===== -->
     <section id="garantia" class="py-20 bg-primary text-white">
