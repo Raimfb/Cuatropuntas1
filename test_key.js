@@ -5,7 +5,7 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 // 2. Guarda el archivo.
 // 3. Ejecuta en la terminal: node test_key.js
 
-const API_KEY = "AIzaSyC7swBOIidTJ3eWtxoO-m1guSqRcMhFMlE";
+const API_KEY = process.env.GEMINI_API_KEY;
 
 async function test() {
     console.log("----------------------------------------");

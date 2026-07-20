@@ -3,9 +3,11 @@ node_modules/
 
 # Seguridad (TU CLAVE SECRETA - NUNCA SUBIR)
 .env
+.env.local
+.env*.local
 
 # Archivos de sistema
 .DS_Store
 Thumbs.db
+desktop.ini
 .vercel
-.env*.local
