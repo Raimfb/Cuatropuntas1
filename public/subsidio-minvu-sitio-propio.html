@@ -106,29 +106,11 @@
     }
     </script>
 
-    <!-- ===== Tailwind CSS (CDN) ===== -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- ===== Estilos Compilados Estáticos ===== -->
+    <link rel="stylesheet" href="/tailwind.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1a202c', // Dark Slate
-                        secondary: '#c05621', // Brick/Construction Accent
-                        accent: '#f7fafc', // Light Gray
-                        'legal-gold': '#b7791f',
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         .hero-overlay {
             background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
@@ -559,8 +541,8 @@
             <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm flex flex-col items-center">
                 <p>&copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados.</p>
                 <div class="mt-2 space-x-4">
-                    <a href="/politicas.html" class="hover:text-gray-300 transition">Políticas de Privacidad</a>
-                    <a href="/politicas.html" class="hover:text-gray-300 transition">Términos y Condiciones</a>
+                    <a href="/politicas" class="hover:text-gray-300 transition">Políticas de Privacidad</a>
+                    <a href="/politicas" class="hover:text-gray-300 transition">Términos y Condiciones</a>
                 </div>
             </div>
         </div>
@@ -699,7 +681,7 @@
                 <div>
                     <p class="text-sm font-bold text-primary">Aviso de Privacidad</p>
                     <p class="text-xs text-gray-500 mt-1 leading-relaxed">
-                        Utilizamos cookies para asegurar que su experiencia en nuestro sitio sea óptima. Al continuar navegando, entendemos que acepta nuestra <a href="/politicas.html" class="text-secondary hover:underline font-medium">Política de Cookies</a>.
+                        Utilizamos cookies para asegurar que su experiencia en nuestro sitio sea óptima. Al continuar navegando, entendemos que acepta nuestra <a href="/politicas" class="text-secondary hover:underline font-medium">Política de Cookies</a>.
                     </p>
                 </div>
             </div>
