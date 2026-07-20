@@ -1,5 +1,3 @@
-const { GoogleGenerativeAI } = require("@google/generative-ai");
-
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody) {
     const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSM28Xbe2cpwsThD6r8rdwxxiyQc6AEGNfVNgIZBegdORmqWJivsiYKF7p2YqcaEjRFRkF4AGaQFjTE7AFRvql2nSF8lCTAbqL4UxV9vExktwsmZABFm6ae2iGaAyDErqOTv3kVHeyR6LvU7NAwk0T2ZCBiLu1jqF1EPduJQZAeW9WUAeV9izkIcfcI7v8GmPX4KUhKodO9YWOMh99ZBfHSjl51b4ZC7WkuW7auqlXfkq0flT5RE1VM8PyLZCEldwOi1ZAj18H4IEFmZBMGTnsRwXA";
@@ -45,50 +43,69 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
     }
 }
 
-// Clasificación de Intención usando Gemini IA
-async function classifyIntentWithAI(userMessage) {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-        const textLower = userMessage.toLowerCase();
-        if (textLower.includes("postular") || textLower.includes("ganarme") || textLower.includes("cómo postulo")) return "ROUTE_3";
-        if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49")) return "ROUTE_1";
+// Clasificación Ultra Rápida y Robusta de Intención (0ms Serverless Ready)
+function classifyIntent(userMessage) {
+    const textLower = (userMessage || "").toLowerCase().trim();
+
+    // 1. Descarte de Postulaciones (Prioridad Alta)
+    if (
+        textLower.includes("como postulo") || 
+        textLower.includes("cómo postulo") || 
+        textLower.includes("como postular") || 
+        textLower.includes("cómo postular") || 
+        textLower.includes("ganarme un subsidio") || 
+        textLower.includes("obtener subsidio") || 
+        textLower.includes("postulacion") || 
+        textLower.includes("postulación") ||
+        textLower.includes("quiero saber como")
+    ) {
+        return "ROUTE_3";
+    }
+
+    // 2. Ruta 1: Subsidio Adjudicado
+    if (
+        textLower.includes("subsidio") || 
+        textLower.includes("ds1") || 
+        textLower.includes("ds49") || 
+        textLower.includes("adjudicado") || 
+        textLower.includes("gane") || 
+        textLower.includes("gané") || 
+        textLower.includes("tengo subsidio")
+    ) {
+        return "ROUTE_1";
+    }
+
+    // 3. Ruta 2: Proyectos Particulares
+    if (
+        textLower.includes("segundo piso") || 
+        textLower.includes("casa nueva") || 
+        textLower.includes("parcela") || 
+        textLower.includes("ampliar") || 
+        textLower.includes("ampliacion") || 
+        textLower.includes("ampliación") || 
+        textLower.includes("remodelar") || 
+        textLower.includes("remodelacion") || 
+        textLower.includes("remodelación") || 
+        textLower.includes("quincho") || 
+        textLower.includes("construir") ||
+        textLower.includes("proyecto")
+    ) {
         return "ROUTE_2";
     }
 
-    try {
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-        const prompt = `
-Eres un clasificador semántico para una constructora en Chile (Cuatropuntas).
-Analiza el mensaje del usuario y clasifícalo en EXACTAMENTE una de las siguientes 4 categorías.
-Devuelve ÚNICAMENTE el código de la categoría: SALUDO_INICIAL, RUTA_1, RUTA_2 o RUTA_3.
-
-Categorías:
-- SALUDO_INICIAL: El usuario solo dice un saludo genérico o el texto por defecto de inicio (ej: "hola", "buenas tardes", "hola, estoy interesado en cotizar con ustedes un proyecto", "hola cuatropuntas").
-- RUTA_1: El usuario menciona que YA TIENE, GANÓ o TIENE ADJUDICADO un subsidio habitacional (DS1, DS49, subsidio estatal para sitio propio).
-- RUTA_2: El usuario desea construir o remodelar un proyecto particular/privado en sitio propio (casa nueva, parcela, segundo piso, ampliación, quincho, remodelación sin subsidio).
-- RUTA_3: El usuario pregunta sobre CÓMO POSTULAR, cómo obtener, ganarse o tramitar un subsidio desde cero con el Serviu/MINVU.
-
-Mensaje del usuario: "${userMessage}"
-
-Respuesta (solo escribe SALUDO_INICIAL, RUTA_1, RUTA_2 o RUTA_3):`;
-
-        const result = await model.generateContent(prompt);
-        const responseText = (await result.response.text()).trim();
-
-        if (responseText.includes("SALUDO_INICIAL")) return "SALUDO_INICIAL";
-        if (responseText.includes("RUTA_1")) return "ROUTE_1";
-        if (responseText.includes("RUTA_3")) return "ROUTE_3";
-        return "ROUTE_2";
-    } catch (error) {
-        console.warn("⚠️ Falló Gemini AI, usando fallback heurístico:", error.message);
-        const textLower = userMessage.toLowerCase();
-        if (textLower.includes("postular") || textLower.includes("ganarme")) return "ROUTE_3";
-        if (textLower.includes("subsidio") || textLower.includes("ds1") || textLower.includes("ds49")) return "ROUTE_1";
-        if (textLower === "hola" || textLower.includes("cotizar")) return "SALUDO_INICIAL";
-        return "ROUTE_2";
+    // 4. Saludo Inicial
+    if (
+        textLower === "hola" || 
+        textLower === "hola\\" || 
+        textLower.includes("buenas") || 
+        textLower.includes("cotizar") || 
+        textLower.includes("interesado")
+    ) {
+        return "SALUDO_INICIAL";
     }
+
+    // Default fallback a Ruta 2
+    return "ROUTE_2";
 }
 
 module.exports = async (req, res) => {
@@ -137,8 +154,7 @@ module.exports = async (req, res) => {
 
                             console.log(`📩 Mensaje procesado de ${from}: "${userText}"`);
 
-                            // Clasificación dinámica con Gemini IA (100% stateless serverless ready)
-                            const intent = await classifyIntentWithAI(userText);
+                            const intent = classifyIntent(userText);
                             let responseMsg = "";
 
                             if (intent === "SALUDO_INICIAL") {
