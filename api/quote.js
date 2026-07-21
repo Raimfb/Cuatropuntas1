@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
-        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || null;
+        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas";
 
         // --- MATRIZ DE PRECIOS EXACTA PUBLICADA EN LA WEB CUATROPUNTAS (UF/m² NETAS +IVA) ---
         // Coincidencia 100% estricta con las tablas públicas de precios.html y index.html
@@ -152,23 +152,19 @@ module.exports = async (req, res) => {
 
         doc.fontSize(14).fillColor('#1a202c').text('3. Disclaimer Legal Importante');
         doc.fontSize(10).fillColor('#718096')
-           .text('Este documento constituye una estimación paramétrica comercial. NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere una reunión y evaluación de terreno presencial con nuestro equipo de arquitectura.', { align: 'justify' });
+           .text('Este documento constituye una estimación paramétrica comercial. NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere una reunión y evaluación presencial con nuestro equipo de arquitectura.', { align: 'justify' });
         doc.moveDown(2);
 
-        doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso — Agenda tu Visita / Reunión');
-        if (calendarUrl) {
-            doc.fontSize(11).fillColor('#4a5568').text('Para formalizar este presupuesto, agendemos una evaluación técnica presencial.');
-            doc.moveDown(0.8);
-            
-            doc.rect(doc.x, doc.y, 180, 25).fill('#c05621');
-            doc.fillColor('#ffffff').fontSize(10).text('AGENDAR MI VISITA AHORA', doc.x + 30, doc.y - 17, {
-                link: calendarUrl,
-                underline: false
-            });
-            doc.moveDown(1.5);
-        } else {
-            doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu evaluación presencial, responde a este correo o escríbenos a nuestro WhatsApp oficial +56 9 2738 4075.');
-        }
+        doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso — Agenda tu Reunión / Visita');
+        doc.fontSize(11).fillColor('#4a5568').text('Para formalizar este presupuesto, agendemos una evaluación o reunión técnica en nuestro calendario o respondiendo directamente a este correo.');
+        doc.moveDown(0.8);
+        
+        doc.rect(doc.x, doc.y, 220, 25).fill('#c05621');
+        doc.fillColor('#ffffff').fontSize(10).text('AGENDAR EN CAL.COM AHORA', doc.x + 25, doc.y - 17, {
+            link: calendarUrl,
+            underline: false
+        });
+        doc.moveDown(1.5);
 
         doc.end();
 
@@ -205,15 +201,12 @@ module.exports = async (req, res) => {
                 <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>Este valor considera la entrega habitable llave en mano con el sistema constructivo elegido.</p>
                 <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #c05621; border-radius: 4px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>¿Listo para dar el siguiente paso?</strong></p>
-                    <p style="margin: 5px 0 0 0;">Para coordinar una reunión de evaluación o revisión de terreno, puedes responder a este correo o escribirnos directo por WhatsApp.</p>
+                    <p style="margin: 5px 0 0 0;">Para coordinar una reunión de evaluación o revisión de proyecto, agende directamente en nuestro calendario en línea o responda a este correo.</p>
                 </div>
-                ${calendarUrl 
-                    ? `<div style="text-align:center; margin: 30px 0;">
-                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:16px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📅 Agendar Evaluación Presencial</a>
-                        <p style="font-size:12px; color:#718096; margin-top:10px;">Lunes a Viernes 11:00–19:00 · Sábados hasta las 16:00</p>
-                       </div>` 
-                    : `<p style="text-align:center; margin: 20px 0;"><a href="https://wa.me/56927384075?text=Hola,%20acabo%20de%20recibir%20mi%20cotizaci%C3%B3n%20y%20me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n." style="background-color:#25d366; color:#ffffff; padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:15px; display:inline-block;">💬 Coordinar por WhatsApp (+56 9 2738 4075)</a></p>`
-                }
+                <div style="text-align:center; margin: 30px 0;">
+                    <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:16px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📅 Agendar Reunión en Cal.com</a>
+                    <p style="font-size:12px; color:#718096; margin-top:10px;">Selecciona la fecha y hora que mejor te acomode</p>
+                </div>
                 <p>Un saludo cordial,<br><strong>Equipo Constructora Cuatropuntas</strong></p>
             </div>
             `,
