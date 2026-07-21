@@ -1,6 +1,6 @@
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody) {
-    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSM28Xbe2cpwsThD6r8rdwxxiyQc6AEGNfVNgIZBegdORmqWJivsiYKF7p2YqcaEjRFRkF4AGaQFjTE7AFRvql2nSF8lCTAbqL4UxV9vExktwsmZABFm6ae2iGaAyDErqOTv3kVHeyR6LvU7NAwk0T2ZCBiLu1jqF1EPduJQZAeW9WUAeV9izkIcfcI7v8GmPX4KUhKodO9YWOMh99ZBfHSjl51b4ZC7WkuW7auqlXfkq0flT5RE1VM8PyLZCEldwOi1ZAj18H4IEFmZBMGTnsRwXA";
+    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSEBulsLUwIarFJ2cbVYOK55khaTUUdZAR8MClTADrZCuqbtvR4jrqU5eXoIPAfVQuBngNpbFPcEpwUVXOowN739ALW3swwLciCH7yWwsrQcOc9S7cgL1rJ73x74n5GmebXguoD8PVWhV1mBPala99XSTUu5vj6c4tknalggt4gtpCSwQZDZD";
     const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
 
     if (!token) {
