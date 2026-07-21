@@ -1,7 +1,10 @@
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
-async function sendWhatsAppMessage(recipientNumber, textBody) {
+async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = null) {
     const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSEBulsLUwIarFJ2cbVYOK55khaTUUdZAR8MClTADrZCuqbtvR4jrqU5eXoIPAfVQuBngNpbFPcEpwUVXOowN739ALW3swwLciCH7yWwsrQcOc9S7cgL1rJ73x74n5GmebXguoD8PVWhV1mBPala99XSTUu5vj6c4tknalggt4gtpCSwQZDZD";
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
+    // Usar dinámicamente el ID del número al que el cliente le escribió, o el ID oficial
+    const phoneId = incomingPhoneId || process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
 
     if (!token) {
         console.error("❌ ERROR: WHATSAPP_TOKEN no configurado");
@@ -11,7 +14,7 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
     const url = `https://graph.facebook.com/v20.0/${phoneId}/messages`;
     const cleanNumber = recipientNumber.replace(/[^0-9]/g, '');
 
-    console.log(`📤 Enviando respuesta por Meta API a ${cleanNumber}...`);
+    console.log(`📤 Enviando respuesta por Meta API a ${cleanNumber} usando Phone ID ${phoneId}...`);
 
     try {
         const response = await fetch(url, {
@@ -43,7 +46,7 @@ async function sendWhatsAppMessage(recipientNumber, textBody) {
     }
 }
 
-// Clasificación Ultra Rápida y Robusta de Intención (0ms Serverless Ready)
+// Clasificación Ultra Rápida de Intención
 function classifyIntent(userMessage) {
     const textLower = (userMessage || "").toLowerCase().trim();
 
@@ -104,7 +107,6 @@ function classifyIntent(userMessage) {
         return "SALUDO_INICIAL";
     }
 
-    // Default fallback a Ruta 2
     return "ROUTE_2";
 }
 
@@ -144,6 +146,8 @@ module.exports = async (req, res) => {
                     const changes = entry.changes || [];
                     for (const change of changes) {
                         const value = change.value;
+                        // Extraer dinámicamente el ID del número telefónico al que le escribieron
+                        const incomingPhoneId = value?.metadata?.phone_number_id || null;
                         const messages = value?.messages || [];
 
                         for (const messageObj of messages) {
@@ -152,26 +156,23 @@ module.exports = async (req, res) => {
 
                             if (!from || !userText) continue;
 
-                            console.log(`📩 Mensaje procesado de ${from}: "${userText}"`);
+                            console.log(`📩 Mensaje procesado de ${from} hacia PhoneID ${incomingPhoneId}: "${userText}"`);
 
                             const intent = classifyIntent(userText);
                             let responseMsg = "";
 
                             if (intent === "SALUDO_INICIAL") {
-                                // PASO 2: Bienvenida e indagación
                                 responseMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para ayudarte de la manera más rápida y precisa, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
                             } else if (intent === "ROUTE_1") {
-                                // Ruta 1: Subsidio Adjudicado
                                 responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
                             } else if (intent === "ROUTE_2") {
-                                // Ruta 2: Proyectos Particulares
                                 responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
                             } else {
-                                // Ruta 3: Descarte de Postulaciones
                                 responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
                             }
 
-                            await sendWhatsAppMessage(from, responseMsg);
+                            // Enviar respuesta usando dinámicamente el PhoneID oficial que recibió la solicitud
+                            await sendWhatsAppMessage(from, responseMsg, incomingPhoneId);
                         }
                     }
                 }
