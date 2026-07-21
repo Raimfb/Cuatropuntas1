@@ -24,7 +24,6 @@ module.exports = async (req, res) => {
         const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono, website_url } = req.body;
 
         // 1. Honeypot check: Si 'website_url' está presente, es un bot.
-        // Respondemos 200 OK para que el bot crea que tuvo éxito, pero no procesamos nada.
         if (website_url) {
             console.log('Bot detected via Honeypot. Aborting silently.');
             return res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
@@ -39,59 +38,71 @@ module.exports = async (req, res) => {
         const areaNum = parseFloat(area);
         const pisosNum = parseInt(pisos);
 
-        // Validar m2 (Límite comercial sensato: 10m2 a 5000m2)
         if (isNaN(areaNum) || areaNum < 10 || areaNum > 5000) {
             return res.status(400).json({ error: 'La superficie ingresada no es válida. Por favor ingresa un valor entre 10 y 5000 m².' });
         }
 
-        // Validar pisos (1 a 4 máximo)
         if (isNaN(pisosNum) || pisosNum < 1 || pisosNum > 4) {
             return res.status(400).json({ error: 'El número de pisos debe estar entre 1 y 4.' });
         }
 
-        // Validar Email (Regex robusta)
         const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         if (!emailRegex.test(email) || email.length > 100) {
             return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
-        // Variable de entorno: URL del calendario Cal.com (NEXT_PUBLIC_CALENDAR_URL en Vercel)
         const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || null;
 
-        // --- LÓGICA DE PRECIOS CUATROPUNTAS ---
-        // Precios base publicados en la página (sin IVA), por sistema constructivo
-        const preciosBase = {
-            'Albanileria': 27,  // Construcción Sólida (Albañilería)
-            'Mixto':       23,  // Mixto (ponderado entre Sólido y SIP)
-            'Covintec':    21,  // Covintec (estructura tridimensional estucada)
-            'SIP':         20,  // Panel SIP (núcleo EPS y OSB)
-            'Metalcon':    15   // Material Ligero (Metalcon / Vulcometal)
-        };
+        // --- MATRIZ DE PRECIOS EXACTA PUBLICADA EN LA WEB CUATROPUNTAS (UF/m² NETAS +IVA) ---
+        // Coincidencia 100% estricta con las tablas públicas de precios.html y index.html
+        let baseUFm2 = 19; // Fallback general
 
-        const costoM2Base = preciosBase[sistema] || 20;
+        const isAmpliacion = tipo.toLowerCase().includes("segundo") || tipo.toLowerCase().includes("amplia");
+        const isQuincho = tipo.toLowerCase().includes("quincho");
+        const isRemodelacion = tipo.toLowerCase().includes("remodela");
 
-        // Ajuste por escala: proyectos pequeños tienen mayor costo relativo
-        let penalizaciones = 0;
-        if (pisos >= 2) penalizaciones += 0.08;   // Segundo piso: escaleras, losa, refuerzos
-        if (area < 40)  penalizaciones += 0.12;   // Escala pequeña: costos fijos se distribuyen en menos m²
+        if (isQuincho) {
+            if (sistema === 'Metalcon') baseUFm2 = 12;
+            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 14;
+            else baseUFm2 = 15; // Albañilería / Mixto
+        } else if (isRemodelacion) {
+            if (sistema === 'Metalcon') baseUFm2 = 8;
+            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 10;
+            else baseUFm2 = 12; // Albañilería / Mixto
+        } else if (isAmpliacion || pisosNum >= 2) {
+            if (sistema === 'Metalcon') baseUFm2 = 22;
+            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 24;
+            else if (sistema === 'Mixto') baseUFm2 = 25;
+            else baseUFm2 = 27; // Albañilería 100% Sólido
+        } else {
+            // Casa Nueva (1 Piso)
+            if (sistema === 'Metalcon') baseUFm2 = 19;
+            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 21;
+            else if (sistema === 'Mixto') baseUFm2 = 23;
+            else baseUFm2 = 25; // Albañilería 100% Sólido
+        }
 
-        // Logística y ajuste socio-económico según Tier de la comuna
-        let factorComuna = 1.0;
+        // Ajustes por escala y terminaciones
+        let multiplicador = 1.0;
+        if (areaNum < 40) multiplicador += 0.08; // Proyectos pequeños (costo fijo proporcional mayor)
+        if (terminaciones === 'Premium') multiplicador += 0.10; // Terminaciones Premium (porcelanatos, termopanel)
+
+        // Factor por Comuna / Logística en RM
         const tiers = {
-            'Tier1': 1.10, // Sector Oriente: Vitacura, Las Condes, etc (+10% por logística y estándares zona)
-            'Tier2': 1.05, // Residencial: Ñuñoa, Macul, La Florida, etc (+5%)
-            'Tier3': 1.00, // Eje Central / Poniente: Santiago, Maipú, etc (Base)
-            'Tier4': 0.97, // En Crecimiento: Renca, La Pintana, etc (-3%)
-            'Tier5': 0.95  // Rural / Periferia: Colina, Lampa, etc (-5% ajuste de escala/operación)
+            'Tier1': 1.05, // Sector Oriente (+5% estándar zona y accesos)
+            'Tier2': 1.00, // Residencial (Base)
+            'Tier3': 1.00, // Eje Central / Poniente (Base)
+            'Tier4': 0.98, // En Crecimiento (-2%)
+            'Tier5': 0.98  // Periferia / Rural (-2%)
         };
-        factorComuna = tiers[comuna] || 1.0;
+        const factorComuna = tiers[comuna] || 1.0;
 
-        const costoM2Final = costoM2Base * (1 + penalizaciones) * factorComuna;
-        const totalEstimado = costoM2Final * area;
+        const costoM2Final = baseUFm2 * multiplicador * factorComuna;
+        const totalEstimado = costoM2Final * areaNum;
 
-        // Rango referencial: ±8% sobre el total estimado
-        const minUF_raw = Math.round(totalEstimado * 0.97);
-        const maxUF_raw = Math.round(totalEstimado * 1.08);
+        // Rango referencial: ±5% sobre el total estimado para dar un margen comercial realista
+        const minUF_raw = Math.round(totalEstimado * 0.96);
+        const maxUF_raw = Math.round(totalEstimado * 1.05);
 
         const formatter = new Intl.NumberFormat('es-CL');
         const minUF = formatter.format(minUF_raw);
@@ -119,21 +130,21 @@ module.exports = async (req, res) => {
         doc.fontSize(12).fillColor('#4a5568')
            .text(`Fecha: ${new Date().toLocaleDateString('es-CL')}`)
            .text(`Preparado para: ${nombre}`)
-           .text(`Proyecto: ${tipo} en sector ${comuna}`);
+           .text(`Proyecto: ${tipo}`);
         doc.moveDown(1.5);
 
         doc.fontSize(14).fillColor('#1a202c').text('1. Resumen del Proyecto');
         doc.fontSize(12).fillColor('#4a5568')
            .text(`• Tipo: ${tipo}`)
            .text(`• Sistema Constructivo: ${sistema}`)
-           .text(`• Superficie estimada: ${area} m²`)
-           .text(`• Pisos: ${pisos}`)
+           .text(`• Superficie estimada: ${areaNum} m²`)
+           .text(`• Pisos: ${pisosNum}`)
            .text(`• Sector de la obra: ${comuna}`);
         doc.moveDown(1.5);
 
         doc.fontSize(14).fillColor('#1a202c').text('2. Estimación Referencial (Estructura Habitable, Sin IVA)');
         doc.fontSize(12).fillColor('#4a5568')
-           .text('Este rango cubre la obra gruesa hasta entrega habitable, con terminaciones estándar (cerámico, pintura interior, puertas y ventanas estándar). Variaciones en terminaciones, instalaciones especiales o paisajismo se cotizan de forma personalizada.');
+           .text('Este rango cubre la obra hasta entrega habitable llave en mano, con terminaciones seleccionadas según el sistema constructivo elegido. Modificaciones especiales o paisajismo se cotizan de forma personalizada.');
         doc.moveDown(1);
         
         doc.fontSize(18).fillColor('#c05621').text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, { align: 'center', stroke: true });
@@ -141,15 +152,14 @@ module.exports = async (req, res) => {
 
         doc.fontSize(14).fillColor('#1a202c').text('3. Disclaimer Legal Importante');
         doc.fontSize(10).fillColor('#718096')
-           .text('Este documento constituye una estimación paramétrica comercial (Clase 5). NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere obligatoriamente una visita técnica a terreno para evaluar la mecánica de suelos, las condiciones topográficas, el empalme de servicios y accesibilidad.', { align: 'justify' });
+           .text('Este documento constituye una estimación paramétrica comercial. NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere una reunión y evaluación de terreno presencial con nuestro equipo de arquitectura.', { align: 'justify' });
         doc.moveDown(2);
 
-        doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso \u2014 Agenda tu Visita a Terreno');
+        doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso — Agenda tu Visita / Reunión');
         if (calendarUrl) {
-            doc.fontSize(11).fillColor('#4a5568').text('Para formalizar este presupuesto, necesitamos realizar una visita t\u00e9cnica gratuita al terreno.');
+            doc.fontSize(11).fillColor('#4a5568').text('Para formalizar este presupuesto, agendemos una evaluación técnica presencial.');
             doc.moveDown(0.8);
             
-            // Simular un bot\u00f3n en el PDF
             doc.rect(doc.x, doc.y, 180, 25).fill('#c05621');
             doc.fillColor('#ffffff').fontSize(10).text('AGENDAR MI VISITA AHORA', doc.x + 30, doc.y - 17, {
                 link: calendarUrl,
@@ -157,7 +167,7 @@ module.exports = async (req, res) => {
             });
             doc.moveDown(1.5);
         } else {
-            doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu visita t\u00e9cnica gratuita, responde a este correo o escr\u00edbenos al WhatsApp.');
+            doc.fontSize(12).fillColor('#4a5568').text('Para agendar tu evaluación presencial, responde a este correo o escríbenos a nuestro WhatsApp oficial +56 9 2738 4075.');
         }
 
         doc.end();
@@ -191,20 +201,20 @@ module.exports = async (req, res) => {
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
                 <h2 style="color: #c05621;">¡Hola, ${nombre}!</h2>
-                <p>Adjunto encontrarás la estimación comercial para tu proyecto de <strong>${tipo} (${area} m²)</strong> calculada por nuestro sistema según la información que nos entregaste.</p>
-                <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>Este valor considera la estructura habitable con terminaciones estándar según el sistema constructivo que elegiste.</p>
+                <p>Adjunto encontrarás la estimación comercial para tu proyecto de <strong>${tipo} (${areaNum} m²)</strong> calculada por nuestro sistema según la información que nos entregaste.</p>
+                <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>Este valor considera la entrega habitable llave en mano con el sistema constructivo elegido.</p>
                 <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #c05621; border-radius: 4px; margin: 20px 0;">
-                    <p style="margin: 0;"><strong>¿Listo para el siguiente paso?</strong></p>
-                    <p style="margin: 5px 0 0 0;">Para darte un precio final cerrado y exacto, necesitamos hacer una visita técnica y ver el terreno.</p>
+                    <p style="margin: 0;"><strong>¿Listo para dar el siguiente paso?</strong></p>
+                    <p style="margin: 5px 0 0 0;">Para coordinar una reunión de evaluación o revisión de terreno, puedes responder a este correo o escribirnos directo por WhatsApp.</p>
                 </div>
                 ${calendarUrl 
                     ? `<div style="text-align:center; margin: 30px 0;">
-                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:16px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📅 Agendar Mi Visita Ahora</a>
-                        <p style="font-size:12px; color:#718096; margin-top:10px;">Lunes a Viernes 11:00\u201319:00 \u00b7 Sábados hasta las 16:00</p>
+                        <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color:#c05621; color:#ffffff; padding:16px 32px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:16px; display:inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">📅 Agendar Evaluación Presencial</a>
+                        <p style="font-size:12px; color:#718096; margin-top:10px;">Lunes a Viernes 11:00–19:00 · Sábados hasta las 16:00</p>
                        </div>` 
-                    : `<p>Puedes responder a este correo o hablarnos por WhatsApp al <a href="https://wa.me/56994998748">+56 9 9499 8748</a> para agendar la visita.</p>`
+                    : `<p style="text-align:center; margin: 20px 0;"><a href="https://wa.me/56927384075?text=Hola,%20acabo%20de%20recibir%20mi%20cotizaci%C3%B3n%20y%20me%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n." style="background-color:#25d366; color:#ffffff; padding:14px 28px; border-radius:8px; text-decoration:none; font-weight:bold; font-size:15px; display:inline-block;">💬 Coordinar por WhatsApp (+56 9 2738 4075)</a></p>`
                 }
-                <p>Un saludo cordial,<br><strong>Equipo Cuatropuntas</strong></p>
+                <p>Un saludo cordial,<br><strong>Equipo Constructora Cuatropuntas</strong></p>
             </div>
             `,
             attachments: [
@@ -220,7 +230,7 @@ module.exports = async (req, res) => {
         const mailToAdmin = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: 'contacto@cuatropuntas.com',
-            subject: `🚀 NUEVO LEAD + COTIZACIÓN: ${nombre} (${area} m²)`,
+            subject: `🚀 NUEVO LEAD + COTIZACIÓN: ${nombre} (${areaNum} m²)`,
             html: `
             <div style="font-family: Arial, sans-serif; padding: 20px;">
                 <h2>Nuevo cliente ha cotizado en la web</h2>
@@ -230,9 +240,9 @@ module.exports = async (req, res) => {
                     <li><strong>Email:</strong> ${email}</li>
                     <li><strong>Teléfono:</strong> ${telefono}</li>
                     <li><strong>Comuna:</strong> ${comuna}</li>
-                    <li><strong>Proyecto:</strong> ${tipo} de ${area} m², ${pisos} piso(s), calidad ${terminaciones}, material ${sistema}.</li>
+                    <li><strong>Proyecto:</strong> ${tipo} de ${areaNum} m², ${pisosNum} piso(s), calidad ${terminaciones}, material ${sistema}.</li>
                 </ul>
-                <p>¡Contáctalo por WhatsApp si no agenda visita en 24hs!</p>
+                <p>¡Contáctalo por WhatsApp al ${telefono} para agendar reunión o visita a terreno!</p>
             </div>
             `,
             attachments: [
@@ -244,7 +254,6 @@ module.exports = async (req, res) => {
             ]
         };
 
-        // Send both emails
         await Promise.all([
             transporter.sendMail(mailToClient),
             transporter.sendMail(mailToAdmin)
