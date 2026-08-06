@@ -21,13 +21,16 @@ module.exports = async (req, res) => {
     }
 
     try {
-        const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono, website_url } = req.body;
+        const { isBotSubmission } = require('./_botGuard');
+        const botCheck = isBotSubmission(req.body);
 
-        // 1. Honeypot check: Si 'website_url' está presente, es un bot.
-        if (website_url) {
-            console.log('Bot detected via Honeypot. Aborting silently.');
+        if (botCheck.isBot) {
+            console.log(`[BOT BLOCKED api/quote.js] Reason: ${botCheck.reason}. Name: ${req.body?.nombre}, Email: ${req.body?.email}`);
+            // Responder con HTTP 200 para simular éxito y evitar que el bot reintente
             return res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
         }
+
+        const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono } = req.body;
 
         // 2. Validación de campos obligatorios
         if (!tipo || !sistema || area === undefined || pisos === undefined || !terminaciones || !comuna || !nombre || !email || !telefono) {

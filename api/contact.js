@@ -20,6 +20,14 @@ module.exports = async (req, res) => {
     }
 
     try {
+        const { isBotSubmission } = require('./_botGuard');
+        const botCheck = isBotSubmission(req.body);
+
+        if (botCheck.isBot) {
+            console.log(`[BOT BLOCKED api/contact.js] Reason: ${botCheck.reason}. Name: ${req.body?.name}`);
+            return res.status(200).json({ success: true, message: 'Correo enviado correctamente' });
+        }
+
         const { name, phone, type, commune, details } = req.body;
 
         if (!name || !phone || !type || !commune || !details) {

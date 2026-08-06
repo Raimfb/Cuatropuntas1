@@ -311,8 +311,10 @@
                                 <option value="Quincho">Quincho / Terraza</option>
                             </select>
                         </div>
-                        <div class="hp-field" aria-hidden="true">
+                        <!-- Honeypot fields (hidden from human users, bot trap) -->
+                        <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
                             <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" placeholder="Tú sitio web aquí">
+                            <input type="text" id="_hp_check" name="_hp_check" tabindex="-1" autocomplete="off">
                         </div>
                         <div>
                             <label for="qSistema" class="block text-sm font-medium text-gray-700 mb-1">Sistema Constructivo</label>
@@ -533,6 +535,7 @@
             }
         }
 
+        const _renderedAt = Date.now();
         const quoteForm = document.getElementById('quoteForm');
         if (quoteForm) {
             quoteForm.addEventListener('submit', async function(e) {
@@ -553,7 +556,10 @@
                     nombre: document.getElementById('qNombre').value,
                     email: document.getElementById('qEmail').value,
                     telefono: document.getElementById('qTelefono').value,
-                    website_url: document.getElementById('website_url').value
+                    website_url: document.getElementById('website_url')?.value || '',
+                    _hp_check: document.getElementById('_hp_check')?.value || '',
+                    _ts: _renderedAt,
+                    _token: btoa(Math.floor(_renderedAt / 1000) + "_cuatropuntas_human")
                 };
 
                 try {

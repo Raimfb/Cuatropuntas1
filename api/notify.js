@@ -20,6 +20,14 @@ module.exports = async (req, res) => {
     }
 
     try {
+        const { isBotSubmission } = require('./_botGuard');
+        const botCheck = isBotSubmission(req.body);
+
+        if (botCheck.isBot) {
+            console.log(`[BOT BLOCKED api/notify.js] Reason: ${botCheck.reason}. Email: ${req.body?.email}`);
+            return res.status(200).json({ success: true, message: 'Notificación procesada correctamente' });
+        }
+
         const {
             lead_type = 'Particular Privado',
             nombre,
