@@ -1,0 +1,39 @@
+name: Publicador Automático del Blog Cuatropuntas
+
+on:
+  schedule:
+    # Se ejecuta cada 3 días a las 12:00 UTC (09:00 AM hora Chile)
+    - cron: '0 12 */3 * *'
+  workflow_dispatch: # Permite gatillar la publicación manualmente desde el panel de GitHub
+
+jobs:
+  publish-blog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar Código del Repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generar y Publicar Nuevo Artículo GEO
+        run: |
+          node scripts/generate_blog_post.js
+
+      - name: Subir Cambios a GitHub y Desplegar en Vercel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "Cuatropuntas Bot"
+          git config --global user.email "bot@cuatropuntas.com"
+          git add public/blog/ public/sitemap.xml
+          if git diff --staged --quiet; then
+            echo "No hay nuevos artículos para publicar hoy."
+          else
+            git commit -m "feat(blog): publicación automática de artículo GEO [skip ci]"
+            git push origin main
+          fi
