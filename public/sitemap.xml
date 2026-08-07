@@ -48,4 +48,34 @@
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
+    <url>
+        <loc>https://www.cuatropuntas.com/blog/</loc>
+        <lastmod>2026-08-07</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.9</priority>
+    </url>
+    <url>
+        <loc>https://www.cuatropuntas.com/blog/posts/guia-precios-construccion-chile.html</loc>
+        <lastmod>2026-08-07</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.cuatropuntas.com/blog/posts/en-que-fijarse-antes-de-construir.html</loc>
+        <lastmod>2026-08-06</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://www.cuatropuntas.com/blog/posts/metalcon-vs-albanileria-vs-sip.html</loc>
+        <lastmod>2026-08-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
+  <url>
+    <loc>https://www.cuatropuntas.com/blog/posts/permisos-edificacion-dom-santiago-guia.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>

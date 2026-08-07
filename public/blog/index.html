@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es-CL" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ===== SEO / TITLE / DESCRIPTION ===== -->
+    <title>Blog de Arquitectura y Construcción en Chile | Cuatropuntas</title>
+    <meta name="description" content="Guías prácticas, precios por m² (UF), normativas OGUC, subsidios MINVU y consejos de arquitectura para construir o ampliar tu casa en Santiago y Chile.">
+    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="author" content="Constructora Cuatropuntas SpA">
+    <meta name="theme-color" content="#1a202c">
+    <link rel="canonical" href="https://www.cuatropuntas.com/blog/">
+
+    <!-- ===== Geo-referenciación (Local SEO Chile) ===== -->
+    <meta name="geo.region" content="CL-RM" />
+    <meta name="geo.placename" content="Santiago" />
+    <meta name="geo.position" content="-33.448890;-70.669265" />
+    <meta name="ICBM" content="-33.448890, -70.669265" />
+
+    <!-- ===== Open Graph ===== -->
+    <meta property="og:type" content="blog">
+    <meta property="og:site_name" content="Cuatropuntas">
+    <meta property="og:locale" content="es_CL">
+    <meta property="og:url" content="https://www.cuatropuntas.com/blog/">
+    <meta property="og:title" content="Blog de Arquitectura y Construcción en Chile | Cuatropuntas">
+    <meta property="og:description" content="Guías prácticas de construcción, comparación de materiales (Metalcon, SIP, Albañilería), precios UF/m² y normativas en Chile.">
+    <meta property="og:image" content="https://www.cuatropuntas.com/casa_solida_moderna_1770071499659.webp">
+
+    <!-- ===== Styles & Fonts ===== -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1a202c',
+                        secondary: '#c05621',
+                        accent: '#dd6b20',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231a202c'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='%23c05621'%3E4%3C/text%3E%3C/svg%3E">
+
+    <!-- ===== GEO Structured Data (JSON-LD) ===== -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Blog",
+          "@id": "https://www.cuatropuntas.com/blog/#blog",
+          "name": "Blog de Arquitectura y Construcción Cuatropuntas",
+          "description": "Artículos técnicos, precios UF/m², guías de permisos DOM y análisis de sistemas constructivos en Chile.",
+          "url": "https://www.cuatropuntas.com/blog/",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Constructora Cuatropuntas SpA",
+            "url": "https://www.cuatropuntas.com",
+            "logo": "https://www.cuatropuntas.com/logo_cuatropuntas.webp"
+          }
+        }
+      ]
+    }
+    </script>
+</head>
+
+<body class="font-sans antialiased text-gray-800 bg-gray-50 flex flex-col min-h-screen">
+
+    <!-- ===== Navbar ===== -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sm transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center">
+                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="font-bold text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></a>
+                </div>
+                
+                <!-- Desktop Navigation -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/servicios/casas-nuevas/" class="text-gray-600 hover:text-primary transition-colors font-medium">Casas Nuevas</a>
+                    <a href="/servicios/segundos-pisos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Segundos Pisos</a>
+                    <a href="/servicios/quinchos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Quinchos</a>
+                    <a href="/precios" class="text-gray-600 hover:text-primary transition-colors font-medium">Precios</a>
+                    <a href="/blog/" class="text-secondary font-bold border-b-2 border-secondary pb-1">Blog</a>
+                    <a href="/#cotizador" class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg transform hover:-translate-y-0.5">Cotizar Gratis</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" type="button" aria-label="Abrir menú" class="text-gray-700 p-2">
+                        <svg id="hamburgerIcon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="closeIcon" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3 shadow-xl">
+            <a href="/servicios/casas-nuevas/" class="block text-gray-700 font-medium py-2 border-b">Casas Nuevas</a>
+            <a href="/servicios/segundos-pisos/" class="block text-gray-700 font-medium py-2 border-b">Segundos Pisos</a>
+            <a href="/servicios/quinchos/" class="block text-gray-700 font-medium py-2 border-b">Quinchos</a>
+            <a href="/precios" class="block text-gray-700 font-medium py-2 border-b">Precios</a>
+            <a href="/blog/" class="block text-secondary font-bold py-2 border-b">Blog</a>
+            <a href="/#cotizador" class="block bg-secondary text-white text-center font-bold py-3 rounded-md shadow-md mt-4">Cotizar Gratis</a>
+        </div>
+    </nav>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            const hamburger = document.getElementById('hamburgerIcon');
+            const close = document.getElementById('closeIcon');
+            if (menu) {
+                menu.classList.toggle('hidden');
+                hamburger.classList.toggle('hidden');
+                close.classList.toggle('hidden');
+            }
+        }
+    </script>
+
+    <!-- ===== Hero Header ===== -->
+    <header class="pt-32 pb-16 bg-gradient-to-b from-slate-900 to-primary text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <span class="inline-block bg-secondary/20 text-orange-400 font-semibold px-4 py-1.5 rounded-full text-sm mb-4 border border-secondary/30">
+                🇨🇱 Conocimiento Técnico & Arquitectura para Chile
+            </span>
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-6">
+                Blog de Construcción & Arquitectura
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto font-normal leading-relaxed mb-8">
+                Respuestas claras a las preguntas más frecuentes de clientes en Chile: presupuestos en UF/m², normativas DOM, permisos de edificación y comparación técnica de materiales.
+            </p>
+            
+            <!-- Buscador y Filtros -->
+            <div class="max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
+                <input type="text" id="searchInput" placeholder="Buscar por tema (ej: Metalcon, permisos, precios...)" class="flex-grow px-5 py-3.5 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-secondary text-base shadow-md">
+                <button onclick="filterPosts()" class="bg-secondary hover:bg-orange-700 text-white font-bold px-7 py-3.5 rounded-lg transition shadow-md">
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Categorías ===== -->
+    <section class="py-6 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-center gap-2 md:gap-4 text-sm font-medium">
+            <button onclick="selectCategory('Todos')" class="category-btn active bg-primary text-white px-4 py-2 rounded-full transition shadow-sm">Todos</button>
+            <button onclick="selectCategory('Precios & Cotización')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Precios & Cotización</button>
+            <button onclick="selectCategory('Guías Prácticas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Guías Prácticas</button>
+            <button onclick="selectCategory('Materiales & Sistemas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Materiales & Sistemas</button>
+        </div>
+    </section>
+
+    <!-- ===== Grid de Artículos ===== -->
+    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
+        <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <!-- Fallback Post 1 (SSR SEO) -->
+            <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
+                <a href="/blog/posts/guia-precios-construccion-chile.html" class="block overflow-hidden h-52">
+                    <img src="/casa_solida_moderna_1770071499659.webp" alt="Precios de Construcción en Chile UF/m2" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                </a>
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
+                        <span>Precios & Cotización</span>
+                        <span class="text-gray-400">7 Ago 2026</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
+                        <a href="/blog/posts/guia-precios-construccion-chile.html">
+                            ¿Cuánto cuesta construir una casa en Chile en 2026? Guía completa de precios UF/m²
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
+                        Descubre los costos reales por metro cuadrado según el sistema constructivo (Metalcon, SIP, Albañilería) y factores clave de la RM.
+                    </p>
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <span>Equipo Técnico Cuatropuntas</span>
+                        <a href="/blog/posts/guia-precios-construccion-chile.html" class="font-bold text-secondary hover:underline flex items-center">
+                            Leer artículo &rarr;
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Fallback Post 2 (SSR SEO) -->
+            <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
+                <a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="block overflow-hidden h-52">
+                    <img src="/ampliacion_antes_despues_realista.webp" alt="En qué fijarse antes de construir casa en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                </a>
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
+                        <span>Guías Prácticas</span>
+                        <span class="text-gray-400">6 Ago 2026</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
+                        <a href="/blog/posts/en-que-fijarse-antes-de-construir.html">
+                            ¿En qué debes fijarte antes de construir o ampliar tu casa en Santiago?
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
+                        Lista de comprobación fundamental con los 7 aspectos críticos antes de contratar una constructora: terreno, permisos DOM y contrato.
+                    </p>
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <span>Equipo Técnico Cuatropuntas</span>
+                        <a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="font-bold text-secondary hover:underline flex items-center">
+                            Leer artículo &rarr;
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Fallback Post 3 (SSR SEO) -->
+            <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
+                <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="block overflow-hidden h-52">
+                    <img src="/material_solido_albanileria_1770072436347.webp" alt="Metalcon vs Albanileria vs Panel SIP en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                </a>
+                <div class="p-6 flex flex-col flex-grow">
+                    <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
+                        <span>Materiales & Sistemas</span>
+                        <span class="text-gray-400">4 Ago 2026</span>
+                    </div>
+                    <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
+                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html">
+                            Metalcon vs Albañilería vs Panel SIP: Comparativa técnica de costos y velocidad en Chile
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
+                        Analizamos resistencia sísmica, aislación térmica (Zona 3 RM), rapidez de montaje y costos por m² de cada sistema.
+                    </p>
+                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                        <span>Ingeniería Cuatropuntas</span>
+                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="font-bold text-secondary hover:underline flex items-center">
+                            Leer artículo &rarr;
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <!-- ===== CTA Cotizador Banner ===== -->
+    <section class="bg-gradient-to-r from-primary via-slate-900 to-primary text-white py-14 border-t border-gray-800">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-extrabold mb-4">¿Tienes un proyecto en mente en Santiago o la RM?</h2>
+            <p class="text-gray-300 text-lg mb-8 max-w-2xl mx-auto">
+                Utiliza nuestro cotizador inteligente en línea para obtener una estimación de inversión en UF al instante con PDF adjunto.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="/#cotizador" class="bg-secondary hover:bg-orange-700 text-white font-bold px-8 py-4 rounded-lg transition shadow-lg text-lg">
+                    📊 Cotizar mi Proyecto Ahora
+                </a>
+                <a href="https://cal.com/cuatropuntas" target="_blank" rel="noopener" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-8 py-4 rounded-lg transition border border-white/20 text-lg">
+                    📅 Agendar Reunión Técnica
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <footer class="bg-primary text-gray-400 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div>
+                <a href="/" class="font-bold text-2xl tracking-tighter text-white block mb-4">CUATRO<span class="text-secondary">PUNTAS</span></a>
+                <p class="text-sm leading-relaxed">
+                    Constructora especializada en casas nuevas, segundos pisos y quinchos en Santiago de Chile. Transparencia, ingeniería sólida y plazos garantizados.
+                </p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Servicios</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/servicios/casas-nuevas/" class="hover:text-secondary transition">Casas Nuevas Llave en Mano</a></li>
+                    <li><a href="/servicios/segundos-pisos/" class="hover:text-secondary transition">Ampliaciones y Segundos Pisos</a></li>
+                    <li><a href="/servicios/quinchos/" class="hover:text-secondary transition">Quinchos & Terrazas Premium</a></li>
+                    <li><a href="/precios" class="hover:text-secondary transition">Matriz de Precios UF/m²</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Blog & Recursos</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/blog/posts/guia-precios-construccion-chile.html" class="hover:text-secondary transition">Guía de Precios 2026</a></li>
+                    <li><a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="hover:text-secondary transition">7 Puntos Clave Antes de Construir</a></li>
+                    <li><a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="hover:text-secondary transition">Metalcon vs Albañilería vs SIP</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Contacto</h4>
+                <p class="text-sm space-y-1">
+                    <span>📍 Santiago, Región Metropolitana</span><br>
+                    <span>📧 <a href="mailto:contacto@cuatropuntas.com" class="text-secondary hover:underline">contacto@cuatropuntas.com</a></span><br>
+                    <span>🌐 <a href="https://www.cuatropuntas.com" class="hover:text-white">www.cuatropuntas.com</a></span>
+                </p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500 border-t border-gray-800 pt-8">
+            &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados.
+        </div>
+    </footer>
+
+    <script>
+        let allPosts = [];
+        let selectedCat = 'Todos';
+
+        async function loadPosts() {
+            try {
+                const res = await fetch('/blog/posts.json');
+                if (res.ok) {
+                    allPosts = await res.json();
+                    renderPosts();
+                }
+            } catch (e) {
+                console.log('Cargando posts SSR...');
+            }
+        }
+
+        function selectCategory(cat) {
+            selectedCat = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.innerText === cat) {
+                    btn.className = 'category-btn active bg-primary text-white px-4 py-2 rounded-full transition shadow-sm';
+                } else {
+                    btn.className = 'category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition';
+                }
+            });
+            renderPosts();
+        }
+
+        function filterPosts() {
+            renderPosts();
+        }
+
+        function renderPosts() {
+            if (!allPosts || allPosts.length === 0) return;
+            const query = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+            const grid = document.getElementById('postsGrid');
+
+            const filtered = allPosts.filter(p => {
+                const matchesCat = (selectedCat === 'Todos' || p.category === selectedCat);
+                const matchesSearch = !query || p.title.toLowerCase().includes(query) || p.excerpt.toLowerCase().includes(query) || (p.tags && p.tags.some(t => t.toLowerCase().includes(query)));
+                return matchesCat && matchesSearch;
+            });
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-gray-500">No se encontraron artículos que coincidan con la búsqueda.</div>';
+                return;
+            }
+
+            grid.innerHTML = filtered.map(p => `
+                <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
+                    <a href="/blog/posts/${p.slug}.html" class="block overflow-hidden h-52">
+                        <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500" loading="lazy">
+                    </a>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
+                            <span>${p.category}</span>
+                            <span class="text-gray-400">${p.date}</span>
+                        </div>
+                        <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
+                            <a href="/blog/posts/${p.slug}.html">${p.title}</a>
+                        </h2>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
+                            ${p.excerpt}
+                        </p>
+                        <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                            <span>${p.author}</span>
+                            <a href="/blog/posts/${p.slug}.html" class="font-bold text-secondary hover:underline flex items-center">
+                                Leer artículo &rarr;
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
+</body>
+</html>

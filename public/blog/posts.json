@@ -1,0 +1,70 @@
+[
+  {
+    "id": "permisos-edificacion-dom-santiago-guia",
+    "slug": "permisos-edificacion-dom-santiago-guia",
+    "title": "Permisos de edificación DOM en Santiago: ¿Cómo evitar multas y paralización de obras?",
+    "excerpt": "Explicamos el paso a paso para solicitar el Permiso de Edificación en la Dirección de Obras Municipales (DOM) y los riesgos de construir sin regularizar en la RM.",
+    "category": "Guías Prácticas",
+    "date": "2026-08-07",
+    "readTime": "7 min de lectura",
+    "image": "/ampliacion_antes_despues_realista.webp",
+    "author": "Equipo Técnico Cuatropuntas",
+    "tags": [
+      "Permiso Edificación DOM",
+      "Regulación OGUC",
+      "Multas Municipales",
+      "Recepción Definitiva DOM"
+    ]
+  },
+  {
+    "id": "guia-precios-construccion-chile",
+    "slug": "guia-precios-construccion-chile",
+    "title": "¿Cuánto cuesta construir una casa en Chile en 2026? Guía completa de precios UF/m²",
+    "excerpt": "Descubre los costos reales por metro cuadrado según el sistema constructivo (Metalcon, SIP, Albañilería), factores de la Región Metropolitana y cómo presupuestar tu obra sin sobrecostos.",
+    "category": "Precios & Cotización",
+    "date": "2026-08-07",
+    "readTime": "6 min de lectura",
+    "image": "/casa_solida_moderna_1770071499659.webp",
+    "author": "Equipo Técnico Cuatropuntas",
+    "tags": [
+      "Precios UF m2",
+      "Construcción Chile",
+      "Albañilería vs Metalcon",
+      "Presupuesto Casa"
+    ]
+  },
+  {
+    "id": "en-que-fijarse-antes-de-construir",
+    "slug": "en-que-fijarse-antes-de-construir",
+    "title": "¿En qué debes fijarte antes de construir o ampliar tu casa en Santiago?",
+    "excerpt": "Lista de comprobación fundamental con los 7 aspectos críticos que debes revisar antes de contratar una constructora o iniciar obras: terreno, DOM, contrato a suma alzada y permisos.",
+    "category": "Guías Prácticas",
+    "date": "2026-08-06",
+    "readTime": "7 min de lectura",
+    "image": "/ampliacion_antes_despues_realista.webp",
+    "author": "Equipo Técnico Cuatropuntas",
+    "tags": [
+      "Permiso Edificación DOM",
+      "Consejos Construcción",
+      "Contratar Constructora",
+      "Regulación OGUC"
+    ]
+  },
+  {
+    "id": "metalcon-vs-albanileria-vs-sip",
+    "slug": "metalcon-vs-albanileria-vs-sip",
+    "title": "Metalcon vs Albañilería vs Panel SIP: Comparativa técnica de costos y velocidad en Chile",
+    "excerpt": "Analizamos en detalle la resistencia sísmica, aislación térmica (Zona 3 RM), velocidad de montaje y costos por m² de los tres sistemas constructivos más usados en la Región Metropolitana.",
+    "category": "Materiales & Sistemas",
+    "date": "2026-08-04",
+    "readTime": "8 min de lectura",
+    "image": "/material_solido_albanileria_1770072436347.webp",
+    "author": "Ingeniería Cuatropuntas",
+    "tags": [
+      "Metalcon Cintac",
+      "Panel SIP Chile",
+      "Albañilería Confinada",
+      "Aislación Térmica NCh"
+    ]
+  }
+]
