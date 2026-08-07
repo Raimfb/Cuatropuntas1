@@ -176,7 +176,11 @@ function generateHTMLPost(postData) {
             }
         }
     </script>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231a202c'/%3E%3Ctext x='16' y='22' font-family='Arial' font-size='18' font-weight='bold' text-anchor='middle' fill='%23c05621'%3E4%3C/text%3E%3C/svg%3E">
+    <!-- ===== Favicons ===== -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
     <!-- ===== GEO Structured Data (JSON-LD) ===== -->
     <script type="application/ld+json">
@@ -225,7 +229,13 @@ function generateHTMLPost(postData) {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center">
-                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="font-bold text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></a>
+                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="flex items-center gap-3 group">
+                        <picture>
+                            <source srcset="/logo_cuatropuntas.webp" type="image/webp">
+                            <img src="/logo_cuatropuntas.jpg" alt="Logo Constructora Cuatropuntas SpA Santiago" class="h-10 w-auto rounded-md shadow-sm border border-gray-200 object-cover">
+                        </picture>
+                        <span class="font-bold text-xl md:text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></span>
+                    </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <a href="/servicios/casas-nuevas/" class="text-gray-600 hover:text-primary transition-colors font-medium">Casas Nuevas</a>
