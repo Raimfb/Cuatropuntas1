@@ -239,15 +239,15 @@ function generateHTMLPost(postData) {
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
                     <!-- Dropdown Colapsable Casas Nuevas -->
-                    <div class="relative group" id="casasMenuContainer">
-                        <button type="button" id="casasMenuBtn" onclick="toggleCasasMenu(event)" class="inline-flex items-center gap-1.5 text-gray-600 hover:text-primary transition-colors font-medium py-2 focus:outline-none">
+                    <div class="relative inline-block text-left" id="casasMenuContainer">
+                        <button type="button" id="casasMenuBtn" onclick="toggleCasasMenu(event)" class="inline-flex items-center gap-1.5 text-gray-600 hover:text-primary transition-colors font-medium py-2 focus:outline-none cursor-pointer">
                             <span>Casas Nuevas</span>
-                            <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg id="casasChevron" class="w-4 h-4 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
                         <!-- Desplegable Vertical Colapsable -->
-                        <div id="casasDropdown" class="hidden group-hover:block absolute left-0 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 py-3 px-2 z-50 transition-all duration-200 flex flex-col gap-1">
+                        <div id="casasDropdown" class="hidden absolute left-0 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 py-3 px-2 z-50 transition-all duration-200 flex-col gap-1">
                             <a href="/servicios/casas-nuevas/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
                                 <span class="text-lg">🏡</span>
                                 <div>
