@@ -229,10 +229,10 @@ function generateHTMLPost(postData) {
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <div class="flex items-center">
-                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="flex items-center gap-3 group">
-                        <picture>
+                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="flex items-center gap-2.5 group">
+                        <picture class="flex-shrink-0">
                             <source srcset="/logo_cuatropuntas.webp" type="image/webp">
-                            <img src="/logo_cuatropuntas.jpg" alt="Logo Constructora Cuatropuntas SpA Santiago" class="h-10 w-auto rounded-md shadow-sm border border-gray-200 object-cover">
+                            <img src="/logo_cuatropuntas.jpg" alt="Logo Constructora Cuatropuntas SpA Santiago" class="h-8 w-8 object-contain rounded shadow-xs border border-gray-200 flex-shrink-0">
                         </picture>
                         <span class="font-bold text-xl md:text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></span>
                     </a>

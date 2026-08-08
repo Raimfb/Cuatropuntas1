@@ -42,6 +42,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+        nav picture img, nav a img, footer picture img, footer a img {
+            width: 32px !important;
+            height: 32px !important;
+            max-width: 32px !important;
+            max-height: 32px !important;
+            object-fit: contain !important;
+        }
+    </style>
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-gray-50 flex flex-col min-h-screen">
@@ -50,10 +59,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-20">
                 <div class="flex items-center">
-                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="flex items-center gap-3 group">
-                        <picture>
+                    <a href="/" aria-label="Cuatropuntas — Constructora en Santiago" class="flex items-center gap-2.5 group">
+                        <picture class="flex-shrink-0" style="display:inline-block; width:32px; height:32px;">
                             <source srcset="/logo_cuatropuntas.webp" type="image/webp">
-                            <img src="/logo_cuatropuntas.jpg" alt="Logo Constructora Cuatropuntas SpA Santiago" class="h-10 w-auto rounded-md shadow-sm border border-gray-200 object-cover">
+                            <img src="/logo_cuatropuntas.jpg" width="32" height="32" alt="Logo Constructora Cuatropuntas SpA Santiago" style="width:32px; height:32px; max-width:32px; max-height:32px; object-fit:contain;" class="h-8 w-8 object-contain rounded shadow-xs border border-gray-200 flex-shrink-0">
                         </picture>
                         <span class="font-bold text-xl md:text-2xl tracking-tighter text-primary">CUATRO<span class="text-secondary">PUNTAS</span></span>
                     </a>
