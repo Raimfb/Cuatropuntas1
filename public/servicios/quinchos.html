@@ -161,14 +161,59 @@
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-gray-600 hover:text-secondary font-medium transition">Inicio</a>
-                    <a href="/servicios/casas-nuevas" class="text-gray-600 hover:text-secondary font-medium transition">Casas Nuevas</a>
-                    <a href="/servicios/segundos-pisos" class="text-gray-600 hover:text-secondary font-medium transition">Segundos Pisos</a>
-                    <a href="/servicios/quinchos" class="text-secondary font-bold transition">Quinchos</a>
-                    <a href="/servicios/remodelaciones" class="text-gray-600 hover:text-secondary font-medium transition">Remodelaciones</a>
-                    <a href="/subsidio-minvu-sitio-propio" class="text-gray-600 hover:text-secondary font-medium transition">Subsidio MINVU</a>
-                    <a href="/precios" class="text-gray-600 hover:text-secondary font-medium transition">Precios</a>
-                    <a href="#contacto" class="bg-secondary hover:bg-orange-700 text-white font-bold px-5 py-2.5 rounded-md transition shadow-md hover:shadow-lg">Cotizar Ahora</a>
+                    <!-- Dropdown Colapsable Casas Nuevas -->
+                    <div class="relative group" id="casasMenuContainer">
+                        <button type="button" id="casasMenuBtn" onclick="toggleCasasMenu(event)" class="inline-flex items-center gap-1.5 text-gray-600 hover:text-primary transition-colors font-medium py-2 focus:outline-none">
+                            <span>Casas Nuevas</span>
+                            <svg class="w-4 h-4 text-gray-400 group-hover:text-primary transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+                        <!-- Desplegable Vertical Colapsable -->
+                        <div id="casasDropdown" class="hidden group-hover:block absolute left-0 mt-1 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 py-3 px-2 z-50 transition-all duration-200 flex flex-col gap-1">
+                            <a href="/servicios/casas-nuevas/" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
+                                <span class="text-lg">🏡</span>
+                                <div>
+                                    <div class="font-bold text-sm text-gray-900">Ver Todas las Casas Nuevas</div>
+                                    <div class="text-xs text-gray-500 font-normal">Catálogo y proyectos llave en mano</div>
+                                </div>
+                            </a>
+                            <a href="/servicios/casas-nuevas/#metalcom" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
+                                <span class="text-lg">🏗️</span>
+                                <div>
+                                    <div class="font-semibold text-sm text-gray-900">Estructura Metalcom</div>
+                                    <div class="text-xs text-gray-500 font-normal">Obra rápida y ligera desde 19 UF/m²</div>
+                                </div>
+                            </a>
+                            <a href="/servicios/casas-nuevas/#sip" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
+                                <span class="text-lg">🧩</span>
+                                <div>
+                                    <div class="font-semibold text-sm text-gray-900">Panel SIP Térmico</div>
+                                    <div class="text-xs text-gray-500 font-normal">Aislación máxima desde 21 UF/m²</div>
+                                </div>
+                            </a>
+                            <a href="/servicios/casas-nuevas/#albanileria" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
+                                <span class="text-lg">🧱</span>
+                                <div>
+                                    <div class="font-semibold text-sm text-gray-900">Albañilería Armada</div>
+                                    <div class="text-xs text-gray-500 font-normal">Construcción sólida desde 25 UF/m²</div>
+                                </div>
+                            </a>
+                            <div class="border-t border-gray-100 my-1"></div>
+                            <a href="/subsidio-minvu-sitio-propio" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-orange-50 text-gray-800 hover:text-secondary transition">
+                                <span class="text-lg">📜</span>
+                                <div>
+                                    <div class="font-semibold text-sm text-gray-900">Subsidio MINVU Sitio Propio</div>
+                                    <div class="text-xs text-gray-500 font-normal">Construcción con DS1 y DS49</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <a href="/servicios/segundos-pisos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Segundos Pisos</a>
+                    <a href="/servicios/quinchos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Quinchos</a>
+                    <a href="/precios" class="text-gray-600 hover:text-primary transition-colors font-medium">Precios</a>
+                    <a href="/blog/" class="text-gray-600 hover:text-primary transition-colors font-medium">Blog</a>
+                    <a href="#contacto" class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg transform hover:-translate-y-0.5">Cotizar Gratis</a>
                 </div>
             </div>
         </div>
