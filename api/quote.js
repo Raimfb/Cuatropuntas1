@@ -76,13 +76,13 @@ module.exports = async (req, res) => {
             if (sistema === 'Metalcon') baseUFm2 = 22;
             else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 24;
             else if (sistema === 'Mixto') baseUFm2 = 25;
-            else baseUFm2 = 27; // Albañilería 100% Sólido
+            else baseUFm2 = 27; // Albañilería sólida
         } else {
             // Casa Nueva (1 Piso)
             if (sistema === 'Metalcon') baseUFm2 = 19;
             else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 21;
             else if (sistema === 'Mixto') baseUFm2 = 23;
-            else baseUFm2 = 25; // Albañilería 100% Sólido
+            else baseUFm2 = 25; // Albañilería sólida
         }
 
         // Ajustes por escala y terminaciones
@@ -145,9 +145,9 @@ module.exports = async (req, res) => {
            .text(`• Sector de la obra: ${comuna}`);
         doc.moveDown(1.5);
 
-        doc.fontSize(14).fillColor('#1a202c').text('2. Estimación Referencial (Estructura Habitable, Sin IVA)');
+        doc.fontSize(14).fillColor('#1a202c').text('2. Estimación Referencial (Sin IVA)');
         doc.fontSize(12).fillColor('#4a5568')
-           .text('Este rango cubre la obra hasta entrega habitable llave en mano, con terminaciones seleccionadas según el sistema constructivo elegido. Modificaciones especiales o paisajismo se cotizan de forma personalizada.');
+           .text('Este rango se calcula sobre el alcance seleccionado y las terminaciones asociadas al sistema constructivo. Las modificaciones especiales o el paisajismo se cotizan de forma personalizada.');
         doc.moveDown(1);
         
         doc.fontSize(18).fillColor('#c05621').text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, { align: 'center', stroke: true });
@@ -155,7 +155,7 @@ module.exports = async (req, res) => {
 
         doc.fontSize(14).fillColor('#1a202c').text('3. Disclaimer Legal Importante');
         doc.fontSize(10).fillColor('#718096')
-           .text('Este documento constituye una estimación paramétrica comercial. NO es una oferta vinculante ni un presupuesto definitivo de construcción. Para emitir un presupuesto final y exacto, se requiere una reunión y evaluación presencial con nuestro equipo de arquitectura.', { align: 'justify' });
+           .text('Este documento corresponde a una estimación paramétrica comercial, referencial y no vinculante. El presupuesto definitivo requiere una reunión y evaluación presencial con nuestro equipo de arquitectura.', { align: 'justify' });
         doc.moveDown(2);
 
         doc.fontSize(14).fillColor('#1a202c').text('4. Siguiente Paso — Agenda tu Reunión / Visita');
@@ -200,8 +200,8 @@ module.exports = async (req, res) => {
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
                 <h2 style="color: #c05621;">¡Hola, ${nombre}!</h2>
-                <p>Adjunto encontrarás la estimación comercial para tu proyecto de <strong>${tipo} (${areaNum} m²)</strong> calculada por nuestro sistema según la información que nos entregaste.</p>
-                <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>Este valor considera la entrega habitable llave en mano con el sistema constructivo elegido.</p>
+                <p>Adjunto encontrarás una estimación comercial para tu proyecto de <strong>${tipo} (${areaNum} m²)</strong>, calculada por nuestro sistema según la información que nos entregaste.</p>
+                <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>La cifra se calcula sobre el alcance seleccionado y debe revisarse junto con las partidas y condiciones del proyecto.</p>
                 <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #c05621; border-radius: 4px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>¿Listo para dar el siguiente paso?</strong></p>
                     <p style="margin: 5px 0 0 0;">Para coordinar una reunión de evaluación o revisión de proyecto, agende directamente en nuestro calendario en línea o responda a este correo.</p>

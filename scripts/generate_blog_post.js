@@ -44,7 +44,7 @@ const TOPIC_POOL = [
         title: "Aislación térmica en la Región Metropolitana (Zona 3 OGUC): Materiales recomendados",
         category: "Materiales & Sistemas",
         slug: "aislacion-termica-zona-3-rm-oguc",
-        excerpt: "Analizamos las exigencias del acondicionamiento térmico según la norma chilena para Santiago y los mejores materiales aislantes para techos y muros.",
+        excerpt: "Analizamos las exigencias del acondicionamiento térmico según la norma chilena para Santiago y los materiales aislantes que conviene comparar en techos y muros.",
         image: "/material_semi_ligero_sip_1770072450181.webp",
         readTime: "6 min de lectura",
         tags: ["Aislación Térmica OGUC", "Lana de Vidrio Chile", "Ventanas Termopanel", "Eficiencia Energética RM"],
@@ -63,7 +63,7 @@ const TOPIC_POOL = [
             },
             {
                 h2: "La importancia del doble vidriado hermético (Termopanel)",
-                content: "Las ventanas representan una de las mayores vías de pérdida de calor en invierno. El uso de perfiles de PVC o aluminio con rotura de puente térmico y cristales termopanel asegura un ambiente confortable sin condensación interna."
+                content: "Las ventanas representan una vía relevante de pérdida de calor en invierno. El uso de perfiles de PVC o aluminio con rotura de puente térmico y cristales termopanel puede mejorar el confort; la condensación también depende de la ventilación, la humedad y la ejecución."
             }
         ]
     },
@@ -77,7 +77,7 @@ const TOPIC_POOL = [
         tags: ["Regularizar Ampliación", "Ley del Monito", "Recepción Definitiva", "Tasación Bancaria"],
         faq: {
             q: "¿Puedo vender mi casa si tengo un segundo piso sin regularizar?",
-            a: "Sí es posible vender mediante pago al contado, pero los bancos no financian metros cuadrados no regularizados en créditos hipotecarios. Regularizar la ampliación permite que el tasador apruebe el 100% de la superficie útil."
+            a: "La venta y el financiamiento dependen de la situación de la propiedad y de las políticas de cada entidad. Regularizar una ampliación entrega antecedentes formales para que la DOM y, cuando corresponda, la entidad financiera evalúen la superficie declarada."
         },
         sections: [
             {
@@ -318,7 +318,7 @@ function generateHTMLPost(postData) {
             <div class="bg-primary text-white p-8 rounded-2xl text-center space-y-4 shadow-xl mt-12">
                 <h3 class="text-2xl font-extrabold">¿Quieres cotizar tu proyecto en Santiago?</h3>
                 <p class="text-gray-300 text-sm max-w-xl mx-auto">
-                    Prueba nuestra calculadora paramétrica en línea y recibe en menos de 2 minutos un presupuesto referencial en UF ajustado a tu comuna.
+                    Revisa una referencia inicial en UF y define con el equipo las variables que pueden modificar el valor de tu proyecto y su comuna.
                 </p>
                 <a href="/#cotizador" class="inline-block bg-secondary hover:bg-orange-700 text-white font-bold px-8 py-3.5 rounded-lg transition text-base">
                     📊 Simular Presupuesto en Lógica UF
