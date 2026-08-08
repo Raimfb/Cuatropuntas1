@@ -172,6 +172,29 @@ module.exports = async (req, res) => {
 
         const pdfBuffer = await pdfPromise;
 
+        const faqPriceAnswer = isRemodelacion
+            ? 'La tabla de la página publica casas nuevas desde 19 UF/m² en Metalcom, 21 UF/m² en panel SIP y 25 UF/m² en albañilería. Para remodelaciones, la referencia parte desde 11 UF/m² en Metalcon y 13 UF/m² en albañilería. El valor final depende de las partidas, la superficie, las terminaciones y las condiciones de la vivienda.'
+            : isQuincho
+                ? 'La tabla de la página publica casas nuevas desde 19 UF/m² en Metalcom, 21 UF/m² en panel SIP y 25 UF/m² en albañilería. Para quinchos, la referencia parte desde 12 UF/m² en Metalcon y 15 UF/m² en albañilería en obra. El valor final depende del diseño, el equipamiento, las terminaciones y las conexiones requeridas.'
+                : (isAmpliacion || pisosNum >= 2)
+                    ? 'La tabla de la página publica casas nuevas desde 19 UF/m² en Metalcom, 21 UF/m² en panel SIP y 25 UF/m² en albañilería. Para segundos pisos y ampliaciones, la referencia parte desde 22 UF/m² en Metalcon, 24 UF/m² en panel SIP y 27 UF/m² en albañilería. El valor final depende del sistema, la estructura existente, la superficie, las terminaciones y la comuna.'
+                    : 'Para casas nuevas, la referencia publicada parte desde 19 UF/m² en Metalcom, 21 UF/m² en panel SIP y 25 UF/m² en albañilería. El valor final depende del sistema, la superficie, las terminaciones y la comuna.';
+
+        const faqTimelineAnswer = isRemodelacion
+            ? 'En remodelaciones, el plazo se define después de revisar las partidas, las instalaciones existentes y las condiciones de la vivienda. Los tiempos pueden cambiar por ajustes de proyecto, disponibilidad de materiales y hallazgos durante la obra.'
+            : 'Los plazos dependen del tamaño, sistema, permisos y condiciones del terreno. Como referencia, una casa nueva de 50 a 80 m² puede tomar entre 3 y 5 meses; un segundo piso o ampliación, entre 2 y 4 meses; y un quincho completo, entre 1 y 2 meses. Son rangos orientativos y pueden cambiar por ajustes de proyecto, clima, disponibilidad de materiales y condiciones encontradas en obra.';
+
+        const faqEmailHtml = `
+                <div style="background-color:#fffaf5; border:1px solid #fed7aa; border-radius:8px; padding:18px; margin:24px 0; color:#4a5568; line-height:1.55;">
+                    <h3 style="margin:0 0 14px 0; color:#1a202c; font-size:17px;">Preguntas frecuentes</h3>
+                    <p style="margin:0 0 12px 0;"><strong>¿Cómo funciona la visita técnica a terreno en Santiago y comunas?</strong><br>Atendemos a terreno en comunas de la Región Metropolitana, entre ellas La Florida, Puente Alto, Maipú, Colina, Peñalolén y San Bernardo. Después de una primera revisión, coordinamos una visita para evaluar deslindes, condiciones preliminares del suelo, orientación y requisitos de la DOM.</p>
+                    <p style="margin:0 0 12px 0;"><strong>¿Cuánto cuesta construir una casa en Santiago?</strong><br>${faqPriceAnswer} Revisa el detalle en <a href="https://www.cuatropuntas.com/precios" style="color:#c05621; font-weight:bold;">la tabla de precios</a>.</p>
+                    <p style="margin:0 0 12px 0;"><strong>¿Cuánto demora la construcción de mi proyecto?</strong><br>${faqTimelineAnswer}</p>
+                    <p style="margin:0 0 12px 0;"><strong>¿Puedo construir con subsidio MINVU?</strong><br>Trabajamos con proyectos de <strong>Construcción en Sitio Propio (DS1 y DS49)</strong>. Si ya cuentas con un subsidio, revisamos sus condiciones, el terreno y el alcance técnico que puede financiarse. <a href="https://www.cuatropuntas.com/subsidio-minvu-sitio-propio" style="color:#c05621; font-weight:bold;">Ver información sobre subsidios</a>.</p>
+                    <p style="margin:0;"><strong>¿Qué incluye el servicio llave en mano?</strong><br>El servicio contempla las partidas y terminaciones definidas en la cotización. Como base, puede incluir estructura completa, puertas y ventanas estándar, terminaciones exteriores, pisos, baño, pintura interior y gestión del Permiso de Edificación y la Recepción Final cuando corresponda.</p>
+                </div>
+        `;
+
         // --- ENVÍO DE CORREOS ---
         const user = process.env.ZOHO_USER || 'contacto@cuatropuntas.com';
         const pass = process.env.ZOHO_PASS;
@@ -195,12 +218,13 @@ module.exports = async (req, res) => {
         const mailToClient = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: email,
-            subject: `Tu Cotización de Proyecto: ${tipo} (${minUF} - ${maxUF} UF)`,
+            subject: `Tu estimación referencial: ${tipo} (${minUF} - ${maxUF} UF)`,
             html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px;">
                 <h2 style="color: #c05621;">¡Hola, ${nombre}!</h2>
                 <p>Adjunto encontrarás una estimación comercial para tu proyecto de <strong>${tipo} (${areaNum} m²)</strong>, calculada por nuestro sistema según la información que nos entregaste.</p>
                 <p>El rango de inversión referencial es de <strong>${minUF} a ${maxUF} UF (sin IVA)</strong>.<br>La cifra se calcula sobre el alcance seleccionado y debe revisarse junto con las partidas y condiciones del proyecto.</p>
+                ${faqEmailHtml}
                 <div style="background-color: #f7fafc; padding: 15px; border-left: 4px solid #c05621; border-radius: 4px; margin: 20px 0;">
                     <p style="margin: 0;"><strong>¿Listo para dar el siguiente paso?</strong></p>
                     <p style="margin: 5px 0 0 0;">Para coordinar una reunión de evaluación o revisión de proyecto, agende directamente en nuestro calendario en línea o responda a este correo.</p>
@@ -225,11 +249,11 @@ module.exports = async (req, res) => {
         const mailToAdmin = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: 'contacto@cuatropuntas.com',
-            subject: `🚀 NUEVO LEAD + COTIZACIÓN: ${nombre} (${areaNum} m²)`,
+            subject: `🚀 NUEVO LEAD + ESTIMACIÓN REFERENCIAL: ${nombre} (${areaNum} m²)`,
             html: `
             <div style="font-family: Arial, sans-serif; padding: 20px;">
                 <h2>Nuevo cliente ha cotizado en la web</h2>
-                <p>El sistema automático acaba de enviarle una cotización de <strong>${minUF} a ${maxUF} UF</strong> al siguiente contacto:</p>
+                <p>El sistema automático acaba de enviarle una estimación referencial de <strong>${minUF} a ${maxUF} UF</strong> al siguiente contacto:</p>
                 <ul>
                     <li><strong>Nombre:</strong> ${nombre}</li>
                     <li><strong>Email:</strong> ${email}</li>
