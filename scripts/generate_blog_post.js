@@ -238,14 +238,54 @@ function generateHTMLPost(postData) {
                     </a>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="/servicios/casas-nuevas/" class="text-gray-600 hover:text-primary transition-colors font-medium">Casas Nuevas</a>
-                    <a href="/servicios/segundos-pisos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Segundos Pisos</a>
-                    <a href="/servicios/quinchos/" class="text-gray-600 hover:text-primary transition-colors font-medium">Quinchos</a>
+                    <div class="relative group">
+                        <button type="button" class="inline-flex items-center gap-1 text-gray-600 hover:text-primary transition-colors font-medium focus:outline-none" aria-haspopup="true" aria-label="Abrir menú de servicios">
+                            Servicios
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </button>
+                        <div class="absolute left-0 top-full pt-3 w-64 hidden group-hover:block group-focus-within:block z-50" role="menu">
+                            <div class="bg-white border border-gray-100 rounded-md shadow-xl p-2">
+                                <a href="/servicios/casas-nuevas/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Casas Nuevas</a>
+                                <a href="/servicios/segundos-pisos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Segundos Pisos y Ampliaciones</a>
+                                <a href="/servicios/quinchos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Quinchos Premium</a>
+                                <a href="/servicios/remodelaciones/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Remodelaciones</a>
+                                <a href="/subsidio-minvu-sitio-propio" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Subsidio MINVU</a>
+                            </div>
+                        </div>
+                    </div>
                     <a href="/precios" class="text-gray-600 hover:text-primary transition-colors font-medium">Precios</a>
                     <a href="/blog/" class="text-secondary font-bold border-b-2 border-secondary pb-1">Blog</a>
                     <a href="/#cotizador" class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg">Cotizar Gratis</a>
                 </div>
+                <div class="flex items-center md:hidden">
+                    <button onclick="toggleMobileMenu()" type="button" aria-label="Abrir menú de navegación" class="text-gray-700 hover:text-primary focus:outline-none p-2">
+                        <svg id="hamburgerIcon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                        <svg id="closeIcon" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
+        </div>
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 pt-2 pb-6 space-y-3 shadow-xl">
+            <div class="border-b border-gray-100">
+                <button type="button" id="mobileServicesToggle" onclick="toggleServicesMenu()" aria-expanded="false" aria-controls="mobileServicesMenu" class="w-full flex items-center justify-between text-gray-700 hover:text-secondary font-medium py-2">
+                    <span>Servicios</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </button>
+                <div id="mobileServicesMenu" class="hidden pl-4 pb-2 space-y-1">
+                    <a href="/servicios/casas-nuevas/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Casas Nuevas</a>
+                    <a href="/servicios/segundos-pisos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Segundos Pisos y Ampliaciones</a>
+                    <a href="/servicios/quinchos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Quinchos Premium</a>
+                    <a href="/servicios/remodelaciones/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Remodelaciones</a>
+                    <a href="/subsidio-minvu-sitio-propio" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Subsidio MINVU</a>
+                </div>
+            </div>
+            <a href="/precios" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Precios</a>
+            <a href="/blog/" onclick="toggleMobileMenu()" class="block text-secondary font-bold py-2 border-b border-gray-100">Blog</a>
+            <a href="/#cotizador" onclick="toggleMobileMenu()" class="block bg-secondary text-white text-center font-bold py-3 rounded-md shadow-md mt-4">Cotizar Gratis</a>
         </div>
     </nav>
 
@@ -293,6 +333,7 @@ function generateHTMLPost(postData) {
             &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. | <a href="/blog/" class="text-secondary hover:underline">Volver al Blog</a>
         </div>
     </footer>
+    <script src="/navigation.js"></script>
 </body>
 </html>`;
 }
