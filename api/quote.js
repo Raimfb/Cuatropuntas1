@@ -69,9 +69,8 @@ module.exports = async (req, res) => {
             else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 14;
             else baseUFm2 = 15; // Albañilería / Mixto
         } else if (isRemodelacion) {
-            if (sistema === 'Metalcon') baseUFm2 = 8;
-            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 10;
-            else baseUFm2 = 12; // Albañilería / Mixto
+            if (sistema === 'Metalcon') baseUFm2 = 11;
+            else baseUFm2 = 13; // Albañilería / otros sistemas sólidos
         } else if (isAmpliacion || pisosNum >= 2) {
             if (sistema === 'Metalcon') baseUFm2 = 22;
             else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 24;
