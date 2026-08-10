@@ -144,6 +144,14 @@
             object-fit: contain !important;
         }
     </style>
+
+    <style>
+        svg { display: inline-block; vertical-align: middle; flex-shrink: 0; }
+        svg.w-4, svg.h-4 { width: 1rem !important; height: 1rem !important; max-width: 1rem !important; max-height: 1rem !important; }
+        svg.w-5, svg.h-5 { width: 1.25rem !important; height: 1.25rem !important; max-width: 1.25rem !important; max-height: 1.25rem !important; }
+        svg.w-6, svg.h-6 { width: 1.5rem !important; height: 1.5rem !important; max-width: 1.5rem !important; max-height: 1.5rem !important; }
+        svg.w-7, svg.h-7 { width: 1.75rem !important; height: 1.75rem !important; max-width: 1.75rem !important; max-height: 1.75rem !important; }
+    </style>
 </head>
 
 <body class="font-sans antialiased text-gray-800 bg-white">
@@ -167,7 +175,7 @@
                     <div class="relative group">
                         <button type="button" class="inline-flex items-center gap-1 text-gray-600 hover:text-primary transition-colors font-medium focus:outline-none" aria-haspopup="true" aria-label="Abrir menú de servicios">
                             Servicios
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                            <svg class="w-4 h-4" width="16" height="16" style="width:16px; height:16px; max-width:16px; max-height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                         </button>
                         <div class="absolute left-0 top-full pt-3 w-64 hidden group-hover:block group-focus-within:block z-50" role="menu">
                             <div class="bg-white border border-gray-100 rounded-md shadow-xl p-2">
@@ -187,10 +195,10 @@
                 <!-- Mobile Menu Button (Hamburger) -->
                 <div class="flex items-center md:hidden">
                     <button onclick="toggleMobileMenu()" type="button" aria-label="Abrir menú de navegación" class="text-gray-700 hover:text-primary focus:outline-none p-2">
-                        <svg id="hamburgerIcon" class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="hamburgerIcon" class="w-7 h-7" width="28" height="28" style="width:28px; height:28px; max-width:28px; max-height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                         </svg>
-                        <svg id="closeIcon" class="w-7 h-7 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg id="closeIcon" class="w-7 h-7 hidden" width="28" height="28" style="width:28px; height:28px; max-width:28px; max-height:28px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                         </svg>
                     </button>
@@ -203,7 +211,7 @@
             <div class="border-b border-gray-100">
                 <button type="button" id="mobileServicesToggle" onclick="toggleServicesMenu()" aria-expanded="false" aria-controls="mobileServicesMenu" class="w-full flex items-center justify-between text-gray-700 hover:text-secondary font-medium py-2">
                     <span>Servicios</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    <svg class="w-4 h-4" width="16" height="16" style="width:16px; height:16px; max-width:16px; max-height:16px;" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div id="mobileServicesMenu" class="hidden pl-4 pb-2 space-y-1">
                     <a href="/servicios/casas-nuevas/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Casas Nuevas</a>
