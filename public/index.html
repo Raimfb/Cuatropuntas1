@@ -294,7 +294,11 @@
     </nav>
 
     <!-- ===== Navbar ===== -->
-        
+            <a href="/precios" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Precios</a>
+            <a href="/blog/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Blog</a>
+            <a href="#contacto" onclick="toggleMobileMenu()" class="block bg-secondary text-white text-center font-bold py-3 rounded-md shadow-md mt-4">Cotizar Gratis</a>
+        </div>
+    </nav>
 
     <script>
         function toggleMobileMenu() {
@@ -311,12 +315,15 @@
 
     <!-- ===== Hero Section ===== -->
     <header id="inicio" class="relative h-screen flex items-center justify-center bg-gray-900 overflow-hidden">
-        <picture class="absolute inset-0 w-full h-full">
-            <source media="(max-width: 768px)" srcset="/casa_solida_moderna_hero_mobile.webp" type="image/webp">
-            <source media="(min-width: 769px)" srcset="/casa_solida_moderna_1770071499659.webp" type="image/webp">
-            <img src="/casa_solida_moderna_1770071499659.png" alt="Casa sólida moderna construida por Constructora Cuatropuntas en Santiago de Chile"
-                class="w-full h-full object-cover opacity-60" width="1920" height="1080" fetchpriority="high" decoding="async">
-        </picture>
+        <video autoplay loop muted playsinline poster="/casa_solida_moderna_1770071499659.webp" class="absolute inset-0 w-full h-full object-cover opacity-60">
+            <source src="/hero-timelapse.mp4" type="video/mp4">
+            <picture class="absolute inset-0 w-full h-full">
+                <source media="(max-width: 768px)" srcset="/casa_solida_moderna_hero_mobile.webp" type="image/webp">
+                <source media="(min-width: 769px)" srcset="/casa_solida_moderna_1770071499659.webp" type="image/webp">
+                <img src="/casa_solida_moderna_1770071499659.png" alt="Casa sólida moderna construida por Constructora Cuatropuntas en Santiago de Chile"
+                    class="w-full h-full object-cover opacity-60" width="1920" height="1080" fetchpriority="high" decoding="async">
+            </picture>
+        </video>
         <div class="absolute inset-0 hero-overlay"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center sm:text-left pt-20">
