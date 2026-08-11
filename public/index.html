@@ -348,9 +348,9 @@
         <div class="absolute inset-0 hero-overlay"></div>
 
         <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 lg:pt-16">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center hero-media-grid">
+            <div class="hero-media-grid">
                 <!-- Columna Izquierda: Mensaje principal del Hero y CTAs -->
-                <div class="lg:col-span-9 text-center lg:text-left hero-media-copy">
+                <div class="text-center lg:text-left hero-media-copy">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
                         Constructora en Santiago: Casas, Ampliaciones y Segundos Pisos
                     </h1>
@@ -372,27 +372,17 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha / Abajo en Móvil: Cuadro de Video Compacto (300px máx) -->
-                <div class="lg:col-span-3 w-full max-w-[300px] mx-auto lg:ml-auto lg:mr-0 mt-4 lg:mt-0 hero-media-video-column">
-                    <div class="relative w-full rounded-xl overflow-hidden shadow-2xl border border-white/20 bg-gray-900/90 backdrop-blur-md transition hover:border-orange-500/50 hero-media-video-card">
-                        <!-- Badge Embudo -->
-                        <div class="flex items-center justify-between px-3 py-2 bg-gray-950/80 border-b border-white/10 text-white text-[11px] font-semibold">
-                            <span class="flex items-center gap-1.5 text-gray-200">
-                                <span class="w-2 h-2 rounded-full bg-orange-500"></span>
-                                Etapas de Obra
-                            </span>
-                            <span class="text-orange-400 font-medium text-[10px]">Timelapse CP</span>
-                        </div>
+                <!-- Columna Derecha / Abajo en Móvil: Video de etapas de construcción -->
+                <div class="hero-media-video-column">
+                    <div class="hero-media-video-card">
                         <!-- Video Horizontal (16:9) -->
-                        <div class="relative aspect-video w-full bg-black hero-media-video-frame">
-                            <video controls autoplay loop muted playsinline preload="metadata" aria-label="Timelapse CP de las etapas de obra" poster="/casa_solida_moderna_1770071499659.webp" class="w-full h-full object-cover hero-timelapse-video">
+                        <div class="hero-media-video-frame">
+                            <video controls autoplay loop muted playsinline preload="metadata" aria-label="Timelapse CP de las etapas de obra" poster="/casa_solida_moderna_1770071499659.webp" class="hero-timelapse-video">
                                 <source src="/hero-timelapse.mp4" type="video/mp4">
                                 Su navegador no soporta reproducción de video.
                             </video>
                         </div>
-                        <div class="p-2.5 bg-gray-950/90 text-center text-[11px] leading-snug text-gray-300">
-                            🏗️ Fases coordinadas: fundación, estructura y terminaciones.
-                        </div>
+                        <p class="hero-media-caption">Etapas de una construcci&oacute;n</p>
                     </div>
                 </div>
             </div>

@@ -18,12 +18,30 @@
 
 .hero-media-video-card {
     width: 100%;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+    backdrop-filter: none;
+    transition: none;
 }
 
 .hero-media-video-frame {
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #000;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.hero-media-caption {
+    margin: 0.75rem 0 0;
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 0.875rem;
+    line-height: 1.4;
+    letter-spacing: 0.02em;
+    text-align: center;
 }
 
 .hero-timelapse-video {
@@ -35,13 +53,13 @@
 
 @media (min-width: 1024px) {
     .hero-media-grid {
-        grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr);
-        gap: 2rem;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: clamp(2rem, 5vw, 5rem);
     }
 
     .hero-media-video-column {
-        max-width: 340px;
-        margin: 0 0 0 auto;
+        max-width: none;
+        margin: 0;
     }
 }
 
