@@ -5,7 +5,6 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
 
 const POSTS_JSON_PATH = path.join(__dirname, '../public/blog/posts.json');
 const POSTS_DIR = path.join(__dirname, '../public/blog/posts');
@@ -395,15 +394,6 @@ function publishNewPost() {
     console.log(`[POSTS.JSON UPDATED] Total posts: ${posts.length}`);
 
     updateSitemap(selected.slug);
-
-    // Intentar git commit & push si estamos en entorno git
-    try {
-        execSync('git add public/blog/ public/sitemap.xml', { cwd: path.join(__dirname, '..') });
-        execSync(`git commit -m "feat(blog): publicar articulo ${selected.slug}"`, { cwd: path.join(__dirname, '..') });
-        console.log(`[GIT COMMITTED] feat(blog): publicar articulo ${selected.slug}`);
-    } catch (e) {
-        console.log('[GIT NOTICE] Archivos creados pero sin git commit automático:', e.message);
-    }
 }
 
 if (require.main === module) {

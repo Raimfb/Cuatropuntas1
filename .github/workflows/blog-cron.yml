@@ -9,6 +9,8 @@ on:
 jobs:
   publish-blog:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Descargar Código del Repositorio
         uses: actions/checkout@v4
