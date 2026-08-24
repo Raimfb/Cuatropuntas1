@@ -46,6 +46,32 @@ async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = 
     }
 }
 
+// Sanitizador y Formateador Estricto para WhatsApp (1 solo asterisco para negrita)
+function formatWhatsAppMarkdown(text) {
+    if (!text) return "";
+    let cleaned = text;
+
+    // 1. Reemplazar dobles o múltiples asteriscos (**texto** o ***texto***) por 1 solo asterisco (*texto*)
+    cleaned = cleaned.replace(/\*{2,}/g, '*');
+
+    // 2. Limpiar asteriscos impares/huérfanos por línea para evitar texto roto en WhatsApp
+    const lines = cleaned.split('\n');
+    const fixedLines = lines.map(line => {
+        const asteriskMatches = line.match(/\*/g) || [];
+        if (asteriskMatches.length % 2 !== 0) {
+            // Si la línea termina en asterisco descolgado, removerlo
+            if (line.trim().endsWith('*')) {
+                return line.trim().slice(0, -1);
+            }
+            // Si hay un asterisco abierto sin cerrar, cerrarlo al final de la línea
+            return line + '*';
+        }
+        return line;
+    });
+
+    return fixedLines.join('\n');
+}
+
 // Generador Inteligente de Respuestas con Gemini AI para WhatsApp
 async function generateAIWhatsAppResponse(userText, profileName, firstName, from) {
     const apiKey = process.env.GEMINI_API_KEY;
@@ -105,9 +131,13 @@ Tu objetivo es doble: responder la duda del cliente con exactitud técnica Y **c
      - Para proyectos particulares (casas nuevas, ampliaciones, 2dos pisos, quinchos, remodelaciones): ${particularLink}
      - Para subsidios MINVU aprobados en sitio propio: ${subsidioLink}
 
-4. **TONO Y FORMATO EN WHATSAPP**:
+4. **FORMATO DE NEGRITAS EN WHATSAPP (ESTRICTO)**:
+   - WhatsApp solo soporta 1 solo asterisco (*palabra*) para aplicar negrita.
+   - NUNCA uses dobles asteriscos (**texto**) ni dejes asteriscos sin cerrar (*texto sin cierre).
+
+5. **TONO EN WHATSAPP**:
    - Cercano, profesional, directo y empático. Usar el nombre de pila del cliente (${firstName || 'cliente'}).
-   - Máximo 2 a 3 párrafos concisos. Usar negritas y viñetas para facilitar lectura en pantalla móvil.
+   - Máximo 2 a 3 párrafos concisos. Usar negritas simples (*texto*) y viñetas para facilitar lectura en pantalla móvil.
 
 ### MATRIZ OFICIAL DE INFORMACIÓN CUATROPUNTAS:
 - **Sistemas Constructivos**:
@@ -121,7 +151,7 @@ Tu objetivo es doble: responder la duda del cliente con exactitud técnica Y **c
 
     const result = await model.generateContent(userText);
     const response = await result.response;
-    return response.text();
+    return formatWhatsAppMarkdown(response.text());
 }
 
 // Clasificación Ultra Rápida de Intención
