@@ -17,7 +17,7 @@ const TOPIC_POOL = [
         category: "Guías Prácticas",
         slug: "permisos-edificacion-dom-santiago-guia",
         excerpt: "Explicamos el paso a paso para solicitar el Permiso de Edificación en la Dirección de Obras Municipales (DOM) y los riesgos de construir sin regularizar en la RM.",
-        image: "/ampliacion_antes_despues_realista.webp",
+        image: "/blog_permisos_dom_santiago.jpg",
         readTime: "7 min de lectura",
         tags: ["Permiso Edificación DOM", "Regulación OGUC", "Multas Municipales", "Recepción Definitiva DOM"],
         faq: {

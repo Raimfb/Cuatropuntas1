@@ -208,6 +208,25 @@
             <button onclick="selectCategory('Precios & Cotización')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Precios & Cotización</button>
             <button onclick="selectCategory('Guías Prácticas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Guías Prácticas</button>
             <button onclick="selectCategory('Materiales & Sistemas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Materiales & Sistemas</button>
+            </p>
+            
+            <!-- Buscador y Filtros -->
+            <div class="max-w-2xl mx-auto flex flex-col sm:flex-row gap-3">
+                <input type="text" id="searchInput" placeholder="Buscar por tema (ej: Metalcon, permisos, precios...)" class="flex-grow px-5 py-3.5 rounded-lg text-gray-900 outline-none focus:ring-2 focus:ring-secondary text-base shadow-md">
+                <button onclick="filterPosts()" class="bg-secondary hover:bg-orange-700 text-white font-bold px-7 py-3.5 rounded-lg transition shadow-md">
+                    Buscar
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ===== Categorías ===== -->
+    <section class="py-6 bg-white border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap items-center justify-center gap-2 md:gap-4 text-sm font-medium">
+            <button onclick="selectCategory('Todos')" class="category-btn active bg-primary text-white px-4 py-2 rounded-full transition shadow-sm">Todos</button>
+            <button onclick="selectCategory('Precios & Cotización')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Precios & Cotización</button>
+            <button onclick="selectCategory('Guías Prácticas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Guías Prácticas</button>
+            <button onclick="selectCategory('Materiales & Sistemas')" class="category-btn bg-gray-100 text-gray-700 hover:bg-gray-200 px-4 py-2 rounded-full transition">Materiales & Sistemas</button>
         </div>
     </section>
 
@@ -218,7 +237,7 @@
             <!-- Fallback Post 1 (SSR SEO) -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
                 <a href="/blog/posts/guia-precios-construccion-chile.html" class="block overflow-hidden h-52">
-                    <img src="/casa_solida_moderna_1770071499659.webp" alt="Precios de Construcción en Chile UF/m2" class="w-full h-full object-cover hover:scale-105 transition duration-500">
+                    <img src="/blog_precios_construccion.jpg" alt="Precios de Construcción en Chile UF/m2" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
                     <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
@@ -245,7 +264,7 @@
             <!-- Fallback Post 2 (SSR SEO) -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
                 <a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="block overflow-hidden h-52">
-                    <img src="/ampliacion_antes_despues_etiquetada.webp" alt="En qué fijarse antes de construir casa en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500" style="object-position: center top;">
+                    <img src="/blog_consejos_construir.jpg" alt="En qué fijarse antes de construir casa en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500" style="object-position: center top;">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
                     <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
@@ -259,26 +278,6 @@
                     </h2>
                     <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
                         Lista de comprobación con 7 puntos para revisar antes de contratar una constructora: terreno, permisos DOM y contrato.
-                    </p>
-                    <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                        <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="font-bold text-secondary hover:underline flex items-center">
-                            Leer artículo &rarr;
-                        </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Fallback Post 3 (SSR SEO) -->
-            <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
-                <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="block overflow-hidden h-52">
-                    <img src="/material_solido_albanileria_1770072436347.webp" alt="Metalcon vs Albanileria vs Panel SIP en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500">
-                </a>
-                <div class="p-6 flex flex-col flex-grow">
-                    <div class="flex justify-between items-center text-xs font-semibold text-secondary mb-3">
-                        <span>Materiales & Sistemas</span>
-                        <span class="text-gray-400">4 Ago 2026</span>
-                    </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
                         <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html">
                             Metalcon vs Albañilería vs Panel SIP: Comparativa técnica de costos y velocidad en Chile
