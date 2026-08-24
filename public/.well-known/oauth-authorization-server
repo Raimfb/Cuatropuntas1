@@ -17,11 +17,27 @@
     "public"
   ],
   "agent_auth": {
-    "skill": "https://www.cuatropuntas.com/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
+    "skill": "https://www.cuatropuntas.com/auth.md",
     "register_uri": "https://www.cuatropuntas.com/api/chat",
     "identity_types_supported": [
       "anonymous",
       "verified_email"
-    ]
+    ],
+    "anonymous": {
+      "credential_types_supported": [
+        "bearer"
+      ],
+      "claim_uri": "https://www.cuatropuntas.com/api/chat"
+    },
+    "identity_assertion": {
+      "assertion_types_supported": [
+        "verified_email",
+        "urn:ietf:params:oauth:token-type:id-jag"
+      ],
+      "credential_types_supported": [
+        "bearer"
+      ],
+      "claim_uri": "https://www.cuatropuntas.com/api/chat"
+    }
   }
 }
