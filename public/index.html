@@ -12,6 +12,8 @@
     <meta name="author" content="Constructora Cuatropuntas SpA">
     <meta name="theme-color" content="#1a202c">
     <link rel="canonical" href="https://www.cuatropuntas.com/">
+    <link rel="ai-catalog" href="/.well-known/ai-catalog.json">
+    <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM Overview">
 
     <!-- ===== Geo-referenciación (Local SEO Chile) ===== -->
     <meta name="geo.region" content="CL-RM" />
@@ -1323,6 +1325,42 @@
         </span>
     </a>
 
+    <!-- WebMCP: Expose tools for AI Agents and Autonomous Browsers -->
+    <script>
+      (function() {
+        if (typeof navigator !== 'undefined' && 'modelContext' in navigator && navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+          try {
+            navigator.modelContext.registerTool({
+              name: "cotizar_construccion",
+              description: "Obtiene precios referenciales y cotizaciones por m² en Santiago de Chile para Metalcom, SIP y Albañilería.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  metros_cuadrados: { type: "number", description: "M² a construir o ampliar" },
+                  materialidad: { type: "string", enum: ["metalcom", "sip", "albanileria"], description: "Sistema constructivo" }
+                },
+                required: ["metros_cuadrados", "materialidad"]
+              },
+              execute: async function(params) {
+                const m2 = params.metros_cuadrados || 50;
+                const mat = params.materialidad || 'metalcom';
+                const precios = { metalcom: 13.5, sip: 15.5, albanileria: 20 };
+                const ufM2 = precios[mat] || 15;
+                return {
+                  metros_cuadrados: m2,
+                  materialidad: mat,
+                  uf_m2_referencial: ufM2,
+                  total_estimado_uf: m2 * ufM2,
+                  contacto_whatsapp: "https://wa.me/56963482439"
+                };
+              }
+            });
+          } catch(e) {
+            console.debug('WebMCP registration note:', e);
+          }
+        }
+      })();
+    </script>
     <script src="/navigation.js"></script>
 </body>
 

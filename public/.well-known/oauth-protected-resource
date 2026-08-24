@@ -1,0 +1,14 @@
+{
+  "resource": "https://cuatropuntas.com/api",
+  "authorization_servers": [
+    "https://cuatropuntas.com"
+  ],
+  "scopes_supported": [
+    "read",
+    "quote",
+    "public"
+  ],
+  "bearer_methods_supported": [
+    "header"
+  ]
+}

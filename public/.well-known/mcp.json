@@ -1,0 +1,93 @@
+{
+  "$schema": "https://modelcontextprotocol.io/schemas/server-card.json",
+  "serverInfo": {
+    "name": "cuatropuntas-mcp-server",
+    "version": "1.0.0",
+    "description": "Servidor MCP oficial de Constructora Cuatro Puntas para cotizaciones de construcción residencial, consulta de precios por m2 y asesoría en subsidios MINVU en Chile."
+  },
+  "endpoint": "https://cuatropuntas.com/api/mcp",
+  "transport": {
+    "type": "http",
+    "url": "https://cuatropuntas.com/api/mcp"
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "cotizar_construccion",
+        "description": "Calcula el presupuesto estimado de construcción o ampliación según m2, comuna y materialidad (Metalcom, SIP, Albañilería).",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "metros_cuadrados": {
+              "type": "number",
+              "description": "Metros cuadrados del proyecto"
+            },
+            "materialidad": {
+              "type": "string",
+              "enum": [
+                "metalcom",
+                "sip",
+                "albanileria"
+              ],
+              "description": "Sistema constructivo deseado"
+            },
+            "comuna": {
+              "type": "string",
+              "description": "Comuna de la Región Metropolitana"
+            },
+            "tipo_proyecto": {
+              "type": "string",
+              "enum": [
+                "casa_nueva",
+                "segundo_piso",
+                "ampliacion",
+                "quincho"
+              ]
+            }
+          },
+          "required": [
+            "metros_cuadrados",
+            "materialidad",
+            "tipo_proyecto"
+          ]
+        }
+      },
+      {
+        "name": "consultar_subsidio_minvu",
+        "description": "Verifica los requisitos y tramos del Subsidio DS1 para construcción en sitio propio.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "tramo": {
+              "type": "string",
+              "enum": [
+                "tramo1",
+                "tramo2",
+                "tramo3"
+              ]
+            },
+            "tiene_terreno_inscrito": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "tiene_terreno_inscrito"
+          ]
+        }
+      }
+    ],
+    "resources": [
+      {
+        "uri": "cuatropuntas://precios/m2",
+        "name": "Tabla de Precios por m2",
+        "mimeType": "application/json"
+      }
+    ],
+    "prompts": [
+      {
+        "name": "asesor_construccion",
+        "description": "Prompt asistido para orientar a clientes en la elección de materialidad según presupuesto y terreno."
+      }
+    ]
+  }
+}

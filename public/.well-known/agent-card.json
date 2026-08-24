@@ -1,0 +1,43 @@
+{
+  "$schema": "https://a2a-protocol.org/schemas/agent-card.json",
+  "name": "Cuatro Puntas Constructor AI Agent",
+  "version": "1.0.0",
+  "description": "Agente autónomo de Constructora Cuatro Puntas especializado en cotizaciones inteligentes de construcción, ampliaciones y asesoría técnica de proyectos habitacionales en Chile.",
+  "supportedInterfaces": [
+    {
+      "url": "https://cuatropuntas.com/api/chat",
+      "protocol": "https"
+    },
+    {
+      "url": "https://cuatropuntas.com/api/mcp",
+      "protocol": "mcp-http"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "tools": true,
+    "actions": [
+      "quote",
+      "consult_prices",
+      "check_subsidy_eligibility",
+      "schedule_visit"
+    ]
+  },
+  "skills": [
+    {
+      "id": "cotizacion-construccion",
+      "name": "Cotización de Construcción y Ampliación",
+      "description": "Genera presupuestos detallados por m2 con desglose de obra gruesa y terminaciones en Metalcom, Panel SIP y Albañilería."
+    },
+    {
+      "id": "subsidio-minvu",
+      "name": "Asesoría Técnica Subsidio MINVU DS1",
+      "description": "Evalúa viabilidad técnica y normativa para construcción en sitio propio con subsidio habitacional estatal."
+    },
+    {
+      "id": "asesoria-materiales",
+      "name": "Comparativa de Materiales y Eficiencia Térmica",
+      "description": "Compara rendimiento térmico, acústico, tiempos de entrega y costos entre sistemas constructivos."
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "issuer": "https://cuatropuntas.com",
+  "authorization_endpoint": "https://cuatropuntas.com/api/auth/authorize",
+  "token_endpoint": "https://cuatropuntas.com/api/auth/token",
+  "jwks_uri": "https://cuatropuntas.com/.well-known/jwks.json",
+  "response_types_supported": [
+    "token",
+    "id_token"
+  ],
+  "grant_types_supported": [
+    "client_credentials",
+    "anonymous"
+  ],
+  "scopes_supported": [
+    "read",
+    "quote",
+    "public"
+  ]
+}

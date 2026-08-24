@@ -1,0 +1,26 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "cotizar-proyecto",
+      "type": "skill-md",
+      "description": "Permite calcular costos referenciales por metro cuadrado para casas nuevas, ampliaciones y segundos pisos.",
+      "url": "/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
+      "digest": "sha256:cc86d26f184dd4e393b2a20f21fe6e87caa756cc4d5b4a5a9a3e8de56d8f7ce2"
+    },
+    {
+      "name": "subsidio-minvu",
+      "type": "skill-md",
+      "description": "Guía paso a paso para construir con subsidio estatal DS1 en terreno con título de dominio inscrito.",
+      "url": "/.well-known/agent-skills/subsidio-minvu/SKILL.md",
+      "digest": "sha256:5ede32b3a8b7d947fb85a403400adc24e303211d6c37cfce0f25c2a911fc06d0"
+    },
+    {
+      "name": "asesoria-materiales",
+      "type": "skill-md",
+      "description": "Análisis técnico de aislación térmica, resistencia sísmica y velocidad constructiva entre Metalcom, Panel SIP y Albañilería.",
+      "url": "/.well-known/agent-skills/asesoria-materiales/SKILL.md",
+      "digest": "sha256:5129db7a39e91a22b02b833f677eea18b690c125bb1182b5f1122d5eb0bc6cec"
+    }
+  ]
+}

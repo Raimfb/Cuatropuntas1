@@ -1,0 +1,40 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://cuatropuntas.com/api/quote",
+      "service-desc": [
+        {
+          "href": "https://cuatropuntas.com/api/mcp",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cuatropuntas.com/llms.txt",
+          "type": "text/markdown"
+        }
+      ],
+      "status": [
+        {
+          "href": "https://cuatropuntas.com/api/chat",
+          "type": "application/json"
+        }
+      ]
+    },
+    {
+      "anchor": "https://cuatropuntas.com/api/mcp",
+      "service-desc": [
+        {
+          "href": "https://cuatropuntas.com/.well-known/mcp/server-card.json",
+          "type": "application/json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cuatropuntas.com/llms-full.txt",
+          "type": "text/markdown"
+        }
+      ]
+    }
+  ]
+}

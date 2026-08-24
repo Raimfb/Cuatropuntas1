@@ -1,0 +1,31 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "Constructora Cuatro Puntas",
+    "identifier": "did:web:cuatropuntas.com"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:cuatropuntas.com:mcp:server",
+      "displayName": "Cuatro Puntas Construction MCP Server",
+      "type": "application/mcp-server-card+json",
+      "url": "https://cuatropuntas.com/.well-known/mcp/server-card.json",
+      "representativeQueries": [
+        "cuanto cuesta construir una casa de 100 m2 en Santiago",
+        "precio por metro cuadrado construccion metalcom chile",
+        "requisitos subsidio ds1 sitio propio construccion"
+      ]
+    },
+    {
+      "identifier": "urn:air:cuatropuntas.com:agent:advisor",
+      "displayName": "Cuatro Puntas Residential Construction Agent",
+      "type": "application/agent-card+json",
+      "url": "https://cuatropuntas.com/.well-known/agent-card.json",
+      "representativeQueries": [
+        "cotizar ampliacion segundo piso en metalcom",
+        "construir quincho solido en santiago",
+        "constructora casas llave en mano subsidio minvu"
+      ]
+    }
+  ]
+}

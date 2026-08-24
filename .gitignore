@@ -6,8 +6,12 @@ node_modules/
 .env.local
 .env*.local
 
-# Archivos de sistema
+# Archivos de sistema y temporales
 .DS_Store
 Thumbs.db
 desktop.ini
 .vercel
+scan_result.json
+scratch/
+test-results/
+
