@@ -1,4 +1,6 @@
 const { test, expect } = require('@playwright/test');
+const fs = require('fs');
+const path = require('path');
 
 test.describe('AI Agent Readiness Tests', () => {
   test('Live Scan API returns optimal readiness level (Level 4+)', async ({ request }) => {
@@ -47,8 +49,10 @@ test.describe('AI Agent Readiness Tests', () => {
 
     const testResultsDir = 'c:/Users/raimu/Documents/vyxa core/Cuatropuntas-Secure/test-results';
     if (!fs.existsSync(testResultsDir)) fs.mkdirSync(testResultsDir, { recursive: true });
-
     await page.screenshot({ path: testResultsDir + '/isitagentready-result.png', fullPage: true });
-    console.log('Screenshot guardada en test-results/isitagentready-result.png');
+
+    const artifactDir = 'C:/Users/raimu/.gemini/antigravity/brain/b644b3ca-2507-46bf-af21-a58a9fe590e0';
+    await page.screenshot({ path: artifactDir + '/isitagentready-result.png', fullPage: true });
+    console.log('Screenshot guardada exitosamente.');
   });
 });

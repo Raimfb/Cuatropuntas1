@@ -20,8 +20,8 @@
     "skill": "https://www.cuatropuntas.com/auth.md",
     "register_uri": "https://www.cuatropuntas.com/api/chat",
     "identity_types_supported": [
-      "anonymous",
-      "verified_email"
+      "identity_assertion",
+      "anonymous"
     ],
     "anonymous": {
       "credential_types_supported": [
