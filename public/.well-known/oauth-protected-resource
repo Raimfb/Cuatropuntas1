@@ -1,6 +1,7 @@
 {
-  "resource": "https://cuatropuntas.com/api",
+  "resource": "https://www.cuatropuntas.com",
   "authorization_servers": [
+    "https://www.cuatropuntas.com",
     "https://cuatropuntas.com"
   ],
   "scopes_supported": [

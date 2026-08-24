@@ -5,16 +5,22 @@ This document describes authentication, authorization, and terms of interaction 
 ## Overview
 Cuatro Puntas provides public programmatic access to read service information, pricing tables, subsidy guidelines, and request project quotes.
 
-## Authentication Methods
-- **Public Read & Discovery:** No authentication credentials required for discovery endpoints (`llms.txt`, `/.well-known/*`, and pricing metadata).
-- **Interactive Quoting & Messaging:** Agents may submit quote requests and lead submissions via public endpoints (`/api/quote`, `/api/chat`) using anonymous client identifiers.
-- **WebMCP:** Browser agents can execute client-side tools registered via `navigator.modelContext` without additional auth.
+## Agent Audience & Permissions
+- **Audience:** AI Agents, autonomous assistants (ChatGPT, Claude, Perplexity, Gemini, etc.), search engines, and developers.
+- **Read Access:** Free, unrestricted public access to documentation, pricing tables, and project catalogs.
+- **Quote & Interaction API:** Free public access to submit quotes and interact with the AI construction assistant.
 
-## OAuth / OIDC Discovery Endpoints
-- **Authorization Server:** `https://cuatropuntas.com/.well-known/oauth-authorization-server`
-- **OpenID Configuration:** `https://cuatropuntas.com/.well-known/openid-configuration`
-- **Protected Resource:** `https://cuatropuntas.com/.well-known/oauth-protected-resource`
+## Registration & Provisioning
+- Registration Endpoint: https://cuatropuntas.com/api/chat
+- Supported Flow: Anonymous & Verified Email
+- Credential Use: Standard Bearer Token or Anonymous session headers
 
-## Contact & Terms
+## Discovery Endpoints
+- OAuth Authorization Server: https://cuatropuntas.com/.well-known/oauth-authorization-server
+- OpenID Configuration: https://cuatropuntas.com/.well-known/openid-configuration
+- Protected Resource Metadata: https://cuatropuntas.com/.well-known/oauth-protected-resource
+
+## Contact
 - Constructora Cuatropuntas SpA
-- Support: contacto@cuatropuntas.com
+- Email: contacto@cuatropuntas.com
+- Support WhatsApp: https://wa.me/56963482439

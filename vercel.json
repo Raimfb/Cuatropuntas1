@@ -75,6 +75,19 @@
       ]
     },
     {
+      "source": "/.well-known/(oauth-protected-resource|oauth-authorization-server|openid-configuration|mcp\\.json|ai-catalog\\.json|agent-card\\.json)",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        }
+      ]
+    },
+    {
       "source": "/.well-known/(.*)",
       "headers": [
         {

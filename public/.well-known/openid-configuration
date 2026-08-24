@@ -1,8 +1,8 @@
 {
-  "issuer": "https://cuatropuntas.com",
-  "authorization_endpoint": "https://cuatropuntas.com/api/auth/authorize",
-  "token_endpoint": "https://cuatropuntas.com/api/auth/token",
-  "jwks_uri": "https://cuatropuntas.com/.well-known/jwks.json",
+  "issuer": "https://www.cuatropuntas.com",
+  "authorization_endpoint": "https://www.cuatropuntas.com/api/auth/authorize",
+  "token_endpoint": "https://www.cuatropuntas.com/api/auth/token",
+  "jwks_uri": "https://www.cuatropuntas.com/.well-known/jwks.json",
   "response_types_supported": [
     "token",
     "id_token"
@@ -15,5 +15,13 @@
     "read",
     "quote",
     "public"
-  ]
+  ],
+  "agent_auth": {
+    "skill": "https://www.cuatropuntas.com/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
+    "register_uri": "https://www.cuatropuntas.com/api/chat",
+    "identity_types_supported": [
+      "anonymous",
+      "verified_email"
+    ]
+  }
 }
