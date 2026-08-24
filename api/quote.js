@@ -54,7 +54,7 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
-        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas";
+        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas.com/visita-tecnica";
 
         // Mapeo legible de comunas y sectores para presentación ejecutiva
         function getComunaLabel(comunaKey) {
