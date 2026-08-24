@@ -148,6 +148,7 @@ module.exports = async (req, res) => {
                         const value = change.value;
                         // Extraer dinámicamente el ID del número telefónico al que le escribieron
                         const incomingPhoneId = value?.metadata?.phone_number_id || null;
+                        const contacts = value?.contacts || [];
                         const messages = value?.messages || [];
 
                         for (const messageObj of messages) {
@@ -156,19 +157,30 @@ module.exports = async (req, res) => {
 
                             if (!from || !userText) continue;
 
-                            console.log(`📩 Mensaje procesado de ${from} hacia PhoneID ${incomingPhoneId}: "${userText}"`);
+                            // Extraer nombre de perfil de WhatsApp del cliente
+                            const contactObj = contacts.find(c => c.wa_id === from) || contacts[0];
+                            const profileName = (contactObj?.profile?.name || "").trim();
+                            const firstName = profileName ? profileName.split(' ')[0] : "";
+                            const nameGreeting = firstName ? `, ${firstName}` : "";
+                            const nameQuery = profileName 
+                                ? `?name=${encodeURIComponent(profileName)}&phone=${encodeURIComponent(from)}` 
+                                : `?phone=${encodeURIComponent(from)}`;
+
+                            console.log(`📩 Mensaje procesado de ${from} (${profileName || 'Sin Nombre'}) hacia PhoneID ${incomingPhoneId}: "${userText}"`);
 
                             const intent = classifyIntent(userText);
                             let responseMsg = "";
 
                             if (intent === "SALUDO_INICIAL") {
-                                responseMsg = `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
+                                responseMsg = firstName
+                                    ? `¡Hola ${firstName}! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`
+                                    : `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
                             } else if (intent === "ROUTE_1") {
-                                responseMsg = `¡Excelente! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html`;
+                                responseMsg = `¡Excelente${nameGreeting}! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
                             } else if (intent === "ROUTE_2") {
-                                responseMsg = `Estupendo, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios`;
+                                responseMsg = `Estupendo${nameGreeting}, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios${nameQuery}`;
                             } else {
-                                responseMsg = `Comprendo. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
+                                responseMsg = `Comprendo${nameGreeting}. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
                             }
 
                             // Enviar respuesta usando dinámicamente el PhoneID oficial que recibió la solicitud

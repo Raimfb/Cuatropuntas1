@@ -56,3 +56,38 @@ function toggleMobileMenu() {
         }
     }
 }
+
+function autoFillFromQueryParams() {
+    try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const nameParam = urlParams.get('name');
+        const phoneParam = urlParams.get('phone');
+
+        if (nameParam) {
+            const nombreInput = document.getElementById('qNombre');
+            if (nombreInput) {
+                nombreInput.value = nameParam;
+            }
+        }
+        if (phoneParam) {
+            const telefonoInput = document.getElementById('qTelefono');
+            if (telefonoInput) {
+                let cleanPhone = phoneParam.replace(/\D/g, '');
+                if (cleanPhone.startsWith('569')) {
+                    cleanPhone = '+' + cleanPhone;
+                } else if (cleanPhone.length > 0 && !cleanPhone.startsWith('+')) {
+                    cleanPhone = '+' + cleanPhone;
+                }
+                telefonoInput.value = cleanPhone;
+            }
+        }
+    } catch (e) {
+        console.error('Error prefilling form from query params:', e);
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', autoFillFromQueryParams);
+} else {
+    autoFillFromQueryParams();
+}
