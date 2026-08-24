@@ -46,6 +46,70 @@ async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = 
     }
 }
 
+// Generador Inteligente de Respuestas con Gemini AI para WhatsApp
+async function generateAIWhatsAppResponse(userText, profileName, firstName, from) {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return null;
+
+    const nameQuery = profileName 
+        ? `?name=${encodeURIComponent(profileName)}&phone=${encodeURIComponent(from)}` 
+        : `?phone=${encodeURIComponent(from)}`;
+    const particularLink = `https://www.cuatropuntas.com/precios${nameQuery}`;
+    const subsidioLink = `https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
+    const clientNameStr = firstName 
+        ? `El cliente se llama ${firstName} (nombre completo en WhatsApp: "${profileName}"). Dirígete a él llamándolo por su nombre de pila (${firstName}).` 
+        : "No conocemos el nombre de pila del cliente, salúdalo con un ¡Hola! cálido y profesional.";
+
+    let validModelName = "gemini-1.5-flash";
+    try {
+        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
+        const listResp = await fetch(listUrl);
+        const listData = await listResp.json();
+        if (listData && listData.models) {
+            const viableModel = listData.models.find(m =>
+                m.supportedGenerationMethods &&
+                m.supportedGenerationMethods.includes("generateContent") &&
+                (m.name.includes("flash") || m.name.includes("pro"))
+            );
+            if (viableModel) {
+                validModelName = viableModel.name.replace("models/", "");
+            }
+        }
+    } catch (e) {}
+
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({
+        model: validModelName,
+        systemInstruction: `
+Eres el **Asesor Técnico y Comercial Oficial de Constructora Cuatropuntas SpA** en Santiago de Chile. Estás respondiendo a través de WhatsApp.
+
+### INFORMACIÓN DEL CLIENTE:
+${clientNameStr}
+
+### REGLAS DE RESPUESTA EN WHATSAPP (CRÍTICO):
+1. **INTELECTO Y RESPUESTA DIRECTA**: Responde de forma inteligente y exacta a lo que el cliente pregunta (materiales, precios, comunas, permisos DOM, procesos, etc.). NUNCA evadas su consulta ni des respuestas genéricas que no tengan que ver con su pregunta.
+2. **TONO CÁLIDO, EMPÁTICO Y HUMANO**: Habla como un experto en construcción en Chile, cercano, atento y transparente.
+3. **FORMATO OPTIMIZADO PARA WHATSAPP**: Respuestas muy concisas (2 a 3 párrafos cortos). Usa negritas para destacar puntos clave o viñetas simples.
+4. **ENLACES PERSONALIZADOS**: Cuando la conversación corresponda a cotizar, presupuestar m² o enviar ficha técnica:
+   - Para proyectos particulares (casas nuevas, ampliaciones, 2dos pisos, quinchos, remodelaciones): ${particularLink}
+   - Para subsidios MINVU (DS1 o DS49 adjudicados en sitio propio): ${subsidioLink}
+5. **FILTRO IMPORTANTE MINVU**: Si el cliente pregunta cómo postular o ganarse un subsidio, aclárale amablemente que Cuatropuntas NO gestiona postulaciones ante el Serviu, sino que ejecuta obras de subsidios ya aprobados en terreno propio.
+
+### MATRIZ OFICIAL DE INFORMACIÓN CUATROPUNTAS:
+- **Sistemas Constructivos**:
+  1. Metalcon (Cintac): Estructura de acero galvanizado ligero. Antisísmico, rápido montaje, ideal para casas, 2dos pisos y ampliaciones (desde 19 UF/m² casas, 22 UF/m² 2dos pisos, 12 UF/m² quinchos).
+  2. Panel SIP: Paneles aislantes de alto rendimiento térmico (cumplen Zona 3 OGUC de Santiago), máxima eficiencia energética (desde 21 UF/m² casas, 24 UF/m² 2dos pisos).
+  3. Albañilería Armada / Confinada: Estructura sólida tradicional de ladrillo/hormigón y máxima durabilidad (desde 25 UF/m² casas, 27 UF/m² 2dos pisos, 15 UF/m² quinchos).
+- **Servicios**: Casas Nuevas Llave en Mano (con gestión de Permisos DOM y Recepción Definitiva), Segundos Pisos y Ampliaciones, Quinchos Premium, Remodelaciones y Ejecución de Subsidios MINVU Sitio Propio.
+- **Cobertura**: Región Metropolitana de Santiago.
+`
+    });
+
+    const result = await model.generateContent(userText);
+    const response = await result.response;
+    return response.text();
+}
+
 // Clasificación Ultra Rápida de Intención
 function classifyIntent(userMessage) {
     const textLower = (userMessage || "").toLowerCase().trim();
@@ -165,22 +229,36 @@ module.exports = async (req, res) => {
                             const nameQuery = profileName 
                                 ? `?name=${encodeURIComponent(profileName)}&phone=${encodeURIComponent(from)}` 
                                 : `?phone=${encodeURIComponent(from)}`;
+                            const particularLink = `https://www.cuatropuntas.com/precios${nameQuery}`;
+                            const subsidioLink = `https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
 
                             console.log(`📩 Mensaje procesado de ${from} (${profileName || 'Sin Nombre'}) hacia PhoneID ${incomingPhoneId}: "${userText}"`);
 
-                            const intent = classifyIntent(userText);
                             let responseMsg = "";
 
-                            if (intent === "SALUDO_INICIAL") {
-                                responseMsg = firstName
-                                    ? `¡Hola ${firstName}! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`
-                                    : `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
-                            } else if (intent === "ROUTE_1") {
-                                responseMsg = `¡Excelente${nameGreeting}! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
-                            } else if (intent === "ROUTE_2") {
-                                responseMsg = `Estupendo${nameGreeting}, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: https://www.cuatropuntas.com/precios${nameQuery}`;
-                            } else {
-                                responseMsg = `Comprendo${nameGreeting}. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
+                            // 1. Intentar generar respuesta inteligente con Gemini AI
+                            try {
+                                responseMsg = await generateAIWhatsAppResponse(userText, profileName, firstName, from);
+                            } catch (aiErr) {
+                                console.error("⚠️ Error intentando responder con Gemini AI:", aiErr.message);
+                            }
+
+                            // 2. Fallback a respuestas estáticas por intenciones si Gemini no genera respuesta
+                            if (!responseMsg) {
+                                console.log("ℹ️ Usando respuesta fallback por intenciones...");
+                                const intent = classifyIntent(userText);
+
+                                if (intent === "SALUDO_INICIAL") {
+                                    responseMsg = firstName
+                                        ? `¡Hola ${firstName}! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`
+                                        : `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
+                                } else if (intent === "ROUTE_1") {
+                                    responseMsg = `¡Excelente${nameGreeting}! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: ${subsidioLink}`;
+                                } else if (intent === "ROUTE_2") {
+                                    responseMsg = `Estupendo${nameGreeting}, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: ${particularLink}`;
+                                } else {
+                                    responseMsg = `Comprendo${nameGreeting}. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
+                                }
                             }
 
                             // Enviar respuesta usando dinámicamente el PhoneID oficial que recibió la solicitud
