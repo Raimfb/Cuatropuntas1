@@ -56,16 +56,13 @@ module.exports = async (req, res) => {
 
         const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas.com/visita-tecnica";
 
-        // Mapeo legible de comunas y sectores para presentación ejecutiva
-        function getComunaLabel(comunaKey) {
-            const map = {
-                'Tier1': 'Sector Oriente & Precordillera (Las Condes, Vitacura, Lo Barnechea, Providencia, La Reina)',
-                'Tier2': 'Sector Centro-Oriente / Residencial (Ñuñoa, Macul, La Florida, Peñalolén, San Miguel, Huechuraba)',
-                'Tier3': 'Sector Poniente / Sur / Norte / Centro (Maipú, Pudahuel, Puente Alto, San Bernardo, Santiago Centro, Quilicura)',
-                'Tier4': 'Sectores en Crecimiento RM (Renca, Lo Espejo, Cerro Navia, PAC, Lo Prado, San Ramón, Conchalí)',
-                'Tier5': 'Zonas Rurales / Parcelas RM (Colina/Chicureo, Lampa, Talagante, Buin, Paine, Pirque, Calera de Tango, Melipilla, Peñaflor)'
-            };
-            return map[comunaKey] || comunaKey || 'Región Metropolitana';
+        // Mapeo legible de comunas para presentación ejecutiva
+        function getComunaLabel(comunaVal) {
+            if (!comunaVal) return 'Región Metropolitana';
+            if (comunaVal === 'Tier1') return 'Sector Oriente, RM';
+            if (comunaVal.startsWith('Tier')) return 'Región Metropolitana';
+            if (comunaVal.includes('RM') || comunaVal.includes('Metropolitana')) return comunaVal;
+            return `${comunaVal}, RM`;
         }
 
         const comunaHuman = getComunaLabel(comuna);
@@ -104,15 +101,20 @@ module.exports = async (req, res) => {
         if (areaNum < 40) multiplicador += 0.08; // Proyectos pequeños (costo fijo proporcional mayor)
         if (terminaciones === 'Premium') multiplicador += 0.10; // Terminaciones Premium (porcelanatos, termopanel)
 
-        // Factor por Comuna / Logística en RM
-        const tiers = {
-            'Tier1': 1.05, // Sector Oriente (+5% estándar zona y accesos)
-            'Tier2': 1.00, // Residencial (Base)
-            'Tier3': 1.00, // Eje Central / Poniente (Base)
-            'Tier4': 0.98, // En Crecimiento (-2%)
-            'Tier5': 0.98  // Periferia / Rural (-2%)
-        };
-        const factorComuna = tiers[comuna] || 1.0;
+        // Factor logístico interno por comuna en RM
+        function getFactorComuna(comunaVal) {
+            if (!comunaVal) return 1.0;
+            const name = String(comunaVal).toLowerCase();
+            if (name.includes('vitacura') || name.includes('las condes') || name.includes('lo barnechea') || name.includes('providencia') || name.includes('la reina') || name === 'tier1') {
+                return 1.05;
+            }
+            if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacaví') || name.includes('alhué') || name.includes('pirque') || name.includes('san josé de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maría pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
+                return 0.98;
+            }
+            return 1.00;
+        }
+
+        const factorComuna = getFactorComuna(comuna);
 
         const costoM2Final = baseUFm2 * multiplicador * factorComuna;
         const totalEstimado = costoM2Final * areaNum;
