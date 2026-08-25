@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
             return res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
         }
 
-        const { tipo, sistema, area, pisos, terminaciones, comuna, nombre, email, telefono } = req.body;
+        const { tipo, sistema, area, pisos, terminaciones, comuna, permisos, nombre, email, telefono } = req.body;
 
         // 2. Validación de campos obligatorios
         if (!tipo || !sistema || area === undefined || pisos === undefined || !terminaciones || !comuna || !nombre || !email || !telefono) {
@@ -65,6 +65,50 @@ module.exports = async (req, res) => {
             return `${comunaVal}, RM`;
         }
 
+        // Mapeo y factores para Estado de Planos y Permisos DOM
+        function getPermisosData(permisosKey) {
+            switch (permisosKey) {
+                case 'PermisoAprobado':
+                    return {
+                        label: 'Permiso de Edificación DOM Aprobado (Listo para construir)',
+                        factor: 0.94, // ~6% de descuento técnico por expediente aprobado
+                        adminBadge: 'PERMISO DOM APROBADO (Listo para inicio inmediato)',
+                        badgeShort: 'Permiso DOM Listo',
+                        badgePdf: 'Permiso DOM Aprobado',
+                        notePdf: 'Descuento técnico aplicado por proyecto municipal aprobado. Inicio de faenas programable en plazos reducidos.'
+                    };
+                case 'ArquitectoPropio':
+                    return {
+                        label: 'Arquitecto propio a cargo de la DOM (Solo ejecución de obra)',
+                        factor: 0.94, // ~6% de descuento técnico por gestión externa
+                        adminBadge: 'ARQUITECTO PROPIO (Solo requiere Construcción)',
+                        badgeShort: 'Arq. Propio',
+                        badgePdf: 'Arq. Propio (Solo Obra)',
+                        notePdf: 'Cotización orientada a la ejecución material de obra bajo dirección de tu arquitecto patrocinante.'
+                    };
+                case 'Planos':
+                    return {
+                        label: 'Planos de arquitectura listos (Falta cálculo y permiso DOM)',
+                        factor: 0.97, // ~3% de descuento técnico por diseño inicial
+                        adminBadge: 'PLANOS LISTOS (Falta cálculo y trámite DOM)',
+                        badgeShort: 'Con Planos',
+                        badgePdf: 'Planos Listos (Falta DOM)',
+                        notePdf: 'Descuento aplicado por planos existentes. Cuatropuntas asume ingeniería de cálculo y tramitación municipal.'
+                    };
+                case 'Idea':
+                default:
+                    return {
+                        label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
+                        factor: 1.00,
+                        adminBadge: 'PROYECTO COMPLETO (Diseño + DOM + Construcción)',
+                        badgeShort: 'Desde Cero',
+                        badgePdf: 'Diseño + DOM + Obra',
+                        notePdf: 'Modalidad Llave en Mano Integral: incluye arquitectura, cálculo estructural, gestión DOM y ejecución de obra.'
+                    };
+            }
+        }
+
+        const permisosData = getPermisosData(permisos);
         const comunaHuman = getComunaLabel(comuna);
         const firstName = (nombre || '').trim().split(' ')[0] || 'Cliente';
 
@@ -115,8 +159,9 @@ module.exports = async (req, res) => {
         }
 
         const factorComuna = getFactorComuna(comuna);
+        const factorPermisos = permisosData.factor;
 
-        const costoM2Final = baseUFm2 * multiplicador * factorComuna;
+        const costoM2Final = baseUFm2 * multiplicador * factorComuna * factorPermisos;
         const totalEstimado = costoM2Final * areaNum;
 
         // Rango referencial: ±5% sobre el total estimado para dar un margen comercial realista
@@ -173,7 +218,7 @@ module.exports = async (req, res) => {
         doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('1. Parámetros Técnicos del Proyecto', 45, 148);
 
         const cardTop = 164;
-        doc.roundedRect(45, cardTop, 522, 70, 4).fillAndStroke('#f8fafc', '#e2e8f0');
+        doc.roundedRect(45, cardTop, 522, 72, 4).fillAndStroke('#f8fafc', '#e2e8f0');
         
         doc.fillColor('#2d3748').fontSize(9).font('Helvetica');
         doc.text(`• Tipo de Obra: ${tipo}`, 60, cardTop + 10);
@@ -182,11 +227,12 @@ module.exports = async (req, res) => {
         doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 52);
 
         doc.text(`• Sector / Ubicación: ${comunaHuman}`, 290, cardTop + 10, { width: 260 });
+        doc.text(`• Estado Planos / DOM: ${permisosData.badgePdf}`, 290, cardTop + 24, { width: 260 });
         doc.text('• Modalidad: Llave en Mano Integral', 290, cardTop + 38);
-        doc.text('• Gestión Municipal: Asesoría Permisos DOM', 290, cardTop + 52);
+        doc.text('• Gestión Municipal: Asesoría Técnica DOM', 290, cardTop + 52);
 
         // 4. Inversión Estimada Referencial
-        const sec2Top = cardTop + 82;
+        const sec2Top = cardTop + 84;
         doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('2. Estimación Económica Referencial (Sin IVA)', 45, sec2Top);
         doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
            .text('Rango paramétrico preliminar calculado según m² y sistema constructivo seleccionado:', 45, sec2Top + 15);
@@ -220,23 +266,23 @@ module.exports = async (req, res) => {
         const btnX = 135;
         const btnY = sec4Top + 48;
         const btnWidth = 340;
-        const btnHeight = 32;
-
+        const btnHeight = 36;
+        
         doc.roundedRect(btnX, btnY, btnWidth, btnHeight, 6).fill('#c05621');
-        doc.fillColor('#ffffff').fontSize(10).font('Helvetica-Bold').text('AGENDAR ASESORÍA TÉCNICA (40 MIN) EN CAL.COM', btnX, btnY + 11, {
-            width: btnWidth,
-            align: 'center',
-            link: calendarUrl,
-            underline: false
-        });
+        doc.fillColor('#ffffff').fontSize(11).font('Helvetica-Bold')
+           .text('AGENDAR VISITA / ASESORÍA EN TERRENO', btnX, btnY + 12, { 
+               width: btnWidth, 
+               align: 'center' 
+           });
+        doc.link(btnX, btnY, btnWidth, btnHeight, calendarUrl);
 
-        const contactY = btnY + btnHeight + 12;
-        doc.fontSize(8.5).font('Helvetica').fillColor('#718096')
-           .text('O contáctanos directamente por WhatsApp al +56 9 7909 2027  |  contacto@cuatropuntas.com', 45, contactY, { width: 522, align: 'center' });
+        doc.fontSize(8).font('Helvetica').fillColor('#718096')
+           .text('Haz clic en el botón superior o escríbenos a contacto@cuatropuntas.com', 45, btnY + 44, { width: 522, align: 'center' });
 
-        // 7. Pie de Documento
+        // 7. Pie de Página
+        doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 730).lineTo(567, 730).stroke();
         doc.fontSize(7.5).font('Helvetica').fillColor('#a0aec0')
-           .text('Nota Legal: Este documento representa una estimación paramétrica referencial y no constituye un contrato vinculante. Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com', 45, 715, { width: 522, align: 'center' });
+           .text('Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com · Documento informativo referencial.', 45, 738, { width: 522, align: 'center' });
 
         doc.end();
 
@@ -264,13 +310,13 @@ module.exports = async (req, res) => {
             </div>
         `;
 
-        // --- CONFIGURACIÓN DE CORREOS (Nodemailer Zoho) ---
-        const user = process.env.ZOHO_USER || 'contacto@cuatropuntas.com';
+        // --- ENVÍO DE CORREOS TRANSACCIONALES VÍA NODEMAILER ---
+        const user = process.env.ZOHO_USER;
         const pass = process.env.ZOHO_PASS;
 
-        if (!pass) {
-            console.error('CRITICAL: ZOHO_PASS environment variable is missing.');
-            return res.status(500).json({ error: 'Error de configuración del servidor. Falta ZOHO_PASS.' });
+        if (!user || !pass) {
+            console.error("ERROR: Variables de entorno ZOHO_USER o ZOHO_PASS no configuradas.");
+            return res.status(500).json({ error: 'Error en el servidor de correo. Por favor contáctanos por WhatsApp.' });
         }
 
         const transporter = nodemailer.createTransport({
@@ -309,13 +355,14 @@ module.exports = async (req, res) => {
                         <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
                         <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
                         <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>
+                        <tr><td style="padding: 4px 0;"><strong>Planos / Permiso DOM:</strong></td><td>${permisosData.label}</td></tr>
                         <tr>
                             <td style="padding: 8px 0 4px 0;"><strong>Inversión Estimada:</strong></td>
                             <td style="padding: 8px 0 4px 0;"><span style="color: #c05621; font-size: 18px; font-weight: bold;">${minUF} a ${maxUF} UF</span> <span style="font-size: 12px; color: #718096;">(sin IVA)</span></td>
                         </tr>
                     </table>
                     <p style="margin: 10px 0 0 0; font-size: 12px; color: #718096;">
-                        *Valores paramétricos calculados según m² y sistema seleccionado. Adjunto encontrarás el documento PDF oficial con el desglose técnico.
+                        *Valores paramétricos calculados según m², sistema constructivo y estado del proyecto. Adjunto encontrarás el documento PDF oficial con el desglose técnico.
                     </p>
                 </div>
 
@@ -375,7 +422,7 @@ module.exports = async (req, res) => {
         const mailToAdmin = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: 'contacto@cuatropuntas.com',
-            subject: `NUEVA COTIZACIÓN WEB: ${nombre} (${tipo} ${areaNum}m² - ${minUF}-${maxUF} UF) - ${comunaHuman.split('(')[0].trim()}`,
+            subject: `NUEVA COTIZACIÓN WEB: ${nombre} (${tipo} ${areaNum}m² - ${minUF}-${maxUF} UF) [${permisosData.badgeShort}] - ${comunaHuman.split(',')[0].trim()}`,
             html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #ffffff; border: 2px solid #c05621; border-radius: 8px; max-width: 600px;">
                 <h2 style="color: #c05621; margin-top: 0;">NUEVO CLIENTE HA COTIZADO EN LA WEB</h2>
@@ -388,6 +435,7 @@ module.exports = async (req, res) => {
                     <tr><td style="padding: 8px; font-weight: bold;">Proyecto:</td><td style="padding: 8px;"><strong>${tipo}</strong> (${areaNum} m², ${pisosNum} piso${pisosNum > 1 ? 's' : ''}, ${sistema})</td></tr>
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Terminaciones:</td><td style="padding: 8px;">${terminaciones}</td></tr>
                     <tr><td style="padding: 8px; font-weight: bold;">Ubicación:</td><td style="padding: 8px;">${comunaHuman}</td></tr>
+                    <tr style="background-color: #fef3c7;"><td style="padding: 8px; font-weight: bold; color: #92400e;">Estado DOM / Planos:</td><td style="padding: 8px; font-weight: bold; color: #92400e;">${permisosData.adminBadge}</td></tr>
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Rango UF:</td><td style="padding: 8px; color: #c05621; font-weight: bold;">${minUF} a ${maxUF} UF (sin IVA)</td></tr>
                 </table>
 
@@ -421,7 +469,7 @@ module.exports = async (req, res) => {
             const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
             if (token) {
                 const adminPhone = "56979092027";
-                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} (${areaNum} m² - ${sistema})\n*Sector*: ${comunaHuman.split('(')[0].trim()}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
+                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} (${areaNum} m² - ${sistema})\n*Sector*: ${comunaHuman.split(',')[0].trim()}\n*Estado DOM*: ${permisosData.adminBadge}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
                 
                 await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
                     method: 'POST',
