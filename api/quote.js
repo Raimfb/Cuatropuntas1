@@ -59,11 +59,11 @@ module.exports = async (req, res) => {
         // Mapeo legible de comunas y sectores para presentación ejecutiva
         function getComunaLabel(comunaKey) {
             const map = {
-                'Tier1': 'Sector Oriente (Vitacura, Las Condes, Lo Barnechea, Providencia, La Reina)',
-                'Tier2': 'Sector Centro-Oriente / Residencial (Ñuñoa, Macul, La Florida, Peñalolén, San Miguel)',
-                'Tier3': 'Sector Poniente / Sur / Norte (Maipú, Pudahuel, Puente Alto, San Bernardo, Santiago)',
-                'Tier4': 'Sectores en Crecimiento RM (Renca, Lo Espejo, Cerro Navia, PAC, Lo Prado)',
-                'Tier5': 'Zonas Rurales / Periferia RM (Colina/Chicureo, Lampa, Talagante, Buin, Paine)'
+                'Tier1': 'Sector Oriente & Precordillera (Las Condes, Vitacura, Lo Barnechea, Providencia, La Reina)',
+                'Tier2': 'Sector Centro-Oriente / Residencial (Ñuñoa, Macul, La Florida, Peñalolén, San Miguel, Huechuraba)',
+                'Tier3': 'Sector Poniente / Sur / Norte / Centro (Maipú, Pudahuel, Puente Alto, San Bernardo, Santiago Centro, Quilicura)',
+                'Tier4': 'Sectores en Crecimiento RM (Renca, Lo Espejo, Cerro Navia, PAC, Lo Prado, San Ramón, Conchalí)',
+                'Tier5': 'Zonas Rurales / Parcelas RM (Colina/Chicureo, Lampa, Talagante, Buin, Paine, Pirque, Calera de Tango, Melipilla, Peñaflor)'
             };
             return map[comunaKey] || comunaKey || 'Región Metropolitana';
         }
