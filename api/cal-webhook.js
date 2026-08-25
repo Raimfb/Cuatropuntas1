@@ -96,25 +96,25 @@ module.exports = async (req, res) => {
 
             // 1. ALERTA INSTANTÁNEA AL ADMINISTRADOR (+56 9 7909 2027)
             const adminPhone = "56979092027";
-            const adminMessage = `🚨 *¡NUEVA REUNIÓN AGENDADA EN CAL.COM!* 📅
+            const adminMessage = `*NUEVA REUNIÓN AGENDADA EN CAL.COM*
 
-👤 *Cliente*: ${clientName}
-📞 *Teléfono*: ${clientPhone}
-📧 *Email*: ${clientEmail}
-🕒 *Fecha y Hora*: ${formattedDate}
-📌 *Motivo*: ${title}
+*Cliente*: ${clientName}
+*Teléfono*: ${clientPhone}
+*Email*: ${clientEmail}
+*Fecha y Hora*: ${formattedDate}
+*Motivo*: ${title}
 
-💡 *Recordatorios*: El sistema enviará recordatorio por WhatsApp 2 días (o 4 horas) antes al cliente para confirmación.`;
+*Recordatorios*: El sistema enviará recordatorio por WhatsApp 2 días (o 4 horas) antes al cliente para confirmación.`;
 
             await sendWhatsAppAlert(adminPhone, adminMessage);
 
             // 2. CONFIRMACIÓN INSTANTÁNEA AL CLIENTE (Si hay teléfono válido)
             if (clientPhone && clientPhone !== "No registrado") {
-                const clientMessage = `¡Hola ${clientName}! 🏗️
+                const clientMessage = `Estimado(a) ${clientName},
 
-Confirmamos que tu cita para **${title}** ha sido agendada con éxito para el **${formattedDate}**.
+Confirmamos que tu cita para "${title}" con Constructora Cuatropuntas ha sido agendada para el ${formattedDate}.
 
- Te enviaremos un recordatorio por este mismo medio para confirmar tu asistencia. ¡Nos vemos pronto!`;
+Te enviaremos un recordatorio previo por este mismo medio para coordinar los detalles. Saludos cordiales, Equipo Cuatropuntas.`;
                 await sendWhatsAppAlert(clientPhone, clientMessage);
             }
 

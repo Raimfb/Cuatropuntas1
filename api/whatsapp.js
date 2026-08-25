@@ -294,8 +294,8 @@ module.exports = async (req, res) => {
 
                                 if (intent === "SALUDO_INICIAL") {
                                     responseMsg = firstName
-                                        ? `¡Hola ${firstName}! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`
-                                        : `¡Hola! Qué gusto saludarte. Bienvenido a Cuatropuntas Constructora. 🏗️ Para orientarte, cuéntame un poco: ¿Qué tipo de proyecto tienes en mente? (Por ejemplo: una construcción desde cero, ampliación, remodelación o si ya cuentas con un subsidio habitacional aprobado).`;
+                                        ? `Hola ${firstName}, bienvenido a Cuatropuntas Constructora. Para orientarte de la mejor forma, cuéntame: ¿qué tipo de proyecto tienes en mente? (Por ejemplo: construcción de casa nueva, segundo piso o ampliación, quincho, remodelación o proyecto con subsidio en terreno propio).`
+                                        : `Hola, bienvenido a Cuatropuntas Constructora. Para orientarte de la mejor forma, cuéntame: ¿qué tipo de proyecto tienes en mente? (Por ejemplo: construcción de casa nueva, segundo piso o ampliación, quincho, remodelación o proyecto con subsidio en terreno propio).`;
                                 } else if (intent === "ROUTE_1") {
                                     responseMsg = `¡Excelente${nameGreeting}! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: ${subsidioLink}`;
                                 } else if (intent === "ROUTE_2") {

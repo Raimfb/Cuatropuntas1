@@ -285,7 +285,7 @@ module.exports = async (req, res) => {
         const mailToClient = {
             from: `"Constructora Cuatropuntas" <${user}>`,
             to: email,
-            subject: `📐 Tu estimación para ${tipo}: ${minUF} a ${maxUF} UF | Constructora Cuatropuntas`,
+            subject: `Estimación para ${tipo}: ${minUF} a ${maxUF} UF | Constructora Cuatropuntas`,
             html: `
             <div style="font-family: Arial, Helvetica, sans-serif; max-width: 620px; margin: auto; padding: 24px; color: #2d3748; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;">
                 <!-- Header -->
@@ -295,14 +295,14 @@ module.exports = async (req, res) => {
                 </div>
 
                 <!-- Saludo cálido y validación -->
-                <p style="font-size: 16px; margin-bottom: 12px;">¡Hola, <strong>${firstName}</strong>!</p>
+                <p style="font-size: 16px; margin-bottom: 12px;">Estimado(a) <strong>${firstName}</strong>,</p>
                 <p style="font-size: 15px; line-height: 1.6; color: #4a5568; margin-top: 0;">
-                    ¡Qué gran proyecto! Planificar tu <strong>${tipo} de ${areaNum} m²</strong> es un paso importante. En Cuatropuntas queremos acompañarte con total respaldo técnico, materiales normados y transparencia de costos desde el primer minuto.
+                    Agradecemos tu interés en cotizar con nosotros. Planificar tu <strong>${tipo} de ${areaNum} m²</strong> es un paso importante. En Cuatropuntas te acompañamos con respaldo técnico, materiales certificados y absoluta transparencia de costos.
                 </p>
 
                 <!-- Tarjeta Resumen Visual Inmediato -->
                 <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #c05621; border-radius: 6px; padding: 18px; margin: 20px 0;">
-                    <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">📋 Ficha de Estimación Referencial</h3>
+                    <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
                     <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
                         <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
                         <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
@@ -329,13 +329,13 @@ module.exports = async (req, res) => {
                 <div style="text-align: center; margin: 28px 0 20px 0;">
                     <!-- Botón 1: Cal.com -->
                     <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 12px;">
-                        📅 Agendar Asesoría Técnica (40 min) en Cal.com
+                        Agendar Asesoría Técnica (40 min) en Cal.com
                     </a>
                     
                     <!-- Botón 2: WhatsApp -->
                     <div>
-                        <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #25D366; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            💬 ¿Prefieres resolver dudas previas? Chatea por WhatsApp
+                        <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #128C7E; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            ¿Prefieres resolver dudas previas? Chatear por WhatsApp
                         </a>
                     </div>
                     <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica directa de lunes a viernes de 09:00 a 18:30 hrs</p>
@@ -353,10 +353,9 @@ module.exports = async (req, res) => {
 
                 ${faqEmailHtml}
 
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 18px; margin-top: 24px; font-size: 14px; color: #4a5568;">
-                    <p style="margin: 0 0 4px 0;">Un saludo cordial,</p>
-                    <p style="margin: 0; font-weight: bold; color: #1a365d;">Equipo Técnico & Arquitectura</p>
-                    <p style="margin: 0; color: #c05621;">Constructora Cuatropuntas SpA</p>
+                <!-- Footer -->
+                <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px;">
+                    <p style="margin: 0; font-size: 13px; color: #718096; font-weight: bold;">Constructora Cuatropuntas SpA</p>
                     <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 7909 2027</p>
                 </div>
             </div>
@@ -374,10 +373,10 @@ module.exports = async (req, res) => {
         const mailToAdmin = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: 'contacto@cuatropuntas.com',
-            subject: `🔥 NUEVA COTIZACIÓN WEB: ${nombre} (${tipo} ${areaNum}m² - ${minUF}-${maxUF} UF) - ${comunaHuman.split('(')[0].trim()}`,
+            subject: `NUEVA COTIZACIÓN WEB: ${nombre} (${tipo} ${areaNum}m² - ${minUF}-${maxUF} UF) - ${comunaHuman.split('(')[0].trim()}`,
             html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #ffffff; border: 2px solid #c05621; border-radius: 8px; max-width: 600px;">
-                <h2 style="color: #c05621; margin-top: 0;">🚀 NUEVO CLIENTE HA COTIZADO EN LA WEB</h2>
+                <h2 style="color: #c05621; margin-top: 0;">NUEVO CLIENTE HA COTIZADO EN LA WEB</h2>
                 <p>El sistema automático ha emitido y enviado una estimación referencial de <strong>${minUF} a ${maxUF} UF</strong> al siguiente prospecto:</p>
                 
                 <table style="width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px;">
@@ -393,7 +392,7 @@ module.exports = async (req, res) => {
                 <!-- BOTÓN 1-TOUCH WHATSAPP PARA CONTACTO RÁPIDO DESDE EL CELULAR -->
                 <div style="text-align: center; margin: 24px 0;">
                     <a href="${adminReplyWaUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #25D366; color: #ffffff; padding: 14px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">
-                        📲 ESCRIBIR A ${firstName.toUpperCase()} POR WHATSAPP (1 TOQUE)
+                        ESCRIBIR A ${firstName.toUpperCase()} POR WHATSAPP
                     </a>
                     <p style="font-size: 12px; color: #718096; margin-top: 8px;">Abre WhatsApp con mensaje de saludo e invitación a reunión técnica pre-redactado</p>
                 </div>
@@ -420,7 +419,7 @@ module.exports = async (req, res) => {
             const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
             if (token) {
                 const adminPhone = "56979092027";
-                const adminMsg = `🏗️ *NUEVA COTIZACIÓN WEB CUATROPUNTAS* 📐\n\n👤 *Cliente*: ${nombre}\n📞 *Teléfono*: ${telefono}\n📧 *Email*: ${email}\n📌 *Proyecto*: ${tipo} (${areaNum} m² - ${sistema})\n📍 *Sector*: ${comunaHuman.split('(')[0].trim()}\n💰 *Rango*: ${minUF} a ${maxUF} UF\n\n👉 *Contactar*: https://wa.me/${formattedClientPhone}`;
+                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} (${areaNum} m² - ${sistema})\n*Sector*: ${comunaHuman.split('(')[0].trim()}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
                 
                 await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
                     method: 'POST',

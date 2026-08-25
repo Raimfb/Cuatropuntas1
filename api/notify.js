@@ -51,7 +51,7 @@ module.exports = async (req, res) => {
         const adminEmail = process.env.ADMIN_EMAIL || 'contacto@cuatropuntas.com';
 
         const leadDataFormatted = `
-📌 DATOS DEL LEAD CALIENTE (Meta WhatsApp Funnel)
+DATOS DEL LEAD (Meta WhatsApp Funnel)
 ------------------------------------------------
 • Cliente: ${nombre}
 • Email: ${email}
@@ -109,14 +109,14 @@ module.exports = async (req, res) => {
                     </div>
 
                     <div style="text-align: center; margin: 32px 0;">
-                        <p style="font-size: 15px; color: #2d3748; font-weight: bold; margin-bottom: 12px;">🎥 Recurso Educativo Exclusivo (Lead Magnet):</p>
+                        <p style="font-size: 15px; color: #2d3748; font-weight: bold; margin-bottom: 12px;">Recurso Educativo Exclusivo:</p>
                         <a href="${lead_magnet_url}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                            ▶️ Ver Guía en Video: Factibilidad & Precios Llave en Mano
+                            Ver Guía en Video: Factibilidad & Precios Llave en Mano
                         </a>
                     </div>
 
                     <p style="font-size: 14px; color: #718096; line-height: 1.5;">
-                        Un ejecutivo técnico senior de nuestro equipo te contactará directamente por teléfono o WhatsApp al <strong>${telefono || 'tu número registrado'}</strong> para agendar tu evaluación en terreno.
+                        Un ejecutivo técnico de nuestro equipo te contactará directamente por teléfono o WhatsApp al <strong>${telefono || 'tu número registrado'}</strong> para agendar tu evaluación en terreno.
                     </p>
 
                     <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
@@ -132,10 +132,10 @@ module.exports = async (req, res) => {
             const mailToAdmin = {
                 from: `"WhatsApp Meta Bot" <${user}>`,
                 to: adminEmail,
-                subject: `🔥 HOT LEAD META WHATSAPP: ${nombre} (${comuna || 'RM'} - ${lead_type})`,
+                subject: `NUEVO LEAD META WHATSAPP: ${nombre} (${comuna || 'RM'} - ${lead_type})`,
                 html: `
                 <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #fffaf0; border: 2px solid #dd6b20; border-radius: 8px;">
-                    <h2 style="color: #c05621; margin-top: 0;">🔥 ALERTA DE LEAD CALIENTE (Meta WhatsApp)</h2>
+                    <h2 style="color: #c05621; margin-top: 0;">ALERTA DE LEAD (Meta WhatsApp)</h2>
                     <p>Un prospecto acaba de superar el funnel de filtrado estricto con los siguientes datos:</p>
                     <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
                         <tr style="background-color: #feebc8;"><td style="padding: 8px; font-weight: bold;">Nombre:</td><td style="padding: 8px;">${nombre}</td></tr>
@@ -147,7 +147,7 @@ module.exports = async (req, res) => {
                         <tr style="background-color: #feebc8;"><td style="padding: 8px; font-weight: bold;">Subsidio Adjudicado:</td><td style="padding: 8px;">${subsidio_adjudicado}</td></tr>
                         <tr><td style="padding: 8px; font-weight: bold;">Superficie:</td><td style="padding: 8px;">${area_estimada} m²</td></tr>
                     </table>
-                    <p style="margin-top: 20px; font-weight: bold; color: #2b6cb0;">👉 Realizar contacto humano dentro de las próximas 2 horas para maximizar la tasa de cierre.</p>
+                    <p style="margin-top: 20px; font-weight: bold; color: #2b6cb0;">Realizar contacto dentro de las próximas 2 horas para coordinar visita técnica.</p>
                 </div>
                 `
             };
