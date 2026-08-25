@@ -311,11 +311,11 @@ module.exports = async (req, res) => {
         `;
 
         // --- ENVÍO DE CORREOS TRANSACCIONALES VÍA NODEMAILER ---
-        const user = process.env.ZOHO_USER;
+        const user = process.env.ZOHO_USER || 'contacto@cuatropuntas.com';
         const pass = process.env.ZOHO_PASS;
 
-        if (!user || !pass) {
-            console.error("ERROR: Variables de entorno ZOHO_USER o ZOHO_PASS no configuradas.");
+        if (!pass) {
+            console.error("ERROR: Variable de entorno ZOHO_PASS no configurada.");
             return res.status(500).json({ error: 'Error en el servidor de correo. Por favor contáctanos por WhatsApp.' });
         }
 
