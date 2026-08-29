@@ -54,8 +54,6 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
-        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas.com/visita-tecnica";
-
         // Mapeo legible de comunas para presentación ejecutiva
         function getComunaLabel(comunaVal) {
             if (!comunaVal) return 'Región Metropolitana';
@@ -64,6 +62,12 @@ module.exports = async (req, res) => {
             if (comunaVal.includes('RM') || comunaVal.includes('Metropolitana')) return comunaVal;
             return `${comunaVal}, RM`;
         }
+
+        const visitWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) en ${getComunaLabel(comuna)} y me gustaría agendar una visita técnica a terreno.`);
+        const defaultCalendarUrl = `https://wa.me/56927384075?text=${visitWaText}`;
+        const envCalendar = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL;
+        // Evitar cualquier enlace roto o desactualizado de cal.com
+        const calendarUrl = (envCalendar && !envCalendar.includes('cal.com')) ? envCalendar : defaultCalendarUrl;
 
         // Mapeo y factores para Estado de Planos y Permisos DOM
         function getPermisosData(permisosKey) {
@@ -176,10 +180,10 @@ module.exports = async (req, res) => {
         const cleanClientPhone = (telefono || '').replace(/\D/g, '');
         const formattedClientPhone = cleanClientPhone.startsWith('56') ? cleanClientPhone : (cleanClientPhone.length === 9 ? `56${cleanClientPhone}` : cleanClientPhone);
         
-        const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar detalles con un asesor técnico.`);
-        const clientWhatsappUrl = `https://wa.me/56979092027?text=${clientWaText}`;
+        const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar una visita técnica a terreno.`);
+        const clientWhatsappUrl = `https://wa.me/56927384075?text=${clientWaText}`;
 
-        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} (${areaNum} m²). ¿Te parece si coordinamos una sesión de asesoría técnica de 40 min para revisar los detalles de tu terreno y diseño?`);
+        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} (${areaNum} m²). ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
         const adminReplyWaUrl = `https://wa.me/${formattedClientPhone}?text=${adminWaText}`;
 
         // --- GENERACIÓN DE PDF PROFESIONAL EN MEMORIA (PDFKit) ---
@@ -256,13 +260,13 @@ module.exports = async (req, res) => {
         curY += 32;
         doc.text('• Gestión Normativa Integral: Asesoramos y gestionamos la tramitación de Permiso de Edificación y Recepción Final ante la Dirección de Obras Municipales (DOM).', 45, curY, { width: 522, lineGap: 2 });
 
-        // 6. Siguiente Paso — Sesión de Asesoría Técnica (40 Minutos)
+        // 6. Siguiente Paso — Coordinar Visita Técnica a Terreno
         const sec4Top = curY + 22;
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('4. Siguiente Paso — Sesión de Asesoría Técnica y Viabilidad (40 min)', 45, sec4Top);
+        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('4. Siguiente Paso — Visita Técnica en Terreno', 45, sec4Top);
         doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
-           .text('Para aterrizar la distribución espacial, evaluar condiciones de terreno y estructurar tu proyecto definitivo con presupuesto cerrado, te invitamos a agendar una sesión técnica de 40 minutos.', 45, sec4Top + 15, { width: 522 });
+           .text('Para evaluar en terreno las condiciones de tu propiedad (deslindes, suelo, factibilidad municipal y distribución) y estructurar tu presupuesto definitivo a suma alzada, te invitamos a agendar una visita técnica.', 45, sec4Top + 15, { width: 522 });
 
-        // Botón Interactivo Corregido y Centrado (Sin Emojis rotos)
+        // Botón Interactivo Centrado
         const btnX = 135;
         const btnY = sec4Top + 48;
         const btnWidth = 340;
@@ -270,7 +274,7 @@ module.exports = async (req, res) => {
         
         doc.roundedRect(btnX, btnY, btnWidth, btnHeight, 6).fill('#c05621');
         doc.fillColor('#ffffff').fontSize(11).font('Helvetica-Bold')
-           .text('AGENDAR VISITA / ASESORÍA EN TERRENO', btnX, btnY + 12, { 
+           .text('AGENDAR VISITA TÉCNICA A TERRENO', btnX, btnY + 12, { 
                width: btnWidth, 
                align: 'center' 
            });
@@ -366,28 +370,28 @@ module.exports = async (req, res) => {
                     </p>
                 </div>
 
-                <!-- Explicación del Siguiente Paso (40 min) -->
+                <!-- Explicación del Siguiente Paso (Visita Técnica a Terreno) -->
                 <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 18px; margin: 24px 0;">
                     <h3 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 16px;">¿Cómo pasamos de esta estimación a tu proyecto definitivo?</h3>
                     <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1e40af;">
-                        Para aterrizar tu distribución espacial, evaluar la viabilidad de tu terreno/vivienda y entregarte un <strong>presupuesto cerrado a suma alzada</strong>, te invitamos a una <strong>Sesión de Asesoría Técnica y Viabilidad de 40 minutos</strong> con nuestro equipo.
+                        Para evaluar en terreno las condiciones de tu propiedad (deslindes, estado del suelo, factibilidad municipal y distribución) y estructurar un <strong>presupuesto definitivo cerrado a suma alzada</strong>, el siguiente paso es coordinar una <strong>Visita Técnica a Terreno</strong> con nuestro equipo de profesionales.
                     </p>
                 </div>
 
-                <!-- DOBLE LLAMADO A LA ACCIÓN (CAL.COM + WHATSAPP) -->
+                <!-- DOBLE LLAMADO A LA ACCIÓN (VISITA TÉCNICA + CONSULTAS WHATSAPP) -->
                 <div style="text-align: center; margin: 28px 0 20px 0;">
-                    <!-- Botón 1: Cal.com -->
+                    <!-- Botón 1: Visita Técnica -->
                     <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 12px;">
-                        Agendar Asesoría Técnica (40 min) en Cal.com
+                        Agendar Visita Técnica a Terreno
                     </a>
                     
                     <!-- Botón 2: WhatsApp -->
                     <div>
                         <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #128C7E; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            ¿Prefieres resolver dudas previas? Chatear por WhatsApp
+                            ¿Tienes dudas previas? Chatear por WhatsApp
                         </a>
                     </div>
-                    <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica directa de lunes a viernes de 09:00 a 18:30 hrs</p>
+                    <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica y coordinación de visitas en terreno: Lunes a Viernes de 09:00 a 18:30 hrs</p>
                 </div>
 
                 <!-- Pilares de Confianza y Transparencia Cuatropuntas -->
@@ -405,7 +409,7 @@ module.exports = async (req, res) => {
                 <!-- Footer -->
                 <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px;">
                     <p style="margin: 0; font-size: 13px; color: #718096; font-weight: bold;">Constructora Cuatropuntas SpA</p>
-                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 7909 2027</p>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 2738 4075</p>
                 </div>
             </div>
             `,
