@@ -41,6 +41,19 @@ for (const relPath of mainPagesToTest) {
         // Check 2: Floating WhatsApp button present
         const floatingBtn = page.locator('a[href*="wa.me/56927384075"]');
         await expect(floatingBtn.first()).toBeVisible();
+
+        // Check 3: Si la página tiene el botón de agendar visita técnica, validar texto y enlace exacto
+        const calBtn = page.locator('#calendarBtnLink');
+        if (await calBtn.count() > 0) {
+            await expect(calBtn).toHaveAttribute('href', 'https://cal.com/cuatropuntas.com/visita-tecnica');
+            const calBtnText = await calBtn.innerText();
+            expect(calBtnText).toContain('Agendar Visita Técnica a Terreno');
+        }
+
+        // Check 4: Ninguna página debe tener textos antiguos
+        expect(bodyText).not.toContain('Agendar Asesoría Técnica');
+        expect(bodyText).not.toContain('Sesión de Asesoría Técnica');
+        expect(bodyText).not.toContain('Agendar Reunión Técnica');
     });
 }
 
@@ -64,3 +77,24 @@ for (const item of blogPostsToTest) {
         }
     });
 }
+
+test('Verificar enlace y texto del botón de agendamiento en blog/index.html', async ({ page }) => {
+    const blogPath = path.join(publicDir, 'blog/index.html');
+    const fileUrl = `file:///${blogPath.replace(/\\/g, '/')}`;
+    await page.goto(fileUrl, { waitUntil: 'domcontentloaded' });
+
+    const calBlogBtn = page.locator('a[href="https://cal.com/cuatropuntas.com/visita-tecnica"]');
+    await expect(calBlogBtn.first()).toBeVisible();
+    const btnText = await calBlogBtn.first().innerText();
+    expect(btnText).toContain('Agendar Visita Técnica a Terreno');
+});
+
+test('Verificar que api/quote.js contiene los textos oficiales y enlace exacto', async () => {
+    const quoteCode = fs.readFileSync(path.join(__dirname, '../api/quote.js'), 'utf-8');
+    expect(quoteCode).toContain('https://cal.com/cuatropuntas.com/visita-tecnica');
+    expect(quoteCode).toContain('Agendar Visita Técnica a Terreno');
+    expect(quoteCode).toContain('4. Siguiente Paso — Visita Técnica en Terreno');
+    expect(quoteCode).not.toContain('Agendar Asesoría Técnica');
+    expect(quoteCode).not.toContain('Sesión de Asesoría Técnica');
+    expect(quoteCode).not.toContain('Agendar Reunión Técnica');
+});
