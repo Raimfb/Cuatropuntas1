@@ -63,11 +63,7 @@ module.exports = async (req, res) => {
             return `${comunaVal}, RM`;
         }
 
-        const visitWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) en ${getComunaLabel(comuna)} y me gustaría agendar una visita técnica a terreno.`);
-        const defaultCalendarUrl = `https://wa.me/56927384075?text=${visitWaText}`;
-        const envCalendar = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL;
-        // Evitar cualquier enlace roto o desactualizado de cal.com
-        const calendarUrl = (envCalendar && !envCalendar.includes('cal.com')) ? envCalendar : defaultCalendarUrl;
+        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas.com/visita-tecnica";
 
         // Mapeo y factores para Estado de Planos y Permisos DOM
         function getPermisosData(permisosKey) {
