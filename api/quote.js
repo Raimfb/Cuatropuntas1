@@ -63,7 +63,7 @@ module.exports = async (req, res) => {
             return `${comunaVal}, RM`;
         }
 
-        const calendarUrl = process.env.NEXT_PUBLIC_CALENDAR_URL || process.env.CALENDAR_URL || "https://cal.com/cuatropuntas.com/visita-tecnica";
+        const calendarUrl = "https://cal.com/cuatropuntas.com/visita-tecnica";
 
         // Mapeo y factores para Estado de Planos y Permisos DOM
         function getPermisosData(permisosKey) {
