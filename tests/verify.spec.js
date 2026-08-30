@@ -21,7 +21,8 @@ const blogPostsToTest = [
     { page: 'blog/posts/como-regularizar-ampliacion-segundo-piso-chile.html', expectedImage: 'blog_regularizar_ampliacion.jpg' },
     { page: 'blog/posts/en-que-fijarse-antes-de-construir.html', expectedImage: 'blog_consejos_construir.jpg' },
     { page: 'blog/posts/guia-precios-construccion-chile.html', expectedImage: 'blog_precios_construccion.jpg' },
-    { page: 'blog/posts/metalcon-vs-albanileria-vs-sip.html', expectedImage: 'blog_comparativa_sistemas.jpg' }
+    { page: 'blog/posts/metalcon-vs-albanileria-vs-sip.html', expectedImage: 'blog_comparativa_sistemas.jpg' },
+    { page: 'blog/posts/por-que-remodelar-bano-cocina-no-se-cobra-por-metro-cuadrado.html', expectedImage: 'blog_remodelacion_bano_cocina.jpg' }
 ];
 
 const screenshotsDir = path.join(__dirname, '../test-results/screenshots');
