@@ -15,17 +15,23 @@ Constructora Cuatropuntas SpA es una empresa de ingeniería y construcción civi
 - **Ventajas:** Alta resistencia sísmica, construcción en seco, menor peso sobre fundaciones existentes, velocidad de montaje hasta 40% mayor.
 - **Uso Recomendado:** Segundos pisos, ampliaciones sobre losa o madera, casas completas de 1 a 2 plantas.
 - **Aislación Térmica/Acústica:** Lana de vidrio/Lana mineral de alta densidad, membrana hidrófuga (Tyvek/Volcanwrap), placas de yeso-cartón o fibrocemento en exterior e interior.
-- **Rango de Precios Referencial:** 11 a 16 UF/m² (aprox. $420.000 a $610.000 CLP/m²).
+- **Rango de Precios Referencial:** Desde 19 UF/m² (Casas Nuevas) | Desde 22 UF/m² (Segundos Pisos) | Desde 11 UF/m² (Remodelación Ligera).
 
 ### B. Panel SIP (Structural Insulated Panel)
 - **Ventajas:** Excelente aislación térmica continua (núcleo EPS de alta densidad con caras OSB estructural), ahorro energético de hasta 60% en climatización, hermeticidad y rapidez.
 - **Uso Recomendado:** Casas completas en parcelas, ampliaciones térmicamente eficientes.
-- **Rango de Precios Referencial:** 13 a 18 UF/m² (aprox. $495.000 a $685.000 CLP/m²).
+- **Rango de Precios Referencial:** Desde 21 UF/m² (Casas Nuevas) | Desde 24 UF/m² (Segundos Pisos).
 
 ### C. Albañilería Armada y Confinada (Construcción Sólida Tradicional)
 - **Ventajas:** Gran inercia térmica, máxima durabilidad, estética tradicional chilena, robustez acústica.
 - **Uso Recomendado:** Primeros pisos, cierres perimetrales, quinchos pesados, viviendas de alto estándar.
-- **Rango de Precios Referencial:** 16 a 24 UF/m² (aprox. $610.000 a $915.000 CLP/m²).
+- **Rango de Precios Referencial:** Desde 25 UF/m² (Casas Nuevas) | Desde 27 UF/m² (Segundos Pisos) | Desde 15 UF/m² (Quinchos) | Desde 13 UF/m² (Remodelación Sólida).
+
+### D. Remodelaciones de Recintos Húmedos (Baños y Cocinas)
+- **Criterio Técnico:** Los baños y cocinas no se tasan linealmente por m² debido a su alta concentración de redes de agua/desagüe, impermeabilización y necesidad de inspección de cañerías preexistentes (vicios ocultos).
+- **Valores Referenciales:**
+  * **Baño Completo:** 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, impermeabilización, fontanería y porcelanato).
+  * **Cocina Integral:** 90 a 160 UF referencial (muebles a medida, cubierta en cuarzo, redes sanitarias y gas).
 
 ---
 
@@ -43,7 +49,7 @@ Constructora Cuatropuntas SpA es una empresa de ingeniería y construcción civi
 
 ## 4. Estructura de Precios y Cotización
 Para estimar un proyecto:
-1. **Superficie a construir (m²):** Multiplicar por el valor referencial de la materialidad.
+1. **Superficie a construir (m²):** Multiplicar por el valor referencial de la materialidad para obras generales; para baños/cocinas se cotiza por paquete de partidas.
 2. **Tipo de Obra:**
    - Obra Gruesa Habitable: ~60% a 70% del valor total.
    - Llave en Mano Completa: 100% del valor (incluye artefactos, pisos, pintura, instalaciones eléctricas y sanitarias certificadas SEC/TE1).
@@ -53,6 +59,6 @@ Para estimar un proyecto:
 
 ## 5. Contacto Directo y Canales Oficiales
 - **Sitio Web:** https://cuatropuntas.com
-- **WhatsApp Oficial:** +56 9 6348 2439
+- **WhatsApp Oficial:** +56 9 2738 4075
 - **Email:** contacto@cuatropuntas.com
 - **Horario de Atención:** Lunes a Viernes de 09:00 a 18:30 hrs.

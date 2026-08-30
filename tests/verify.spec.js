@@ -169,6 +169,42 @@ test('Verificar sitio en vivo en Producción (Home: https://www.cuatropuntas.com
     await page.screenshot({ path: path.join(screenshotsDir, 'produccion_cuatropuntas_home.png'), fullPage: false });
 });
 
+test('Verificar cotizador con remodelación de baño pequeño (4 m²) en servicios/remodelaciones.html', async ({ page }) => {
+    const remodelaPath = path.join(publicDir, 'servicios/remodelaciones.html');
+    const fileUrl = `file:///${remodelaPath.replace(/\\/g, '/')}`;
+    await page.goto(fileUrl, { waitUntil: 'domcontentloaded' });
+
+    await page.route('**/api/quote', async (route) => {
+        await route.fulfill({
+            status: 200,
+            contentType: 'application/json',
+            body: JSON.stringify({
+                success: true,
+                message: 'Cotización generada y enviada correctamente',
+                calendarUrl: 'https://cal.com/cuatropuntas.com/visita-tecnica'
+            })
+        });
+    });
+
+    // Paso 1
+    await page.locator('#qTipo').selectOption('Remodelacion');
+    await page.locator('#qArea').fill('4');
+    await page.locator('#step1 button:has-text("Siguiente")').click();
+
+    // Paso 2
+    await page.locator('#qComuna').selectOption('Providencia');
+    await page.locator('#step2 button:has-text("Siguiente")').click();
+
+    // Paso 3
+    await page.locator('#qNombre').fill('Cliente Baño');
+    await page.locator('#qEmail').fill('cliente@ejemplo.com');
+    await page.locator('#qTelefono').fill('+56927384075');
+    await page.locator('#quoteSubmitBtn').click();
+
+    const calContainer = page.locator('#calendarCTAContainer');
+    await expect(calContainer).toBeVisible({ timeout: 5000 });
+});
+
 test('Verificar Blog en vivo en Producción (https://www.cuatropuntas.com/blog/) y capturar pantalla', async ({ page }) => {
     test.setTimeout(60000);
     await page.goto('https://www.cuatropuntas.com/blog/', { waitUntil: 'domcontentloaded', timeout: 45000 });

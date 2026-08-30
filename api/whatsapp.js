@@ -141,9 +141,10 @@ Tu objetivo es doble: responder la duda del cliente con exactitud técnica Y **c
 
 ### MATRIZ OFICIAL DE INFORMACIÓN CUATROPUNTAS:
 - **Sistemas Constructivos**:
-  1. Metalcon (Cintac): Estructura de acero galvanizado ligero. Antisísmico, rápido montaje, ideal para casas, 2dos pisos y ampliaciones (desde 19 UF/m² casas, 22 UF/m² 2dos pisos, 12 UF/m² quinchos).
+  1. Metalcon (Cintac): Estructura de acero galvanizado ligero. Antisísmico, rápido montaje, ideal para casas, 2dos pisos y ampliaciones (desde 19 UF/m² casas, 22 UF/m² 2dos pisos, 12 UF/m² quinchos, 11 UF/m² remodelación ligera).
   2. Panel SIP: Paneles aislantes de alto rendimiento térmico (cumplen Zona 3 OGUC de Santiago), máxima eficiencia energética (desde 21 UF/m² casas, 24 UF/m² 2dos pisos).
-  3. Albañilería Armada / Confinada: Estructura sólida tradicional de ladrillo/hormigón y máxima durabilidad (desde 25 UF/m² casas, 27 UF/m² 2dos pisos, 15 UF/m² quinchos).
+  3. Albañilería Armada / Confinada: Estructura sólida tradicional de ladrillo/hormigón y máxima durabilidad (desde 25 UF/m² casas, 27 UF/m² 2dos pisos, 15 UF/m² quinchos, 13 UF/m² remodelación sólida).
+- **Remodelaciones y Zonas Húmedas**: En remodelaciones integrales rige el m² (desde 11-13 UF/m²). En baños y cocinas pequeñas se cotiza por paquete de partidas e inspección técnica de cañerías (Baño Completo 65-95 UF | Cocina Integral 90-160 UF).
 - **Servicios**: Casas Nuevas Llave en Mano (con gestión de Permisos DOM y Recepción Definitiva), Segundos Pisos y Ampliaciones, Quinchos Premium, Remodelaciones y Ejecución de Subsidios MINVU Sitio Propio.
 - **Cobertura**: Región Metropolitana de Santiago.
 `

@@ -23,14 +23,15 @@
 - [Subsidio MINVU Sitio Propio](https://cuatropuntas.com/subsidio-minvu-sitio-propio): Guía técnica y requisitos para construir con subsidio estatal DS1 tramos 1, 2 y 3.
 - [Políticas y Privacidad](https://cuatropuntas.com/politicas): Términos del servicio, garantías de construcción y política de protección de datos.
 
-## Guía de Valores Referenciales
-- **Metalcom:** 11 a 16 UF/m² (aprox. $420.000 - $610.000 CLP/m²) según nivel de terminaciones.
-- **Panel SIP:** 13 a 18 UF/m² (aprox. $495.000 - $685.000 CLP/m²) con certificación térmica.
-- **Albañilería Sólida:** 16 a 24 UF/m² (aprox. $610.000 - $915.000 CLP/m²).
-- **Quinchos y Terrazas:** Desde 8 a 15 UF/m² según equipamiento e instalaciones sanitarias/eléctricas.
+## Guía de Valores Referenciales (UF/m² netas +IVA y por Recinto)
+- **Casas Nuevas Llave en Mano:** Metalcom desde 19 UF/m² | Panel SIP desde 21 UF/m² | Albañilería desde 25 UF/m².
+- **Segundos Pisos y Ampliaciones:** Metalcom desde 22 UF/m² | Panel SIP desde 24 UF/m² | Albañilería desde 27 UF/m².
+- **Quinchos Premium:** Metalcom desde 12 UF/m² | Albañilería en obra desde 15 UF/m².
+- **Remodelaciones Integrales (>25 m²):** Desde 11 UF/m² en Metalcon y 13 UF/m² en Albañilería.
+- **Remodelación de Baños y Cocinas:** Se cotizan por paquete de partidas e inspección técnica de cañerías/redes (no por m² lineal). Rango referencial: Baño Completo 65 a 95 UF | Cocina Integral 90 a 160 UF.
 
 ## Canales de Atención y Contacto
-- **WhatsApp Oficial:** [+56 9 6348 2439](https://wa.me/56963482439)
+- **WhatsApp Oficial:** [+56 9 2738 4075](https://wa.me/56927384075)
 - **Cotizador Web:** Formulario interactivo disponible en https://cuatropuntas.com/
 - **Correo Electrónico:** contacto@cuatropuntas.com
 

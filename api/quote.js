@@ -41,8 +41,14 @@ module.exports = async (req, res) => {
         const areaNum = parseFloat(area);
         const pisosNum = parseInt(pisos);
 
-        if (isNaN(areaNum) || areaNum < 10 || areaNum > 5000) {
-            return res.status(400).json({ error: 'La superficie ingresada no es válida. Por favor ingresa un valor entre 10 y 5000 m².' });
+        const isAmpliacion = tipo.toLowerCase().includes("segundo") || tipo.toLowerCase().includes("amplia");
+        const isQuincho = tipo.toLowerCase().includes("quincho");
+        const isRemodelacion = tipo.toLowerCase().includes("remodela");
+
+        const minAllowedArea = isRemodelacion ? 3 : 10;
+
+        if (isNaN(areaNum) || areaNum < minAllowedArea || areaNum > 5000) {
+            return res.status(400).json({ error: `La superficie ingresada no es válida. Por favor ingresa un valor entre ${minAllowedArea} y 5000 m².` });
         }
 
         if (isNaN(pisosNum) || pisosNum < 1 || pisosNum > 4) {
@@ -162,7 +168,22 @@ module.exports = async (req, res) => {
         const factorPermisos = permisosData.factor;
 
         const costoM2Final = baseUFm2 * multiplicador * factorComuna * factorPermisos;
-        const totalEstimado = costoM2Final * areaNum;
+        let totalEstimado = costoM2Final * areaNum;
+
+        // Ajuste técnico para remodelaciones: en áreas pequeñas (<20 m²), como baños o cocinas,
+        // los costos fijos de mano de obra técnica (gasfitería, impermeabilización, demolición y terminaciones)
+        // se dimensionan con un piso base de partidas por recinto para no subdimensionar la obra.
+        if (isRemodelacion) {
+            if (areaNum <= 8) {
+                // Recinto húmedo pequeño (Baño estándar): base técnica de partidas fijas (redes, impermeabilización, shower/tina y porcelanato)
+                const baseRecinto = (sistema === 'Metalcon' ? 60 : 70) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+            } else if (areaNum < 20) {
+                // Recinto mediano (Cocina / Baño amplio): base técnica de muebles, cubiertas, demolición y redes
+                const baseRecinto = (sistema === 'Metalcon' ? 85 : 98) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+            }
+        }
 
         // Rango referencial: ±5% sobre el total estimado para dar un margen comercial realista
         const minUF_raw = Math.round(totalEstimado * 0.96);
@@ -252,8 +273,11 @@ module.exports = async (req, res) => {
         let curY = sec3Top + 16;
         doc.text('• Contrato a Suma Alzada: El presupuesto de la propuesta definitiva es cerrado para todas las partidas, planos y especificaciones acordadas en el contrato.', 45, curY, { width: 522, lineGap: 2 });
         curY += 22;
-        doc.text('• Protocolo ante Imprevistos y Vicios Ocultos: Si en la intervención se detectan preexistencias no visibles preliminarmente (ej. retiro normado de asbesto por empresas autorizadas, refuerzos de fundaciones o fallas en instalaciones preexistentes), nuestro equipo elabora un informe técnico y cotización complementaria con tu aprobación previa antes de ejecutar.', 45, curY, { width: 522, lineGap: 2 });
-        curY += 32;
+        const viciosText = isRemodelacion
+            ? '• Protocolo ante Imprevistos y Vicios Ocultos: En remodelaciones y recintos húmedos (baños/cocinas), la propuesta definitiva se valida tras inspeccionar el estado de redes de agua, desagües y preexistencias. Si surgen cañerías deterioradas no visibles preliminarmente, nuestro equipo emite informe técnico y cotización previa aprobada por ti.'
+            : '• Protocolo ante Imprevistos y Vicios Ocultos: Si en la intervención se detectan preexistencias no visibles preliminarmente (ej. retiro normado de asbesto por empresas autorizadas, refuerzos de fundaciones o fallas en instalaciones preexistentes), nuestro equipo elabora un informe técnico y cotización complementaria con tu aprobación previa antes de ejecutar.';
+        doc.text(viciosText, 45, curY, { width: 522, lineGap: 2 });
+        curY += (isRemodelacion ? 36 : 32);
         doc.text('• Gestión Normativa Integral: Asesoramos y gestionamos la tramitación de Permiso de Edificación y Recepción Final ante la Dirección de Obras Municipales (DOM).', 45, curY, { width: 522, lineGap: 2 });
 
         // 6. Siguiente Paso — Coordinar Visita Técnica a Terreno
@@ -289,7 +313,12 @@ module.exports = async (req, res) => {
         const pdfBuffer = await pdfPromise;
 
         const faqPriceAnswer = isRemodelacion
-            ? 'La tabla pública de referencia parte desde 11 UF/m² en Metalcon y 13 UF/m² en albañilería/sólido. El valor final se define al cuantificar las partidas de demolición, terminaciones e instalaciones específicas.'
+            ? 'En remodelaciones integrales la referencia parte desde 11 UF/m² (Metalcon) y 13 UF/m² (albañilería). Para recintos específicos (baños y cocinas), el valor se estructura por paquete de partidas (redes, impermeabilización y terminaciones) con un rango referencial de 65 a 95 UF por baño completo y 90 a 160 UF por cocina integral.'
+            : isQuincho
+                ? 'Para quinchos de alto estándar, la referencia parte desde 12 UF/m² en Metalcon y 15 UF/m² en albañilería en obra, según equipamiento, techumbre y terminaciones.'
+                : (isAmpliacion || pisosNum >= 2)
+                    ? 'Para segundos pisos y ampliaciones, la referencia parte desde 22 UF/m² en Metalcon, 24 UF/m² en panel SIP y 27 UF/m² en albañilería sólida, dependiendo del refuerzo de la estructura existente y terminaciones.'
+                    : 'Para casas nuevas completas, la referencia parte desde 19 UF/m² en Metalcon, 21 UF/m² en panel SIP y 25 UF/m² en albañilería tradicional sólida.';
             : isQuincho
                 ? 'Para quinchos de alto estándar, la referencia parte desde 12 UF/m² en Metalcon y 15 UF/m² en albañilería en obra, según equipamiento, techumbre y terminaciones.'
                 : (isAmpliacion || pisosNum >= 2)
