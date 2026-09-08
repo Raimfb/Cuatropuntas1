@@ -246,7 +246,7 @@ function generateHTMLPost(postData) {
                             <div class="bg-white border border-gray-100 rounded-md shadow-xl p-2">
                                 <a href="/servicios/casas-nuevas/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Casas Nuevas</a>
                                 <a href="/servicios/segundos-pisos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Segundos Pisos y Ampliaciones</a>
-                                <a href="/servicios/quinchos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Quinchos Premium</a>
+                                <a href="/servicios/quinchos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Quinchos</a>
                                 <a href="/servicios/remodelaciones/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Remodelaciones</a>
                                 <a href="/subsidio-minvu-sitio-propio" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Subsidio MINVU</a>
                             </div>
@@ -277,7 +277,7 @@ function generateHTMLPost(postData) {
                 <div id="mobileServicesMenu" class="hidden pl-4 pb-2 space-y-1">
                     <a href="/servicios/casas-nuevas/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Casas Nuevas</a>
                     <a href="/servicios/segundos-pisos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Segundos Pisos y Ampliaciones</a>
-                    <a href="/servicios/quinchos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Quinchos Premium</a>
+                    <a href="/servicios/quinchos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Quinchos</a>
                     <a href="/servicios/remodelaciones/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Remodelaciones</a>
                     <a href="/subsidio-minvu-sitio-propio" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Subsidio MINVU</a>
                 </div>

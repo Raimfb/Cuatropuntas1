@@ -1,6 +1,8 @@
-# AI Coding Manifesto: Execution & Constraints
+# [DEPRECATED / ARCHIVED] AI Coding Manifesto: Execution & Constraints
 
-Este documento establece las reglas de comportamiento obligatorias para el desarrollo de software. El objetivo principal es maximizar la precisión, minimizar el código innecesario y garantizar la estabilidad del repositorio.
+> **ADVERTENCIA (DEPRECADO):** Este documento ha sido consolidado y reemplazado en su totalidad por [`AGENTS.md`](file:///c:/Users/raimu/Documents/vyxa%20core/Cuatropuntas-Secure/AGENTS.md) como la **Única Fuente de Verdad (SSOT)** del repositorio. Se preserva exclusivamente con fines históricos.
+
+Este documento establece las reglas de comportamiento históricas para el desarrollo de software.
 
 ---
 

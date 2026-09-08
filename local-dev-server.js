@@ -40,6 +40,29 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
+const quoteHandler = require('./api/quote');
+
+app.post('/api/quote', async (req, res) => {
+    try {
+        await quoteHandler(req, res);
+    } catch (error) {
+        console.error("Error en local (quote):", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+const blogPublishHandler = require('./api/blog-publish');
+
+app.post('/api/blog-publish', async (req, res) => {
+    try {
+        await blogPublishHandler(req, res);
+    } catch (error) {
+        console.error("Error en local (blog-publish):", error);
+        res.status(500).json({ error: error.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`✅ Servidor Vercel-Ready corriendo en http://localhost:3000`);
 });
+

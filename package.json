@@ -12,6 +12,7 @@
     "pdfkit": "^0.17.2"
   },
   "devDependencies": {
-    "@playwright/test": "^1.62.1"
+    "@playwright/test": "^1.62.1",
+    "express": "^4.21.2"
   }
 }

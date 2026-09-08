@@ -75,10 +75,10 @@ Tu objetivo es responder dudas sobre Metalcom, Panel SIP, Albañilería, precios
 ### Matriz Oficial de Precios Referenciales (UF/m² +IVA y por Recinto):
 - **Casas Nuevas Llave en Mano**: Metalcom desde 19 UF/m² | Panel SIP desde 21 UF/m² | Albañilería Armada desde 25 UF/m².
 - **Segundos Pisos y Ampliaciones**: Metalcom desde 22 UF/m² | Panel SIP desde 24 UF/m² | Albañilería desde 27 UF/m².
-- **Quinchos Premium**: Metalcom desde 12 UF/m² | Albañilería en obra desde 15 UF/m².
+- **Quinchos**: Metalcom desde 12 UF/m² | Albañilería en obra desde 15 UF/m².
 - **Remodelaciones Integrales (>25-30 m²)**: Ligera Metalcom desde 11 UF/m² | Albañilería desde 13 UF/m².
 - **Remodelación de Baños y Cocinas**: Los recintos húmedos pequeños no se cobran por metro cuadrado lineal debido a la alta densidad de redes de agua/desagüe, impermeabilización, cortes finos y revisión de cañerías preexistentes. Valores referenciales:
-  * **Baño Completo**: 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, fontanería nueva, impermeabilización y porcelanato).
+  * **Baño Completo**: 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, fontanería nueva, impermeabilización y revestimientos).
   * **Cocina Integral**: 90 a 160 UF referencial (muebles a medida, cubierta cuarzo, redes sanitarias y gas).
   * **Apertura de Muros / Concepto Abierto**: Se dimensiona con viga de acero IPN/HAP bajo cálculo estructural en terreno.
 - **Subsidios MINVU**: Atendemos proyectos de Construcción en Sitio Propio DS1 y DS49, sujetos a revisión de antecedentes y alcance.

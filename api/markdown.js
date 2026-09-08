@@ -22,12 +22,12 @@ Valores referenciales actualizados para construcción residencial llave en mano 
 - **Ampliación en Primer Piso (Panel SIP):** 13 a 18 UF/m²
 - **Ampliación Sólida:** 16 a 22 UF/m²
 
-## 3. Quinchos y Terrazas Premium
+## 3. Quinchos y Terrazas
 - **Quincho Estándar (Estructura y asador):** 8 a 12 UF/m²
-- **Quincho Premium (Muebles, isla de granito, baño y parrilla integrada):** 12 a 16 UF/m²
+- **Quincho Completo (Muebles, isla de granito, baño y parrilla integrada):** 12 a 16 UF/m²
 
 ## Contacto para Cotización Formal
-- WhatsApp: +56 9 6348 2439
+- WhatsApp: +56 9 2738 4075
 - Web: https://cuatropuntas.com
 - Email: contacto@cuatropuntas.com
 `;
@@ -52,13 +52,13 @@ Guía técnica y de postulación para construir vivienda con subsidio del Estado
 - Permiso de Edificación y Recepción Final en Dirección de Obras Municipales (DOM).
 - Ejecución completa de obras.
 
-Contacto: contacto@cuatropuntas.com / WhatsApp: +56 9 6348 2439
+Contacto: contacto@cuatropuntas.com / WhatsApp: +56 9 2738 4075
 `;
   } else {
     // Portada / Default
     markdown = `# Constructora Cuatro Puntas
 
-> Constructora líder en Santiago de Chile en casas llave en mano, ampliaciones, segundos pisos, quinchos premium y gestión de subsidios MINVU.
+> Constructora líder en Santiago de Chile en casas llave en mano, ampliaciones, segundos pisos, quinchos y gestión de subsidios MINVU.
 
 ## Servicios Principales
 - **Construcción Llave en Mano:** Proyectos residenciales desde fundaciones hasta terminaciones de lujo.
@@ -79,7 +79,7 @@ Contacto: contacto@cuatropuntas.com / WhatsApp: +56 9 6348 2439
 - Servidor MCP: https://cuatropuntas.com/.well-known/mcp/server-card.json
 
 ## Vías de Contacto
-- WhatsApp: +56 9 6348 2439
+- WhatsApp: +56 9 2738 4075
 - Email: contacto@cuatropuntas.com
 - Web: https://cuatropuntas.com
 `;

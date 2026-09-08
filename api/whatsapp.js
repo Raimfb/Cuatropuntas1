@@ -2,14 +2,15 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = null) {
-    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSEBulsLUwIarFJ2cbVYOK55khaTUUdZAR8MClTADrZCuqbtvR4jrqU5eXoIPAfVQuBngNpbFPcEpwUVXOowN739ALW3swwLciCH7yWwsrQcOc9S7cgL1rJ73x74n5GmebXguoD8PVWhV1mBPala99XSTUu5vj6c4tknalggt4gtpCSwQZDZD";
-    // Usar dinámicamente el ID del número al que el cliente le escribió, o el ID oficial
-    const phoneId = incomingPhoneId || process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
+    const token = process.env.WHATSAPP_TOKEN;
+    // Usar dinámicamente el ID del número al que el cliente le escribió, o la variable de entorno
+    const phoneId = incomingPhoneId || process.env.WHATSAPP_PHONE_NUMBER_ID;
 
-    if (!token) {
-        console.error("❌ ERROR: WHATSAPP_TOKEN no configurado");
+    if (!token || !phoneId) {
+        console.error("❌ ERROR: WHATSAPP_TOKEN o WHATSAPP_PHONE_NUMBER_ID no configurado");
         return false;
     }
+
 
     const url = `https://graph.facebook.com/v20.0/${phoneId}/messages`;
     const cleanNumber = recipientNumber.replace(/[^0-9]/g, '');
@@ -145,7 +146,7 @@ Tu objetivo es doble: responder la duda del cliente con exactitud técnica Y **c
   2. Panel SIP: Paneles aislantes de alto rendimiento térmico (cumplen Zona 3 OGUC de Santiago), máxima eficiencia energética (desde 21 UF/m² casas, 24 UF/m² 2dos pisos).
   3. Albañilería Armada / Confinada: Estructura sólida tradicional de ladrillo/hormigón y máxima durabilidad (desde 25 UF/m² casas, 27 UF/m² 2dos pisos, 15 UF/m² quinchos, 13 UF/m² remodelación sólida).
 - **Remodelaciones y Zonas Húmedas**: En remodelaciones integrales rige el m² (desde 11-13 UF/m²). En baños y cocinas pequeñas se cotiza por paquete de partidas e inspección técnica de cañerías (Baño Completo 65-95 UF | Cocina Integral 90-160 UF).
-- **Servicios**: Casas Nuevas Llave en Mano (con gestión de Permisos DOM y Recepción Definitiva), Segundos Pisos y Ampliaciones, Quinchos Premium, Remodelaciones y Ejecución de Subsidios MINVU Sitio Propio.
+- **Servicios**: Casas Nuevas Llave en Mano (con gestión de Permisos DOM y Recepción Definitiva), Segundos Pisos y Ampliaciones, Quinchos, Remodelaciones y Ejecución de Subsidios MINVU Sitio Propio.
 - **Cobertura**: Región Metropolitana de Santiago.
 `
     });

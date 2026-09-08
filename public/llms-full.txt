@@ -30,7 +30,7 @@ Constructora Cuatropuntas SpA es una empresa de ingeniería y construcción civi
 ### D. Remodelaciones de Recintos Húmedos (Baños y Cocinas)
 - **Criterio Técnico:** Los baños y cocinas no se tasan linealmente por m² debido a su alta concentración de redes de agua/desagüe, impermeabilización y necesidad de inspección de cañerías preexistentes (vicios ocultos).
 - **Valores Referenciales:**
-  * **Baño Completo:** 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, impermeabilización, fontanería y porcelanato).
+  * **Baño Completo:** 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, impermeabilización, fontanería y revestimientos).
   * **Cocina Integral:** 90 a 160 UF referencial (muebles a medida, cubierta en cuarzo, redes sanitarias y gas).
 
 ---

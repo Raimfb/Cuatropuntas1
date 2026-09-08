@@ -1,0 +1,65 @@
+name: Weekly Blog Auto-Publish
+
+on:
+  schedule:
+    # Todos los viernes a las 12:00 UTC (09:00 AM hora de Chile Continental)
+    - cron: '0 12 * * 5'
+  workflow_dispatch:
+    inputs:
+      force_topic:
+        description: 'Tema específico para el artículo (opcional)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  curate-and-publish:
+    name: Curar y Publicar Artículo Semanal
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Ejecutar Piloto Automático de Curaduría y Generación
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY || secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -n "${{ github.event.inputs.force_topic }}" ]; then
+            node scripts/auto-curate-and-publish.js --force-topic="${{ github.event.inputs.force_topic }}"
+          else
+            node scripts/auto-curate-and-publish.js
+          fi
+
+      - name: Instalar Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Ejecutar Pruebas Automatizadas de Calidad
+        run: npx playwright test tests/blog-automation.spec.js
+
+      - name: Commit y Push de los Cambios Compilados a Main
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add public/blog/ content/drafts/ public/sitemap.xml
+          if git diff --staged --quiet; then
+            echo "ℹ️ No se detectaron cambios para commitear. Fin del proceso."
+          else
+            git commit -m "chore(blog): auto-publish weekly article [skip ci]"
+            git push origin main
+            echo "✅ Artículo publicado y empujado a la rama main con éxito."
+          fi

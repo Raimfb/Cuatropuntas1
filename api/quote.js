@@ -1,7 +1,213 @@
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 
-module.exports = async (req, res) => {
+// Mapeo legible de comunas para presentación ejecutiva
+function getComunaLabel(comunaVal) {
+    if (!comunaVal) return 'Región Metropolitana';
+    if (comunaVal === 'Tier1') return 'Sector Oriente, RM';
+    if (comunaVal.startsWith('Tier')) return 'Región Metropolitana';
+    if (comunaVal.includes('RM') || comunaVal.includes('Metropolitana')) return comunaVal;
+    return `${comunaVal}, RM`;
+}
+
+// Mapeo y factores para Estado de Planos y Permisos DOM
+function getPermisosData(permisosKey) {
+    switch (permisosKey) {
+        case 'PermisoAprobado':
+            return {
+                label: 'Permiso de Edificación DOM Aprobado (Listo para construir)',
+                factor: 0.94, // ~6% de descuento técnico por expediente aprobado
+                adminBadge: 'PERMISO DOM APROBADO (Listo para inicio inmediato)',
+                badgeShort: 'Permiso DOM Listo',
+                badgePdf: 'Permiso DOM Aprobado',
+                notePdf: 'Descuento técnico aplicado por proyecto municipal aprobado. Inicio de faenas programable en plazos reducidos.'
+            };
+        case 'ArquitectoPropio':
+            return {
+                label: 'Arquitecto propio a cargo de la DOM (Solo ejecución de obra)',
+                factor: 0.94, // ~6% de descuento técnico por gestión externa
+                adminBadge: 'ARQUITECTO PROPIO (Solo requiere Construcción)',
+                badgeShort: 'Arq. Propio',
+                badgePdf: 'Arq. Propio (Solo Obra)',
+                notePdf: 'Cotización orientada a la ejecución material de obra bajo dirección de tu arquitecto patrocinante.'
+            };
+        case 'Planos':
+            return {
+                label: 'Planos de arquitectura listos (Falta cálculo y permiso DOM)',
+                factor: 0.97, // ~3% de descuento técnico por diseño inicial
+                adminBadge: 'PLANOS LISTOS (Falta cálculo y trámite DOM)',
+                badgeShort: 'Con Planos',
+                badgePdf: 'Planos Listos (Falta DOM)',
+                notePdf: 'Descuento aplicado por planos existentes. Cuatropuntas asume ingeniería de cálculo y tramitación municipal.'
+            };
+        case 'Idea':
+        default:
+            return {
+                label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
+                factor: 1.00,
+                adminBadge: 'PROYECTO COMPLETO (Diseño + DOM + Construcción)',
+                badgeShort: 'Desde Cero',
+                badgePdf: 'Diseño + DOM + Obra',
+                notePdf: 'Modalidad Llave en Mano Integral: incluye arquitectura, cálculo estructural, gestión DOM y ejecución de obra.'
+            };
+    }
+}
+
+// Factor logístico interno por comuna en RM
+function getFactorComuna(comunaVal) {
+    if (!comunaVal) return 1.0;
+    const name = String(comunaVal).toLowerCase();
+    if (name.includes('vitacura') || name.includes('las condes') || name.includes('lo barnechea') || name.includes('providencia') || name.includes('la reina') || name === 'tier1') {
+        return 1.05;
+    }
+    if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacaví') || name.includes('alhué') || name.includes('pirque') || name.includes('san josé de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maría pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
+        return 0.98;
+    }
+    return 1.00;
+}
+
+// --- MATRIZ OFICIAL DE PRECIOS CUATROPUNTAS (UF/m² NETAS +IVA) ---
+function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminaciones = 'Estandar', comuna = '', permisos = 'Idea' } = {}) {
+    const areaNum = parseFloat(area) || 0;
+    const pisosNum = parseInt(pisos) || 1;
+
+    const isAmpliacion = tipo.toLowerCase().includes("segundo") || tipo.toLowerCase().includes("amplia");
+    const isQuincho = tipo.toLowerCase().includes("quincho");
+    const isRemodelacion = tipo.toLowerCase().includes("remodela");
+
+    let baseUFm2 = 19; // Fallback general
+
+    if (isQuincho) {
+        if (sistema === 'Metalcon') baseUFm2 = 12;
+        else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 14;
+        else baseUFm2 = 15; // Albañilería / Mixto
+    } else if (isRemodelacion) {
+        if (sistema === 'Metalcon') baseUFm2 = 11;
+        else baseUFm2 = 13; // Albañilería / otros sistemas sólidos
+    } else if (isAmpliacion || pisosNum >= 2) {
+        if (sistema === 'Metalcon') baseUFm2 = 22;
+        else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 24;
+        else if (sistema === 'Mixto') baseUFm2 = 25;
+        else baseUFm2 = 27; // Albañilería sólida
+    } else {
+        // Casa Nueva (1 Piso)
+        if (sistema === 'Metalcon') baseUFm2 = 19;
+        else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 21;
+        else if (sistema === 'Mixto') baseUFm2 = 23;
+        else baseUFm2 = 25; // Albañilería sólida
+    }
+
+    // Ajustes por escala y terminaciones
+    let multiplicador = 1.0;
+    if (areaNum < 40) multiplicador += 0.08; // Proyectos pequeños
+    if (terminaciones === 'Premium') multiplicador += 0.10; // Terminaciones Premium
+
+    const factorComuna = getFactorComuna(comuna);
+    const permisosData = getPermisosData(permisos);
+    const factorPermisos = permisosData.factor;
+
+    const costoM2Final = baseUFm2 * multiplicador * factorComuna * factorPermisos;
+    let totalEstimado = costoM2Final * areaNum;
+
+    // Ajuste técnico para remodelaciones y recintos pequeños
+    if (isRemodelacion) {
+        if (areaNum <= 8) {
+            const baseRecinto = (sistema === 'Metalcon' ? 60 : 70) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+            totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+        } else if (areaNum < 20) {
+            const baseRecinto = (sistema === 'Metalcon' ? 85 : 98) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+            totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+        }
+    }
+
+    // Rango referencial: -4% a +5%
+    const minUF_raw = Math.round(totalEstimado * 0.96);
+    const maxUF_raw = Math.round(totalEstimado * 1.05);
+
+    const formatter = new Intl.NumberFormat('es-CL');
+    const minUF = formatter.format(minUF_raw);
+    const maxUF = formatter.format(maxUF_raw);
+    const comunaHuman = getComunaLabel(comuna);
+
+    return {
+        baseUFm2,
+        multiplicador,
+        factorComuna,
+        factorPermisos,
+        costoM2Final,
+        totalEstimado,
+        minUF_raw,
+        maxUF_raw,
+        minUF,
+        maxUF,
+        permisosData,
+        comunaHuman,
+        isAmpliacion,
+        isQuincho,
+        isRemodelacion,
+        areaNum,
+        pisosNum
+    };
+}
+
+// --- PERSISTENCIA FAIL-SAFE EN GOOGLE SHEETS ---
+async function persistLeadToGoogleSheets(leadData) {
+    const webhookUrl = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
+    if (!webhookUrl) {
+        console.warn("⚠️ [PERSISTENCE WARNING] GOOGLE_SHEETS_WEBHOOK_URL no configurada. Saltando registro en hoja.");
+        return { success: false, reason: "URL_NOT_CONFIGURED" };
+    }
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+    try {
+        const payload = {
+            timestamp: new Date().toISOString(),
+            fecha_hora_chile: new Date().toLocaleString('es-CL', { timeZone: 'America/Santiago' }),
+            nombre: leadData.nombre,
+            email: leadData.email,
+            telefono: leadData.telefono,
+            tipo_obra: leadData.tipo,
+            sistema_constructivo: leadData.sistema,
+            superficie_m2: leadData.areaNum,
+            pisos: leadData.pisosNum,
+            terminaciones: leadData.terminaciones,
+            comuna: leadData.comunaHuman,
+            estado_dom: leadData.permisosData?.label || leadData.permisos || 'No especificado',
+            rango_uf_estimado: `${leadData.minUF} a ${leadData.maxUF} UF`,
+            total_estimado_uf: leadData.totalEstimado,
+            origen: "Web Cotizador Cuatropuntas",
+            estado_lead: "NUEVO_SIN_CONTACTAR"
+        };
+
+        const response = await fetch(webhookUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+            signal: controller.signal
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+            console.error(`⚠️ [PERSISTENCE ERROR] Google Sheets respondió con HTTP ${response.status}`);
+            return { success: false, reason: `HTTP_${response.status}` };
+        }
+
+        console.log(`✅ [PERSISTENCE SUCCESS] Lead de ${leadData.nombre} persistido con éxito en Google Sheets.`);
+        return { success: true };
+    } catch (error) {
+        clearTimeout(timeoutId);
+        const reason = error.name === 'AbortError' ? 'TIMEOUT_EXCEEDED' : error.message;
+        console.error(`⚠️ [PERSISTENCE EXCEPTION] No se pudo persistir en Google Sheets: ${reason}`);
+        return { success: false, reason };
+    }
+}
+
+const quoteHandler = async (req, res) => {
+
+
     // Enable CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -60,138 +266,34 @@ module.exports = async (req, res) => {
             return res.status(400).json({ error: 'El formato de correo electrónico no es válido.' });
         }
 
-        // Mapeo legible de comunas para presentación ejecutiva
-        function getComunaLabel(comunaVal) {
-            if (!comunaVal) return 'Región Metropolitana';
-            if (comunaVal === 'Tier1') return 'Sector Oriente, RM';
-            if (comunaVal.startsWith('Tier')) return 'Región Metropolitana';
-            if (comunaVal.includes('RM') || comunaVal.includes('Metropolitana')) return comunaVal;
-            return `${comunaVal}, RM`;
-        }
-
+        const firstName = (nombre || '').trim().split(' ')[0] || 'Cliente';
         const calendarUrl = "https://cal.com/cuatropuntas.com/visita-tecnica";
 
-        // Mapeo y factores para Estado de Planos y Permisos DOM
-        function getPermisosData(permisosKey) {
-            switch (permisosKey) {
-                case 'PermisoAprobado':
-                    return {
-                        label: 'Permiso de Edificación DOM Aprobado (Listo para construir)',
-                        factor: 0.94, // ~6% de descuento técnico por expediente aprobado
-                        adminBadge: 'PERMISO DOM APROBADO (Listo para inicio inmediato)',
-                        badgeShort: 'Permiso DOM Listo',
-                        badgePdf: 'Permiso DOM Aprobado',
-                        notePdf: 'Descuento técnico aplicado por proyecto municipal aprobado. Inicio de faenas programable en plazos reducidos.'
-                    };
-                case 'ArquitectoPropio':
-                    return {
-                        label: 'Arquitecto propio a cargo de la DOM (Solo ejecución de obra)',
-                        factor: 0.94, // ~6% de descuento técnico por gestión externa
-                        adminBadge: 'ARQUITECTO PROPIO (Solo requiere Construcción)',
-                        badgeShort: 'Arq. Propio',
-                        badgePdf: 'Arq. Propio (Solo Obra)',
-                        notePdf: 'Cotización orientada a la ejecución material de obra bajo dirección de tu arquitecto patrocinante.'
-                    };
-                case 'Planos':
-                    return {
-                        label: 'Planos de arquitectura listos (Falta cálculo y permiso DOM)',
-                        factor: 0.97, // ~3% de descuento técnico por diseño inicial
-                        adminBadge: 'PLANOS LISTOS (Falta cálculo y trámite DOM)',
-                        badgeShort: 'Con Planos',
-                        badgePdf: 'Planos Listos (Falta DOM)',
-                        notePdf: 'Descuento aplicado por planos existentes. Cuatropuntas asume ingeniería de cálculo y tramitación municipal.'
-                    };
-                case 'Idea':
-                default:
-                    return {
-                        label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
-                        factor: 1.00,
-                        adminBadge: 'PROYECTO COMPLETO (Diseño + DOM + Construcción)',
-                        badgeShort: 'Desde Cero',
-                        badgePdf: 'Diseño + DOM + Obra',
-                        notePdf: 'Modalidad Llave en Mano Integral: incluye arquitectura, cálculo estructural, gestión DOM y ejecución de obra.'
-                    };
-            }
-        }
+        const quote = calculateQuote({
+            tipo,
+            sistema,
+            area: areaNum,
+            pisos: pisosNum,
+            terminaciones,
+            comuna,
+            permisos
+        });
 
-        const permisosData = getPermisosData(permisos);
-        const comunaHuman = getComunaLabel(comuna);
-        const firstName = (nombre || '').trim().split(' ')[0] || 'Cliente';
+        const {
+            baseUFm2,
+            multiplicador,
+            factorComuna,
+            factorPermisos,
+            costoM2Final,
+            totalEstimado,
+            minUF_raw,
+            maxUF_raw,
+            minUF,
+            maxUF,
+            permisosData,
+            comunaHuman
+        } = quote;
 
-        // --- MATRIZ DE PRECIOS EXACTA PUBLICADA EN LA WEB CUATROPUNTAS (UF/m² NETAS +IVA) ---
-        // Coincidencia 100% estricta con las tablas públicas de precios.html y index.html
-        let baseUFm2 = 19; // Fallback general
-
-        const isAmpliacion = tipo.toLowerCase().includes("segundo") || tipo.toLowerCase().includes("amplia");
-        const isQuincho = tipo.toLowerCase().includes("quincho");
-        const isRemodelacion = tipo.toLowerCase().includes("remodela");
-
-        if (isQuincho) {
-            if (sistema === 'Metalcon') baseUFm2 = 12;
-            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 14;
-            else baseUFm2 = 15; // Albañilería / Mixto
-        } else if (isRemodelacion) {
-            if (sistema === 'Metalcon') baseUFm2 = 11;
-            else baseUFm2 = 13; // Albañilería / otros sistemas sólidos
-        } else if (isAmpliacion || pisosNum >= 2) {
-            if (sistema === 'Metalcon') baseUFm2 = 22;
-            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 24;
-            else if (sistema === 'Mixto') baseUFm2 = 25;
-            else baseUFm2 = 27; // Albañilería sólida
-        } else {
-            // Casa Nueva (1 Piso)
-            if (sistema === 'Metalcon') baseUFm2 = 19;
-            else if (sistema === 'SIP' || sistema === 'Covintec') baseUFm2 = 21;
-            else if (sistema === 'Mixto') baseUFm2 = 23;
-            else baseUFm2 = 25; // Albañilería sólida
-        }
-
-        // Ajustes por escala y terminaciones
-        let multiplicador = 1.0;
-        if (areaNum < 40) multiplicador += 0.08; // Proyectos pequeños (costo fijo proporcional mayor)
-        if (terminaciones === 'Premium') multiplicador += 0.10; // Terminaciones Premium (porcelanatos, termopanel)
-
-        // Factor logístico interno por comuna en RM
-        function getFactorComuna(comunaVal) {
-            if (!comunaVal) return 1.0;
-            const name = String(comunaVal).toLowerCase();
-            if (name.includes('vitacura') || name.includes('las condes') || name.includes('lo barnechea') || name.includes('providencia') || name.includes('la reina') || name === 'tier1') {
-                return 1.05;
-            }
-            if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacaví') || name.includes('alhué') || name.includes('pirque') || name.includes('san josé de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maría pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
-                return 0.98;
-            }
-            return 1.00;
-        }
-
-        const factorComuna = getFactorComuna(comuna);
-        const factorPermisos = permisosData.factor;
-
-        const costoM2Final = baseUFm2 * multiplicador * factorComuna * factorPermisos;
-        let totalEstimado = costoM2Final * areaNum;
-
-        // Ajuste técnico para remodelaciones: en áreas pequeñas (<20 m²), como baños o cocinas,
-        // los costos fijos de mano de obra técnica (gasfitería, impermeabilización, demolición y terminaciones)
-        // se dimensionan con un piso base de partidas por recinto para no subdimensionar la obra.
-        if (isRemodelacion) {
-            if (areaNum <= 8) {
-                // Recinto húmedo pequeño (Baño estándar): base técnica de partidas fijas (redes, impermeabilización, shower/tina y porcelanato)
-                const baseRecinto = (sistema === 'Metalcon' ? 60 : 70) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
-                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
-            } else if (areaNum < 20) {
-                // Recinto mediano (Cocina / Baño amplio): base técnica de muebles, cubiertas, demolición y redes
-                const baseRecinto = (sistema === 'Metalcon' ? 85 : 98) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
-                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
-            }
-        }
-
-        // Rango referencial: ±5% sobre el total estimado para dar un margen comercial realista
-        const minUF_raw = Math.round(totalEstimado * 0.96);
-        const maxUF_raw = Math.round(totalEstimado * 1.05);
-
-        const formatter = new Intl.NumberFormat('es-CL');
-        const minUF = formatter.format(minUF_raw);
-        const maxUF = formatter.format(maxUF_raw);
 
         // Enlaces directos a WhatsApp para máxima conversión
         const cleanClientPhone = (telefono || '').replace(/\D/g, '');
@@ -203,7 +305,25 @@ module.exports = async (req, res) => {
         const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} (${areaNum} m²). ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
         const adminReplyWaUrl = `https://wa.me/${formattedClientPhone}?text=${adminWaText}`;
 
+        // --- PERSISTENCIA FAIL-SAFE EN GOOGLE SHEETS (Antes de SMTP) ---
+        await persistLeadToGoogleSheets({
+            nombre,
+            email,
+            telefono: formattedClientPhone,
+            tipo,
+            sistema,
+            areaNum,
+            pisosNum,
+            terminaciones,
+            comunaHuman,
+            permisosData,
+            minUF,
+            maxUF,
+            totalEstimado
+        });
+
         // --- GENERACIÓN DE PDF PROFESIONAL EN MEMORIA (PDFKit) ---
+
         const doc = new PDFDocument({ margin: 45, size: 'LETTER' });
         let buffers = [];
         doc.on('data', buffers.push.bind(buffers));
@@ -319,11 +439,7 @@ module.exports = async (req, res) => {
                 : (isAmpliacion || pisosNum >= 2)
                     ? 'Para segundos pisos y ampliaciones, la referencia parte desde 22 UF/m² en Metalcon, 24 UF/m² en panel SIP y 27 UF/m² en albañilería sólida, dependiendo del refuerzo de la estructura existente y terminaciones.'
                     : 'Para casas nuevas completas, la referencia parte desde 19 UF/m² en Metalcon, 21 UF/m² en panel SIP y 25 UF/m² en albañilería tradicional sólida.';
-            : isQuincho
-                ? 'Para quinchos de alto estándar, la referencia parte desde 12 UF/m² en Metalcon y 15 UF/m² en albañilería en obra, según equipamiento, techumbre y terminaciones.'
-                : (isAmpliacion || pisosNum >= 2)
-                    ? 'Para segundos pisos y ampliaciones, la referencia parte desde 22 UF/m² en Metalcon, 24 UF/m² en panel SIP y 27 UF/m² en albañilería sólida, dependiendo del refuerzo de la estructura existente y terminaciones.'
-                    : 'Para casas nuevas completas, la referencia parte desde 19 UF/m² en Metalcon, 21 UF/m² en panel SIP y 25 UF/m² en albañilería tradicional sólida.';
+
 
         const faqTimelineAnswer = isRemodelacion
             ? 'En remodelaciones, el plazo típico varía entre 1 y 3 meses tras coordinar partidas y materiales.'
@@ -530,3 +646,13 @@ module.exports = async (req, res) => {
         res.status(500).json({ error: 'Error interno en el servidor de cotizaciones' });
     }
 };
+
+
+module.exports = quoteHandler;
+module.exports.calculateQuote = calculateQuote;
+module.exports.getComunaLabel = getComunaLabel;
+module.exports.getPermisosData = getPermisosData;
+module.exports.getFactorComuna = getFactorComuna;
+module.exports.persistLeadToGoogleSheets = persistLeadToGoogleSheets;
+
+

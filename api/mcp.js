@@ -83,7 +83,7 @@ module.exports = async (req, res) => {
             content: [
               {
                 type: "text",
-                text: `Cotización estimada para ${m2} m² en ${mat}: ${m2 * ufM2} UF referenciales (aprox. ${ufM2} UF/m²). Contacto: https://wa.me/56963482439`
+                text: `Cotización estimada para ${m2} m² en ${mat}: ${m2 * ufM2} UF referenciales (aprox. ${ufM2} UF/m²). Contacto: https://wa.me/56927384075`
               }
             ]
           }

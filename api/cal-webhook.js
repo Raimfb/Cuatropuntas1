@@ -1,12 +1,29 @@
-// Helper para enviar mensajes de WhatsApp vía Meta Graph API
-async function sendWhatsAppAlert(recipientNumber, textBody) {
-    const token = process.env.WHATSAPP_TOKEN || "EAAUzVSuHpoUBSEBulsLUwIarFJ2cbVYOK55khaTUUdZAR8MClTADrZCuqbtvR4jrqU5eXoIPAfVQuBngNpbFPcEpwUVXOowN739ALW3swwLciCH7yWwsrQcOc9S7cgL1rJ73x74n5GmebXguoD8PVWhV1mBPala99XSTUu5vj6c4tknalggt4gtpCSwQZDZD";
-    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
+const crypto = require('crypto');
 
-    if (!token) {
-        console.error("❌ ERROR: WHATSAPP_TOKEN no configurado");
+// Helper para validar firma HMAC de Cal.com si el secreto está configurado
+function verifyCalSignature(req, secret) {
+    if (!secret) return true;
+    const signature = req.headers['x-cal-signature-256'];
+    if (!signature) return false;
+    try {
+        const bodyStr = typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+        const expectedSignature = crypto.createHmac('sha256', secret).update(bodyStr).digest('hex');
+        return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
+    } catch (e) {
         return false;
     }
+}
+
+// Helper para enviar mensajes de WhatsApp vía Meta Graph API
+async function sendWhatsAppAlert(recipientNumber, textBody) {
+    const token = process.env.WHATSAPP_TOKEN;
+    const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+
+    if (!token || !phoneId) {
+        console.error("❌ ERROR: WHATSAPP_TOKEN o WHATSAPP_PHONE_NUMBER_ID no configurado");
+        return false;
+    }
+
 
     const url = `https://graph.facebook.com/v20.0/${phoneId}/messages`;
     const cleanNumber = recipientNumber.replace(/[^0-9]/g, '');
@@ -60,8 +77,15 @@ module.exports = async (req, res) => {
         return res.status(405).json({ error: 'Method Not Allowed' });
     }
 
+    const calSecret = process.env.CAL_WEBHOOK_SECRET;
+    if (calSecret && !verifyCalSignature(req, calSecret)) {
+        console.error("❌ Firma inválida de Cal.com Webhook (CAL_WEBHOOK_SECRET mismatch)");
+        return res.status(401).json({ error: 'Unauthorized: Invalid signature' });
+    }
+
     try {
         let body = req.body;
+
         if (typeof body === 'string') {
             try { body = JSON.parse(body); } catch(e) {}
         } else if (Buffer.isBuffer(body)) {
