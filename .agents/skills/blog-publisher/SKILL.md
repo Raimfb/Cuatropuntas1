@@ -32,7 +32,7 @@ Esta skill proporciona el protocolo editorial estricto, la matriz de costos y el
    - `category`: Una de las categorías oficiales (`Casas Nuevas`, `Segundos Pisos & Ampliaciones`, `Remodelaciones`, `Quinchos`, `Precios & Cotización`, `Guías Prácticas`, `Materiales & Sistemas`).
    - `date`: Fecha en formato `YYYY-MM-DD`.
    - `author`: `Equipo Técnico Cuatropuntas` o `Ingeniería Cuatropuntas`.
-   - `image`: Opcional. Si se omite, el compilador asigna la imagen oficial de la categoría.
+   - `image`: **Obligatoria y única**. Ruta a la portada fotorrealista 16:9 generada exclusivamente para el artículo (ej: `/blog_[slug_resumido].jpg`). Prohibido repetir portadas de otros artículos o depender de fallbacks estáticos.
    - `readTime`: Tiempo estimado (ej: `7 min de lectura`).
    - `tags`: Array de 3 a 5 palabras clave estratégicas.
    - `faq`: Array de al menos 2 a 3 objetos `{ question: "...", answer: "..." }`.
@@ -53,18 +53,23 @@ Para redactar y publicar un artículo, el agente debe seguir estrictamente este 
 ```text
 1. Redactar Borrador en content/drafts/[slug].md
    ↓
-2. Compilar y Sincronizar: node scripts/publish-blog.js content/drafts/[slug].md
+2. Generar Portada Fotorrealista Única 16:9 con generate_image y copiar a public/blog_[slug].jpg
    ↓
-3. Verificar con Suite Playwright: npx playwright test tests/blog-automation.spec.js
+3. Compilar y Sincronizar: node scripts/publish-blog.js content/drafts/[slug].md
    ↓
-4. Confirmar Éxito y exhibir ruta generada: public/blog/posts/[slug].html
+4. Verificar con Suite Playwright: npx playwright test tests/blog-automation.spec.js
+   ↓
+5. Confirmar Éxito y exhibir ruta generada: public/blog/posts/[slug].html
 ```
 
-### Paso 1: Guardar el Borrador Markdown
-Escribir el contenido en la carpeta de borradores:
+### Paso 1: Redactar el Borrador Markdown
+Escribir el contenido con frontmatter completo en la carpeta de borradores:
 `content/drafts/[slug].md`
 
-### Paso 2: Ejecutar el Compilador Nativo
+### Paso 2: Generar Portada Fotorrealista Exclusiva
+Invocar la herramienta de generación de imagen (`generate_image`) con ratio `16:9` y un prompt arquitectónico detallado adaptado a Santiago de Chile y a la temática del artículo. Copiar el archivo generado a `public/blog_[slug_resumido].jpg` e incluir su ruta en el frontmatter (`image: "/blog_[slug_resumido].jpg"`).
+
+### Paso 3: Ejecutar el Compilador Nativo
 Ejecutar por terminal:
 ```powershell
 node scripts/publish-blog.js content/drafts/[slug].md
@@ -75,13 +80,13 @@ Esto generará atómicamente:
 - La tarjeta estática SSR en `public/blog/index.html`.
 - La URL canónica en `public/sitemap.xml`.
 
-### Paso 3: Ejecutar la Verificación Automatizada
+### Paso 4: Ejecutar la Verificación Automatizada
 Ejecutar la suite de pruebas para confirmar integridad:
 ```powershell
 npx playwright test tests/blog-automation.spec.js
 ```
 
-### Paso 4: Certificación y Reporte
+### Paso 5: Certificación y Reporte
 Si las pruebas pasan al 100% en verde:
 1. Confirmar el éxito al usuario.
 2. Reportar la ruta del HTML (`public/blog/posts/[slug].html`).

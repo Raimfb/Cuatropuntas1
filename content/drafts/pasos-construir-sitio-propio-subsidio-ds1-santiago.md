@@ -3,6 +3,7 @@ title: "Guía 2026: Pasos para Construir en Sitio Propio con Subsidio DS1 en la 
 slug: "pasos-construir-sitio-propio-subsidio-ds1-santiago"
 excerpt: "Aprende cómo aplicar el Subsidio DS1 de Construcción en Sitio Propio del MINVU en la RM, requisitos de terreno, trámites DOM/Serviu y costos por m² para edificar tu casa."
 category: "Guías Prácticas"
+image: "/blog_subsidio_ds1_sitio_propio.jpg"
 date: "2026-09-08"
 author: "Equipo Técnico Cuatropuntas"
 readTime: "8 min de lectura"
