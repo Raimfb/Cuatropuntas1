@@ -17,8 +17,19 @@
     "public"
   ],
   "agent_auth": {
+    "supported_identity_types": [
+      "ephemeral",
+      "delegated",
+      "anonymous",
+      "identity_assertion"
+    ],
+    "credential_types": [
+      "bearer",
+      "api_key"
+    ],
+    "register_uri": "https://www.cuatropuntas.com/api/mcp",
+    "instructions": "https://www.cuatropuntas.com/auth.md",
     "skill": "https://www.cuatropuntas.com/auth.md",
-    "register_uri": "https://www.cuatropuntas.com/api/chat",
     "identity_types_supported": [
       "identity_assertion",
       "anonymous"
@@ -27,7 +38,7 @@
       "credential_types_supported": [
         "bearer"
       ],
-      "claim_uri": "https://www.cuatropuntas.com/api/chat"
+      "claim_uri": "https://www.cuatropuntas.com/api/mcp"
     },
     "identity_assertion": {
       "assertion_types_supported": [
@@ -37,7 +48,7 @@
       "credential_types_supported": [
         "bearer"
       ],
-      "claim_uri": "https://www.cuatropuntas.com/api/chat"
+      "claim_uri": "https://www.cuatropuntas.com/api/mcp"
     }
   }
 }
