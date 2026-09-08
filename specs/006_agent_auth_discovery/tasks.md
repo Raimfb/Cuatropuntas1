@@ -1,6 +1,6 @@
 # Tasks Breakdown: Spec 006 - Agent Auth Metadata & Well-Known Discovery Polish
 **Feature ID:** `006_agent_auth_discovery`  
-**Estado:** IN PROGRESS (Despliegue a Producción)  
+**Estado:** COMPLETED  
 **Regla Estricta:** No marcar ninguna tarea como completada sin su comando de verificación ejecutado con éxito.
 
 ---
@@ -40,7 +40,7 @@
   - Ejecutar suite completa `npx playwright test` asegurando 0 regresiones.
   - *Comando de verificación:* 64/64 passed en 17.4s (Código de salida 0).
 
-- [ ] **T07: Desplegar a Producción y Verificación en Vivo**
+- [x] **T07: Desplegar a Producción y Verificación en Vivo**
   - `git add .`
   - `git commit -m "feat(spec-006): estandarizar agent auth metadata y web bot auth directory"`
   - `git push origin main`
