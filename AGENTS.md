@@ -62,6 +62,12 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
    - **Nivel Confort & Eficiencia (22 a 24 UF/m² +IVA):** Incorpora ventanas termopanel DVH en recintos habitables, mayor densidad aislante y sellos herméticos perimetrales (hasta 40% de ahorro energético).
    - **Nivel Premium / EIFS (26 a 29 UF/m² +IVA):** Envolvente térmica exterior continua (EIFS) o SIP de alta densidad, eliminación total de puentes térmicos y apto para Calificación Energética de Viviendas (CEV).
    - **Pauta de Comunicación Comercial (Spec 011):** En páginas de venta (`index.html`, `precios.html`, `servicios/*`), estos estándares se comunican a través de beneficios tangibles de habitabilidad, ahorro energético y carpeta técnica lista para recepción municipal en la DOM, reservando las fórmulas matemáticas y citas a artículos legales numéricos exclusivamente para el blog técnico y expedientes de ingeniería.
+8. **Regla Anti-Sobrepromesas y Realismo Comercial:**
+   - **REGLA ANTI-SOBREPROMESAS:** En todo copy, cotizador o post de blog, queda prohibido prometer habitabilidad ininterrumpida, aprobaciones municipales como hecho consumado o presupuestos mágicos. La venta debe basarse en método constructivo, contrato a suma alzada, faena limpia y cumplimiento normativo.
+   - **Segundos Pisos:** Reemplazar *"sin interrumpir la habitabilidad"* por *"Montaje rápido en seco planificado para minimizar los tiempos de obra e impacto en tu rutina diaria"* y *"Protocolos de faena limpia y coordinación por etapas"*.
+   - **Presupuestos:** Enfocar en *"Contrato a suma alzada con itemizado detallado: total transparencia en cada partida sin cobros imprevistos"*.
+   - **Gestión Municipal (DOM):** Enfocar en *"Expediente técnico completo de arquitectura y cálculo listo para tramitación y recepción municipal en la DOM"*.
+   - **Garantías Legales:** Citar respaldo contractual conforme al **Art. 18 de la LGUC** (hasta 10 años en estructura).
 
 ---
 
