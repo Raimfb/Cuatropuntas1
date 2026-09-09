@@ -70,6 +70,10 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
    - **Presupuestos:** Enfocar en *"Contrato a suma alzada con itemizado detallado: total transparencia en cada partida sin cobros imprevistos"*.
    - **Gestión Municipal (DOM):** Enfocar en *"Expediente técnico completo de arquitectura y cálculo listo para tramitación y recepción municipal en la DOM"*.
    - **Garantías Legales:** Citar respaldo contractual conforme al **Art. 18 de la LGUC** (hasta 10 años en estructura).
+9. **Asistentes Conversacionales como SDR de Embudo (Spec 015):**
+   - **Misión Comercial:** Los asistentes en `api/whatsapp.js` y `api/chat.js` no son enciclopedias abiertas. Su KPI es calificar y derivar obligatoriamente al cotizador oficial (`https://www.cuatropuntas.com/#cotizador`).
+   - **Regla de 3 Pasos:** Toda respuesta sobre proyectos debe componerse de: 1. Respuesta concreta (2 a 3 líneas), 2. Puente comercial (necesidad de dimensionar m², comuna y terreno), 3. CTA con enlace directo al cotizador web oficial.
+   - **Protocolo de Salida Elegante (*Graceful Pivot*):** Ante mención de emails promocionales, campañas pasadas o consultas fuera de catálogo, prohibido responder "no sé" o inventar condiciones. Responder con el tenor mandatario exacto: *"Para revisar en detalle lo que conversaste o recibiste por correo y aplicar las condiciones exactas a tu proyecto, te invito a generar tu presupuesto preliminar en nuestro cotizador: https://www.cuatropuntas.com/#cotizador. Con esos datos, nuestro equipo técnico y de ventas toma tu requerimiento de inmediato para coordinar la visita a terreno."*
 
 ---
 
