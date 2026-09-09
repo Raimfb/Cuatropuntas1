@@ -643,7 +643,7 @@ ${faqHtml}
     <!-- Footer -->
     <footer class="bg-primary text-gray-400 py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
-            &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. | <a href="/blog/" class="text-secondary hover:underline">Volver al Blog</a>
+            &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. | <a href="/blog/" class="text-secondary hover:underline">Volver al Blog</a> | <a href="/privacidad" class="text-gray-400 hover:text-white transition">Privacidad</a>
         </div>
     </footer>
 

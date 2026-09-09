@@ -1,4 +1,4 @@
-﻿/**
+/**
  * public/blog-comments.js
  * Constructora Cuatropuntas SpA
  * Widget Reactivo de Comentarios y Captura de Leads para Email Marketing (Spec 005)
@@ -222,7 +222,7 @@
                         <div class="flex items-start gap-2.5 pt-1">
                             <input type="checkbox" id="comment-marketing-consent" required checked class="mt-1 h-4 w-4 rounded border-gray-300 text-secondary focus:ring-secondary">
                             <label for="comment-marketing-consent" class="text-xs text-gray-600 leading-snug">
-                                Acepto recibir novedades técnicas y estimaciones de costos de Constructora Cuatropuntas SpA.
+                                Acepto recibir novedades técnicas y estimaciones de costos conforme a la <a href="/privacidad" target="_blank" rel="noopener noreferrer" class="text-secondary hover:underline font-medium">Política de Privacidad</a>.
                             </label>
                         </div>
                         <button type="submit" id="btn-manual-auth" class="w-full bg-secondary hover:bg-orange-700 text-white font-bold py-2.5 px-4 rounded-lg transition text-sm shadow-md mt-2">

@@ -199,6 +199,9 @@
                             <span class="text-xs text-gray-500 mt-1 block">Ingresa tu número móvil chileno (+56 9) para recibir alertas y PDF por WhatsApp.</span>
                         </div>
                     </div>
+                    <p class="text-xs text-gray-500 mt-4 leading-relaxed">
+                        Al solicitar tu presupuesto, aceptas el tratamiento de tus datos para coordinar el contacto técnico conforme a nuestra <a href="/privacidad" target="_blank" rel="noopener noreferrer" class="text-secondary hover:underline font-medium">Política de Privacidad</a>.
+                    </p>
                     <div class="mt-6 flex flex-col sm:flex-row justify-between items-center sm:gap-4 gap-4">
                         <button type="button" onclick="nextStep(2)" class="w-full sm:w-auto px-6 py-3 border border-gray-300 text-gray-600 font-bold rounded-md hover:bg-gray-50 transition order-2 sm:order-1">&larr; Anterior</button>
                         <button type="submit" id="quoteSubmitBtn" class="w-full sm:w-auto px-6 py-4 bg-secondary text-white font-bold rounded-md hover:bg-orange-700 transition shadow-lg transform hover:-translate-y-0.5 whitespace-nowrap order-1 sm:order-2">
