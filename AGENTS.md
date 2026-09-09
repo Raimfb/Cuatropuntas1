@@ -48,6 +48,8 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
 3. **Quinchos y Terrazas de Alto Estándar:**
    - Metalcom: desde **12 UF/m²**
    - Albañilería en obra: desde **15 UF/m²**
+   - **Alcance Base Incluido (Tarifa Paramétrica):** Cobertizo o techumbre estructural (madera o acero según diseño), piso de hormigón / radier afinado, parrilla tradicional en obra revestida en ladrillos refractarios con mecanismo elevable y manivela frontal, campana de hojalatería con ducto de tiraje y mesón de apoyo lateral básico (madera estructural o albañilería afinada).
+   - **Exclusiones Taxativas (A cubicar y presupuestar en terreno tras visita técnica):** Redes sanitarias (empalmes de agua potable, grifería, lavacopas y canalización de desagües a cámara de alcantarillado), canalización eléctrica desde tablero general o iluminación decorativa adicional, muebles cerrados bajo mesón (puertas de madera, cajoneras o herrajes), cubiertas en piedra natural (granito, mármol o cuarzo) y spiedos motorizados u otros accesorios.
 4. **Remodelaciones Integrales (>25 m²):**
    - Ligera (Metalcom): desde **11 UF/m²**
    - Sólida (Albañilería): desde **13 UF/m²**

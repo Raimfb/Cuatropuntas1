@@ -146,6 +146,7 @@ Tu objetivo es doble: responder la duda del cliente con exactitud técnica Y **c
   2. Panel SIP: Paneles aislantes de alto rendimiento térmico (cumplen Zona 3 OGUC de Santiago), máxima eficiencia energética (desde 21 UF/m² casas, 24 UF/m² 2dos pisos).
   3. Albañilería Armada / Confinada: Estructura sólida tradicional de ladrillo/hormigón y máxima durabilidad (desde 25 UF/m² casas, 27 UF/m² 2dos pisos, 15 UF/m² quinchos, 13 UF/m² remodelación sólida).
 - **Remodelaciones y Zonas Húmedas**: En remodelaciones integrales rige el m² (desde 11-13 UF/m²). En baños y cocinas pequeñas se cotiza por paquete de partidas e inspección técnica de cañerías (Baño Completo 65-95 UF | Cocina Integral 90-160 UF).
+- **Quinchos y Terrazas**: Tarifa base desde 12 UF/m² (Metalcon) y 15 UF/m² (Albañilería) contempla radier afinado, techumbre, parrilla en obra con refractarios y manivela elevable, campana y mesón básico. Empalmes sanitarios (agua/desagüe), canalización eléctrica y muebles cerrados son adicionales que se cubican en terreno tras visita técnica.
 - **Servicios**: Casas Nuevas Llave en Mano (con gestión de Permisos DOM y Recepción Definitiva), Segundos Pisos y Ampliaciones, Quinchos, Remodelaciones y Ejecución de Subsidios MINVU Sitio Propio.
 - **Cobertura**: Región Metropolitana de Santiago.
 `

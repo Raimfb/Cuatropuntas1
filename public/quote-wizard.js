@@ -189,7 +189,16 @@
                 <!-- Step 3: Contacto -->
                 <div id="step3" class="step-container hidden transition-opacity duration-300 opacity-0">
                     <h3 class="text-lg font-bold mb-4">¿A dónde enviamos tu cotización?</h3>
-                    <div id="step3RemodelacionResumen" class="hidden mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 leading-relaxed"></div>
+                    <div id="step3RemodelacionResumen" class="hidden mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 leading-relaxed" style="display: none;"></div>
+                    <div id="step3QuinchoResumen" class="hidden mb-4 p-4 bg-orange-50 border border-orange-200 rounded-lg text-xs text-gray-800 leading-relaxed" style="display: none;">
+                        <div class="font-bold text-orange-900 mb-1 flex items-center gap-1.5">
+                            <span>Alcance de la Estimación para Quincho:</span>
+                        </div>
+                        <div class="space-y-1.5">
+                            <p><strong class="text-green-800">✓ Incluye:</strong> Cobertizo o techumbre, radier afinado, parrilla en obra con refractarios y manivela frontal, campana de hojalatería con ducto de tiraje y mesón de apoyo.</p>
+                            <p><strong class="text-amber-800">⚠ No incluye (adicionales):</strong> Conexiones de agua potable, desagües a alcantarillado, canalización eléctrica ni muebles bajo mesón (se presupuestan en terreno según factibilidad).</p>
+                        </div>
+                    </div>
                     <div class="space-y-4">
                         <div>
                             <label for="qNombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
@@ -270,15 +279,30 @@
             }
 
             const tipoVal = document.getElementById('qTipo')?.value || '';
+            const isQuincho = tipoVal.toLowerCase().includes('quincho');
             const espaciosVal = document.getElementById('espacios-remodelar')?.value?.trim() || '';
-            const resumenEl = document.getElementById('step3RemodelacionResumen');
-            if (resumenEl) {
+
+            const resumenRemodelaEl = document.getElementById('step3RemodelacionResumen');
+            if (resumenRemodelaEl) {
                 if (tipoVal === 'Remodelacion' && espaciosVal) {
-                    resumenEl.classList.remove('hidden');
-                    resumenEl.innerHTML = `<strong>Recintos a remodelar:</strong> ${espaciosVal}<br><span class="text-amber-700 text-[11px]">*El presupuesto preliminar desglosará partidas húmedas y secas conforme a estos recintos. La propuesta definitiva se ratifica tras la visita técnica en terreno.</span>`;
+                    resumenRemodelaEl.classList.remove('hidden');
+                    resumenRemodelaEl.style.display = '';
+                    resumenRemodelaEl.innerHTML = `<strong>Recintos a remodelar:</strong> ${espaciosVal}<br><span class="text-amber-700 text-[11px]">*El presupuesto preliminar desglosará partidas húmedas y secas conforme a estos recintos. La propuesta definitiva se ratifica tras la visita técnica en terreno.</span>`;
                 } else {
-                    resumenEl.classList.add('hidden');
-                    resumenEl.innerHTML = '';
+                    resumenRemodelaEl.classList.add('hidden');
+                    resumenRemodelaEl.style.display = 'none';
+                    resumenRemodelaEl.innerHTML = '';
+                }
+            }
+
+            const resumenQuinchoEl = document.getElementById('step3QuinchoResumen');
+            if (resumenQuinchoEl) {
+                if (isQuincho) {
+                    resumenQuinchoEl.classList.remove('hidden');
+                    resumenQuinchoEl.style.display = '';
+                } else {
+                    resumenQuinchoEl.classList.add('hidden');
+                    resumenQuinchoEl.style.display = 'none';
                 }
             }
         }
@@ -569,14 +593,24 @@
             const espaciosInput = document.getElementById('espacios-remodelar');
 
             function syncEspaciosVisibility(val) {
-                if (!espaciosContainer) return;
-                if (val === 'Remodelacion') {
-                    espaciosContainer.classList.remove('hidden');
-                    espaciosContainer.style.display = '';
-                } else {
-                    espaciosContainer.classList.add('hidden');
-                    espaciosContainer.style.display = 'none';
-                    if (espaciosInput) espaciosInput.value = '';
+                if (espaciosContainer) {
+                    if (val === 'Remodelacion') {
+                        espaciosContainer.classList.remove('hidden');
+                        espaciosContainer.style.display = '';
+                    } else {
+                        espaciosContainer.classList.add('hidden');
+                        espaciosContainer.style.display = 'none';
+                        if (espaciosInput) espaciosInput.value = '';
+                    }
+                }
+                const resumenQuinchoEl = document.getElementById('step3QuinchoResumen');
+                if (resumenQuinchoEl && (!val || !val.toLowerCase().includes('quincho'))) {
+                    resumenQuinchoEl.classList.add('hidden');
+                }
+                const resumenRemodelaEl = document.getElementById('step3RemodelacionResumen');
+                if (resumenRemodelaEl && val !== 'Remodelacion') {
+                    resumenRemodelaEl.classList.add('hidden');
+                    resumenRemodelaEl.innerHTML = '';
                 }
             }
 

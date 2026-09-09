@@ -212,6 +212,14 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
     const maxUF = formatter.format(maxUF_raw);
     const comunaHuman = getComunaLabel(comuna);
 
+    let notasAlcance = spacesAnalysis.notasAlcance || [];
+    if (isQuincho) {
+        notasAlcance = [
+            "Quincho Base Incluye: Cobertizo o techumbre (madera o acero según diseño), radier de hormigón afinado, parrilla tradicional en obra revestida en ladrillos refractarios con mecanismo elevable y manivela frontal, campana de hojalatería con ducto de tiraje y mesón de apoyo lateral básico.",
+            "Partidas Adicionales (a presupuestar en terreno tras visita técnica): No contempla conexiones sanitarias (empalme de agua potable, grifería, lavacopas ni canalización de desagües a alcantarillado), canalización eléctrica desde tablero general o iluminación decorativa, muebles cerrados bajo mesón (puertas de madera o cajoneras) ni cubiertas en piedra natural (granito, mármol o cuarzo)."
+        ];
+    }
+
     return {
         baseUFm2,
         multiplicador,
@@ -233,7 +241,7 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
         espacios_remodelar: espaciosInput,
         isHumedoPuro: spacesAnalysis.isHumedoPuro,
         tipoHumedo: spacesAnalysis.tipoHumedo,
-        notasAlcance: spacesAnalysis.notasAlcance
+        notasAlcance
     };
 }
 
@@ -628,7 +636,7 @@ const quoteHandler = async (req, res) => {
                 ${notasAlcance && notasAlcance.length > 0 ? `
                 <!-- Notas de Alcance Técnico Condicionales -->
                 <div style="background-color: #fffaf0; border: 1px solid #feebc8; border-left: 4px solid #dd6b20; border-radius: 6px; padding: 16px; margin: 20px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #9c4221; font-size: 14px;">Alcance Técnico de Partidas (Remodelación)</h4>
+                    <h4 style="margin: 0 0 8px 0; color: #9c4221; font-size: 14px;">Alcance Técnico de Partidas (${isQuincho ? 'Quincho / Terraza' : 'Remodelación'})</h4>
                     ${notasAlcance.map(nota => `<p style="margin: 0 0 8px 0; font-size: 13px; line-height: 1.5; color: #7b341e;">• ${nota}</p>`).join('')}
                     <p style="margin: 4px 0 0 0; font-size: 11.5px; color: #9c4221; font-style: italic;">*Detalle referencial preliminar. Las especificaciones y cubicaciones exactas se definen y valorizan en la propuesta definitiva tras la visita técnica en terreno.</p>
                 </div>
