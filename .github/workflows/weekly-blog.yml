@@ -49,7 +49,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Ejecutar Pruebas Automatizadas de Calidad
-        run: npx playwright test tests/blog-automation.spec.js
+        run: npx playwright test tests/blog-automation.spec.js tests/blog-image-generation.spec.js
 
       - name: Commit y Push de los Cambios Compilados a Main
         run: |

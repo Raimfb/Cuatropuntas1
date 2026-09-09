@@ -12,6 +12,7 @@ const path = require('path');
 try { require('dotenv').config(); } catch (e) {}
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { compileAndPublishPost, sanitizeContent } = require('./publish-blog');
+const { generateBlogCover } = require('./generate-blog-cover');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
@@ -238,6 +239,7 @@ excerpt: "[Resumen pedagógico de 1 a 2 oraciones para Google]"
 category: "[Una de: Casas Nuevas | Segundos Pisos & Ampliaciones | Remodelaciones | Quinchos | Precios & Cotización | Guías Prácticas | Materiales & Sistemas]"
 date: "${new Date().toISOString().split('T')[0]}"
 author: "Equipo Técnico Cuatropuntas"
+image: "/blog/images/[slug].webp"
 readTime: "7 min de lectura"
 tags:
   - [Tag 1]
@@ -292,6 +294,7 @@ excerpt: "Guía técnica sobre ${topicData.title} para propietarios y constructo
 category: "${topicData.category || 'Materiales & Sistemas'}"
 date: "${new Date().toISOString().split('T')[0]}"
 author: "Equipo Técnico Cuatropuntas"
+image: "/blog/images/${slug}.webp"
 readTime: "7 min de lectura"
 tags:
   - Construcción Santiago
@@ -325,7 +328,7 @@ Explicación detallada del proyecto según la normativa chilena vigente.
     const prompt = buildGeminiPrompt(topicData);
 
     // Auto-descubrimiento o fallback de modelo
-    let modelName = 'gemini-1.5-flash';
+    let modelName = 'gemini-3.5-flash-lite';
     try {
         const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
         const listResp = await fetch(listUrl);
@@ -334,7 +337,7 @@ Explicación detallada del proyecto según la normativa chilena vigente.
             const viable = listData.models.find(m =>
                 m.supportedGenerationMethods &&
                 m.supportedGenerationMethods.includes('generateContent') &&
-                (m.name.includes('flash') || m.name.includes('pro'))
+                (m.name.includes('flash-lite') || m.name.includes('3.5-flash') || m.name.includes('3.6-flash'))
             );
             if (viable) {
                 modelName = viable.name.replace('models/', '');
@@ -344,9 +347,27 @@ Explicación detallada del proyecto según la normativa chilena vigente.
         // Usar default
     }
 
-    console.log(`🤖 Generando artículo con Gemini (${modelName})...`);
-    const model = genAI.getGenerativeModel({ model: modelName });
-    const result = await model.generateContent(prompt);
+    // Reintento con modelos alternativos ante 503/429
+    const candidateModels = [modelName, 'gemini-3.5-flash-lite', 'gemini-3.6-flash', 'gemini-2.5-flash'].filter((v, i, a) => a.indexOf(v) === i);
+    let result = null;
+    let lastError = null;
+
+    for (const currentModel of candidateModels) {
+        try {
+            console.log(`🤖 Generando artículo con Gemini (${currentModel})...`);
+            const model = genAI.getGenerativeModel({ model: currentModel });
+            result = await model.generateContent(prompt);
+            if (result && result.response) break;
+        } catch (err) {
+            console.warn(`⚠️ [GEMINI RETRY] Modelo ${currentModel} ocupado (${err.message}). Probando alternativa...`);
+            lastError = err;
+        }
+    }
+
+    if (!result || !result.response) {
+        throw lastError || new Error('Fallo al generar artículo con modelos Gemini');
+    }
+
     let text = result.response.text();
 
     // Limpiar bloques de código markdown si los incluyó
@@ -392,11 +413,22 @@ async function autoCurateAndPublish(options = {}) {
     }
 
     // 3. Generación con Gemini
-    const markdownContent = await generatePostWithGemini(selectedTopic, options);
+    let markdownContent = await generatePostWithGemini(selectedTopic, options);
 
     // Extraer slug del frontmatter para nombrar el archivo borrador
     const slugMatch = markdownContent.match(/slug:\s*["']?([^"'\n\r]+)["']?/);
     const slug = slugMatch ? slugMatch[1].trim() : `post-${Date.now()}`;
+
+    // 3.5. Generar o procesar portada visual WebP única (Spec 012)
+    const coverResult = await generateBlogCover(selectedTopic, slug, options);
+    const coverPath = coverResult.imagePath || `/blog/images/${slug}.webp`;
+
+    // Sincronizar campo 'image' en el Frontmatter
+    if (/^image:\s*.+$/m.test(markdownContent)) {
+        markdownContent = markdownContent.replace(/^image:\s*.+$/m, `image: "${coverPath}"`);
+    } else {
+        markdownContent = markdownContent.replace(/^slug:\s*.+$/m, `$&\nimage: "${coverPath}"`);
+    }
 
     // 4. Guardar borrador en content/drafts
     if (!fs.existsSync(DRAFTS_DIR)) {
@@ -413,6 +445,7 @@ async function autoCurateAndPublish(options = {}) {
             success: true,
             dryRun: true,
             slug,
+            image: coverPath,
             draftPath,
             topic: selectedTopic
         };
@@ -420,7 +453,7 @@ async function autoCurateAndPublish(options = {}) {
 
     const { parseMarkdownWithFrontmatter } = require('./publish-blog');
     const { metadata, content } = parseMarkdownWithFrontmatter(markdownContent);
-    const publishResult = compileAndPublishPost({ ...metadata, content });
+    const publishResult = compileAndPublishPost({ ...metadata, image: coverPath, content });
 
     console.log(`🎉 [PUBLICACIÓN EXITOSA]`);
     console.log(`   Slug: ${publishResult.slug}`);

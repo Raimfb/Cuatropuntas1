@@ -13,6 +13,7 @@ const path = require('path');
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const BLOG_POSTS_DIR = path.join(PUBLIC_DIR, 'blog', 'posts');
+const BLOG_IMAGES_DIR = path.join(PUBLIC_DIR, 'blog', 'images');
 const POSTS_JSON_PATH = path.join(PUBLIC_DIR, 'blog', 'posts.json');
 const BLOG_INDEX_PATH = path.join(PUBLIC_DIR, 'blog', 'index.html');
 const SITEMAP_PATH = path.join(PUBLIC_DIR, 'sitemap.xml');
@@ -855,6 +856,9 @@ function compileAndPublishPost(inputData, options = {}) {
     // Asegurar directorio destino
     if (!fs.existsSync(BLOG_POSTS_DIR)) {
         fs.mkdirSync(BLOG_POSTS_DIR, { recursive: true });
+    }
+    if (!fs.existsSync(BLOG_IMAGES_DIR)) {
+        fs.mkdirSync(BLOG_IMAGES_DIR, { recursive: true });
     }
 
     // 1. Escribir archivo HTML
