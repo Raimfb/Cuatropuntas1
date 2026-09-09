@@ -56,6 +56,11 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
    - **Cocina Integral:** **90 a 160 UF** (muebles a medida, cubiertas de cuarzo, redes sanitarias y gas).
 6. **Agendamiento Oficial:**
    - Visita Técnica en Terreno: `https://cal.com/cuatropuntas.com/visita-tecnica`
+7. **Estándar Térmico Obligatorio y Niveles de Confort (Art. 4.1.10 OGUC & Ley 21.305):**
+   - **Exigencia Base Zona 3 RM (Santiago):** Todo proyecto habitacional debe cumplir con la transmitancia máxima en techumbre $U \le 0.38\ \text{W/m}^2\text{K}$ ($R_{100} \ge 260$), aislación perimetral en muros, barrera de vapor continua y vanos reglamentarios para aprobación de Recepción Final DOM (Art. 5.1.6).
+   - **Nivel Base Normativo (Desde 19 UF/m² +IVA):** Cumple el 100% de la normativa legal de aislación para recepción DOM con ventanas estándar.
+   - **Nivel Confort & Eficiencia (22 a 24 UF/m² +IVA):** Incorpora ventanas termopanel DVH en recintos habitables, mayor densidad aislante y sellos herméticos perimetrales (hasta 40% de ahorro energético).
+   - **Nivel Premium / EIFS (26 a 29 UF/m² +IVA):** Envolvente térmica exterior continua (EIFS) o SIP de alta densidad, eliminación total de puentes térmicos y apto para Calificación Energética de Viviendas (CEV).
 
 ---
 
