@@ -41,7 +41,7 @@
   - Ejecutar la suite completa de Playwright (`npx playwright test`).
   - *Comando de Verificación:* 72/72 tests aprobados con 0 fallos.
 
-- [ ] **Task 8: Despliegue a Producción**
+- [x] **Task 8: Despliegue a Producción**
   - Registrar commit: `feat(spec-009): politica de privacidad canonica y cumplimiento normativo ley 19.628`.
   - Push a `origin main` para trigger de despliegue en Vercel.
-  - *Comando de Verificación:* Salida de `git push origin main`.
+  - *Comando de Verificación:* Salida de `git push origin main` (ejecutado con éxito).
