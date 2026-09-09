@@ -5,9 +5,9 @@ const path = require('path');
 const baseDir = path.resolve(__dirname, '..');
 const publicDir = path.join(baseDir, 'public');
 
-test.describe('Spec 010: Cumplimiento Térmico OGUC Art. 4.1.10, Niveles de Precios y Artículo Técnico', () => {
+test.describe('Spec 011: Simplificación Comercial y Desescalada de Tecnicismos Térmicos', () => {
 
-  test('T01.1: index.html y precios.html presentan los 3 niveles de desempeño térmico manteniendo la base de 19 UF/m² +IVA', async () => {
+  test('T01.1: index.html y precios.html presentan los 3 niveles de confort y habitabilidad manteniendo la base de 19 UF/m² +IVA sin jerga de laboratorio', async () => {
     const indexPath = path.join(publicDir, 'index.html');
     const preciosPath = path.join(publicDir, 'precios.html');
 
@@ -25,20 +25,28 @@ test.describe('Spec 010: Cumplimiento Térmico OGUC Art. 4.1.10, Niveles de Prec
     expect(indexHtml).toMatch(/Base\s+Normativo|Nivel\s+Base/i);
     expect(indexHtml).toMatch(/Confort\s+(&|y)\s+Eficiencia/i);
     expect(indexHtml).toMatch(/Premium|EIFS/i);
-    expect(indexHtml).toContain('4.1.10');
     expect(indexHtml).toMatch(/22\s*(-|a)\s*24\s*UF/i);
     expect(indexHtml).toMatch(/26\s*(-|a)\s*29\s*UF/i);
+    expect(indexHtml).toContain('Estándares de Confort y Desempeño Térmico');
+    expect(indexHtml).toMatch(/recepci[oó]n\s+municipal/i);
 
     // 3 Niveles en precios.html
     expect(preciosHtml).toMatch(/Base\s+Normativo|Nivel\s+Base/i);
     expect(preciosHtml).toMatch(/Confort\s+(&|y)\s+Eficiencia/i);
     expect(preciosHtml).toMatch(/Premium|EIFS/i);
-    expect(preciosHtml).toContain('4.1.10');
     expect(preciosHtml).toMatch(/22\s*(-|a)\s*24\s*UF/i);
     expect(preciosHtml).toMatch(/26\s*(-|a)\s*29\s*UF/i);
+    expect(preciosHtml).toContain('Estándares de Confort y Desempeño Térmico');
+    expect(preciosHtml).toMatch(/recepci[oó]n\s+municipal/i);
+
+    // Desescalada comercial: ausencia de citas rígidas y unidades de laboratorio en páginas de venta
+    expect(indexHtml).not.toContain('Art. 4.1.10');
+    expect(indexHtml).not.toContain('W/m²K');
+    expect(preciosHtml).not.toContain('Art. 4.1.10');
+    expect(preciosHtml).not.toContain('W/m²K');
   });
 
-  test('T01.2: Fichas de casas-nuevas.html y segundos-pisos.html citan Art. 4.1.10 OGUC (Zona 3 RM) y expediente DOM (Art. 5.1.6)', async () => {
+  test('T01.2: Fichas de casas-nuevas.html y segundos-pisos.html comunican habitabilidad adaptada a Santiago y carpeta técnica DOM sin citas numéricas', async () => {
     const casasPath = path.join(publicDir, 'servicios', 'casas-nuevas.html');
     const segundosPath = path.join(publicDir, 'servicios', 'segundos-pisos.html');
 
@@ -49,21 +57,22 @@ test.describe('Spec 010: Cumplimiento Térmico OGUC Art. 4.1.10, Niveles de Prec
     const segundosHtml = fs.readFileSync(segundosPath, 'utf8');
 
     // casas-nuevas.html
-    expect(casasHtml).toContain('4.1.10');
-    expect(casasHtml).toMatch(/Zona\s*3/i);
-    expect(casasHtml).toContain('5.1.6');
+    expect(casasHtml).toMatch(/clima\s+de\s+Santiago/i);
     expect(casasHtml).toMatch(/Recepci[oó]n\s+Final/i);
+    expect(casasHtml).toContain('DOM');
     expect(casasHtml).toMatch(/barrera\s+de\s+(vapor|humedad)/i);
+    expect(casasHtml).not.toContain('Art. 4.1.10');
+    expect(casasHtml).not.toContain('Art. 5.1.6');
 
     // segundos-pisos.html
-    expect(segundosHtml).toContain('4.1.10');
-    expect(segundosHtml).toMatch(/Zona\s*3/i);
-    expect(segundosHtml).toContain('5.1.6');
-    expect(segundosHtml).toMatch(/Recepci[oó]n\s+Final/i);
     expect(segundosHtml).toMatch(/aislaci[oó]n/i);
+    expect(segundosHtml).toMatch(/confort/i);
+    expect(segundosHtml).toContain('DOM');
+    expect(segundosHtml).not.toContain('Art. 4.1.10');
+    expect(segundosHtml).not.toContain('Art. 5.1.6');
   });
 
-  test('T01.3: Post técnico de aislamiento térmico existe físicamente, cuenta con Schema TechArticle, contenedor de comentarios y WhatsApp oficial', async () => {
+  test('T01.3: Post técnico de aislamiento térmico existe físicamente, preserva rigor técnico, Schema TechArticle, comentarios y WhatsApp oficial', async () => {
     const postSlug = 'normativa-aislacion-termica-oguc-santiago-precios';
     const postPath = path.join(publicDir, 'blog', 'posts', `${postSlug}.html`);
 
@@ -85,13 +94,13 @@ test.describe('Spec 010: Cumplimiento Térmico OGUC Art. 4.1.10, Niveles de Prec
     expect(postHtml).not.toContain('56963482439');
     expect(postHtml).not.toContain('6348 2439');
 
-    // Parámetros técnicos del artículo
+    // Parámetros técnicos del artículo (Rigor preservado en el blog)
     expect(postHtml).toContain('4.1.10');
     expect(postHtml).toMatch(/0[,.]38/); // U <= 0.38
     expect(postHtml).toContain('260'); // R100 >= 260
   });
 
-  test('T01.4: AGENTS.md incluye los parámetros normativos actualizados (Art. 4.1.10 OGUC Zona 3 RM y 3 niveles)', async () => {
+  test('T01.4: AGENTS.md incluye los parámetros normativos de ingeniería como SSOT oficial', async () => {
     const agentsPath = path.join(baseDir, 'AGENTS.md');
     expect(fs.existsSync(agentsPath)).toBeTruthy();
 

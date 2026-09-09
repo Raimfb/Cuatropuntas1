@@ -61,6 +61,7 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
    - **Nivel Base Normativo (Desde 19 UF/m² +IVA):** Cumple el 100% de la normativa legal de aislación para recepción DOM con ventanas estándar.
    - **Nivel Confort & Eficiencia (22 a 24 UF/m² +IVA):** Incorpora ventanas termopanel DVH en recintos habitables, mayor densidad aislante y sellos herméticos perimetrales (hasta 40% de ahorro energético).
    - **Nivel Premium / EIFS (26 a 29 UF/m² +IVA):** Envolvente térmica exterior continua (EIFS) o SIP de alta densidad, eliminación total de puentes térmicos y apto para Calificación Energética de Viviendas (CEV).
+   - **Pauta de Comunicación Comercial (Spec 011):** En páginas de venta (`index.html`, `precios.html`, `servicios/*`), estos estándares se comunican a través de beneficios tangibles de habitabilidad, ahorro energético y carpeta técnica lista para recepción municipal en la DOM, reservando las fórmulas matemáticas y citas a artículos legales numéricos exclusivamente para el blog técnico y expedientes de ingeniería.
 
 ---
 
