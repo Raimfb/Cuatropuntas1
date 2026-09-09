@@ -217,3 +217,41 @@ test('Verificar Blog en vivo en Producción (https://www.cuatropuntas.com/blog/)
     await blogCalBtn.first().scrollIntoViewIfNeeded();
     await page.screenshot({ path: path.join(screenshotsDir, 'produccion_blog_agendar_visita_tecnica.png') });
 });
+
+test('Verificar rebalanceo comercial y 4 tarjetas de servicios en index.html (Spec 007)', async ({ page }) => {
+    const indexPath = path.join(publicDir, 'index.html');
+    const fileUrl = `file:///${indexPath.replace(/\\/g, '/')}`;
+    await page.goto(fileUrl, { waitUntil: 'domcontentloaded' });
+
+    // 1. Validar Hero
+    const heroValue = page.locator('header#inicio p.text-orange-200');
+    await expect(heroValue).toContainText('Precios desde 19 UF/m² +IVA · Construcción Llave en Mano · Trámites DOM Incluidos');
+    await expect(heroValue).not.toContainText('subsidios MINVU');
+
+    // 2. Validar 4 Tarjetas de Servicios independientes en #servicios
+    const serviceCards = page.locator('#servicios h3');
+    await expect(serviceCards).toHaveCount(4);
+    await expect(serviceCards.nth(0)).toHaveText('Casas Nuevas Llave en Mano');
+    await expect(serviceCards.nth(1)).toHaveText('Segundos Pisos y Ampliaciones');
+    await expect(serviceCards.nth(2)).toHaveText('Remodelaciones Integrales');
+    await expect(serviceCards.nth(3)).toHaveText('Quinchos y Terrazas de Alto Estándar');
+
+    // 3. Validar eliminación de tarjeta azul L450
+    const blueCard = page.locator('section:has(h2:has-text("¿Por qué elegirnos?")) div.bg-blue-50');
+    await expect(blueCard).toHaveCount(0);
+
+    // 4. Validar Pilar 03 de Garantía
+    const pilar03 = page.locator('#garantia p.font-bold:has-text("Presupuesto Cerrado y Plazos de Entrega")');
+    await expect(pilar03).toBeVisible();
+    const pilarSubsidio = page.locator('#garantia p.font-bold:has-text("Subsidios MINVU")');
+    await expect(pilarSubsidio).toHaveCount(0);
+
+    // 5. Validar Banner Secundario de Acreditación MINVU con enlace a /subsidio-minvu-sitio-propio
+    const bannerMinvu = page.locator('section:has-text("Sello de Acreditación Técnica")');
+    await expect(bannerMinvu).toBeVisible();
+    await expect(bannerMinvu).toContainText('Acreditados ante el MINVU para Construcción en Sitio Propio (DS1 y DS49)');
+    await expect(bannerMinvu).toContainText('Requisito estricto: Terreno propio y subsidio adjudicado en mano');
+    const bannerLink = bannerMinvu.locator('a[href="/subsidio-minvu-sitio-propio"]');
+    await expect(bannerLink).toBeVisible();
+});
+
