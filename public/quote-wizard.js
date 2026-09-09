@@ -118,6 +118,11 @@
                                 ${tipoOptions}
                             </select>
                         </div>
+                        <div id="espaciosRemodelarContainer" class="${defaultTipo === 'Remodelacion' ? '' : 'hidden '}transition-all duration-300" style="${defaultTipo === 'Remodelacion' ? '' : 'display: none;'}">
+                            <label for="espacios-remodelar" class="block text-sm font-medium text-gray-700 mb-1">Espacio o espacios a remodelar</label>
+                            <input type="text" id="espacios-remodelar" name="espacios_remodelar" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="Ej: Cocina y baño, o dormitorio y living, o baño y comedor...">
+                            <span class="text-xs text-gray-500 mt-1 block">Indícanos si incluye zonas húmedas (baño, cocina) o recintos secos para ajustar el alcance técnico.</span>
+                        </div>
                         <!-- Honeypot fields (hidden from human users, bot trap) -->
                         <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
                             <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" placeholder="Tú sitio web aquí">
@@ -184,6 +189,7 @@
                 <!-- Step 3: Contacto -->
                 <div id="step3" class="step-container hidden transition-opacity duration-300 opacity-0">
                     <h3 class="text-lg font-bold mb-4">¿A dónde enviamos tu cotización?</h3>
+                    <div id="step3RemodelacionResumen" class="hidden mb-4 p-3.5 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-900 leading-relaxed"></div>
                     <div class="space-y-4">
                         <div>
                             <label for="qNombre" class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
@@ -262,6 +268,19 @@
                 alert('Por favor, completa todos los campos de diseño y ubicación para cotizar.');
                 return false;
             }
+
+            const tipoVal = document.getElementById('qTipo')?.value || '';
+            const espaciosVal = document.getElementById('espacios-remodelar')?.value?.trim() || '';
+            const resumenEl = document.getElementById('step3RemodelacionResumen');
+            if (resumenEl) {
+                if (tipoVal === 'Remodelacion' && espaciosVal) {
+                    resumenEl.classList.remove('hidden');
+                    resumenEl.innerHTML = `<strong>Recintos a remodelar:</strong> ${espaciosVal}<br><span class="text-amber-700 text-[11px]">*El presupuesto preliminar desglosará partidas húmedas y secas conforme a estos recintos. La propuesta definitiva se ratifica tras la visita técnica en terreno.</span>`;
+                } else {
+                    resumenEl.classList.add('hidden');
+                    resumenEl.innerHTML = '';
+                }
+            }
         }
 
         document.querySelectorAll('.step-container').forEach(el => {
@@ -309,7 +328,19 @@
     function calcularCon(tipo, sistema) {
         const tipoEl = document.getElementById('qTipo');
         const sistemaEl = document.getElementById('qSistema');
-        if (tipoEl && tipo) tipoEl.value = tipo;
+        if (tipoEl && tipo) {
+            tipoEl.value = tipo;
+            const container = document.getElementById('espaciosRemodelarContainer');
+            if (container) {
+                if (tipo === 'Remodelacion') {
+                    container.classList.remove('hidden');
+                    container.style.display = '';
+                } else {
+                    container.classList.add('hidden');
+                    container.style.display = 'none';
+                }
+            }
+        }
         if (sistemaEl && sistema) sistemaEl.value = sistema;
 
         nextStep(1);
@@ -337,6 +368,7 @@
             const comuna = params.get('comuna');
             const pisos = params.get('pisos');
             const terminaciones = params.get('terminaciones');
+            const espacios = params.get('espacios') || params.get('espacios_remodelar');
 
             if (nombre) {
                 const el = document.getElementById('qNombre');
@@ -352,7 +384,18 @@
             }
             if (tipo) {
                 const el = document.getElementById('qTipo');
-                if (el) el.value = tipo;
+                if (el) {
+                    el.value = tipo;
+                    const container = document.getElementById('espaciosRemodelarContainer');
+                    if (container) {
+                        if (tipo === 'Remodelacion') container.classList.remove('hidden');
+                        else container.classList.add('hidden');
+                    }
+                }
+            }
+            if (espacios) {
+                const el = document.getElementById('espacios-remodelar');
+                if (el) el.value = espacios;
             }
             if (sistema) {
                 const el = document.getElementById('qSistema');
@@ -412,6 +455,7 @@
             const payload = {
                 tipo: document.getElementById('qTipo')?.value || 'Casa Nueva',
                 sistema: document.getElementById('qSistema')?.value || 'Metalcon',
+                espacios_remodelar: document.getElementById('espacios-remodelar')?.value || '',
                 area: parseFloat(document.getElementById('qArea')?.value || '0'),
                 pisos: parseInt(document.getElementById('qPisos')?.value || '1', 10),
                 terminaciones: document.getElementById('qTerminaciones')?.value || 'Estandar',
@@ -519,6 +563,30 @@
         if (quoteForm) {
             _renderedAt = Date.now();
             bindSubmitHandler(quoteForm);
+
+            const tipoSelect = document.getElementById('qTipo');
+            const espaciosContainer = document.getElementById('espaciosRemodelarContainer');
+            const espaciosInput = document.getElementById('espacios-remodelar');
+
+            function syncEspaciosVisibility(val) {
+                if (!espaciosContainer) return;
+                if (val === 'Remodelacion') {
+                    espaciosContainer.classList.remove('hidden');
+                    espaciosContainer.style.display = '';
+                } else {
+                    espaciosContainer.classList.add('hidden');
+                    espaciosContainer.style.display = 'none';
+                    if (espaciosInput) espaciosInput.value = '';
+                }
+            }
+
+            if (tipoSelect) {
+                tipoSelect.addEventListener('change', function() {
+                    syncEspaciosVisibility(this.value);
+                });
+                syncEspaciosVisibility(tipoSelect.value);
+            }
+
             prefillFromURL();
         }
     }

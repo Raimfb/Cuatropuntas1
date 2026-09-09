@@ -66,14 +66,87 @@ function getFactorComuna(comunaVal) {
     return 1.00;
 }
 
+// --- ANÁLISIS SEMÁNTICO DE RECINTOS PARA REMODELACIÓN (SPEC 013) ---
+const NOTA_ALCANCE_BANO = 'Nota de alcance (Baño incluido en remodelación general): Considera artefactos en línea estándar (inodoro tradicional y lavamanos simple sin vanitorio de diseño), receptáculo de ducha en obra o tina estándar con cortina/barra, cerámicos nacionales y grifería monomando básica. No incluye showerdoor de cristal templado, vanitorios a medida en cuarzo ni artefactos suspendidos.';
+const NOTA_ALCANCE_COCINA = 'Nota de alcance (Cocina incluida en remodelación general): Considera muebles modulares en melamina estándar de 15 mm con tiradores básicos, cubierta postformada resistente a la humedad, lavaplatos sobrepuesto de acero inoxidable y grifería monomando estándar. Se excluye taxativamente todo tipo de electrodomésticos y línea blanca (tanto empotrada como tradicional: encimera, horno, campana de extracción, lavavajillas o refrigerador), así como cubiertas de cuarzo o granito y herrajes especiales, partidas que se cubican y cotizan exclusivamente en el presupuesto definitivo tras la visita técnica.';
+
+function analyzeRemodelingSpaces(espaciosInput) {
+    if (!espaciosInput || typeof espaciosInput !== 'string') {
+        return {
+            hasBano: false,
+            hasCocina: false,
+            hasSeco: false,
+            isHumedoPuro: false,
+            tipoHumedo: null,
+            notasAlcance: []
+        };
+    }
+
+    const raw = espaciosInput.trim();
+    if (!raw) {
+        return {
+            hasBano: false,
+            hasCocina: false,
+            hasSeco: false,
+            isHumedoPuro: false,
+            tipoHumedo: null,
+            notasAlcance: []
+        };
+    }
+
+    const text = raw.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+    const hasBano = /\b(bano|banos|toilet|wc|ducha|duchas|sanitario)\b/i.test(text) ||
+                    /(baño|baños)/i.test(raw);
+
+    const hasCocina = /\b(cocina|cocinas|kitchen|kitchenette)\b/i.test(text);
+
+    const hasSeco = /\b(living|comedor|dormitorio|dormitorios|pieza|piezas|habitacion|habitaciones|estar|sala|pasillo|terraza|quincho|escritorio|oficina|bodega|mansarda|acceso|hall|recibidor|casa|departamento|depto)\b/i.test(text);
+
+    const isHumedoPuro = (hasBano || hasCocina) && !hasSeco;
+    let tipoHumedo = null;
+    if (isHumedoPuro) {
+        if (hasBano && hasCocina) {
+            tipoHumedo = 'Baño y Cocina';
+        } else if (hasBano) {
+            tipoHumedo = 'Baño';
+        } else if (hasCocina) {
+            tipoHumedo = 'Cocina';
+        }
+    }
+
+    const notasAlcance = [];
+    if (hasBano) notasAlcance.push(NOTA_ALCANCE_BANO);
+    if (hasCocina) notasAlcance.push(NOTA_ALCANCE_COCINA);
+
+    return {
+        hasBano,
+        hasCocina,
+        hasSeco,
+        isHumedoPuro,
+        tipoHumedo,
+        notasAlcance
+    };
+}
+
 // --- MATRIZ OFICIAL DE PRECIOS CUATROPUNTAS (UF/m² NETAS +IVA) ---
-function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminaciones = 'Estandar', comuna = '', permisos = 'Idea' } = {}) {
+function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminaciones = 'Estandar', comuna = '', permisos = 'Idea', espacios = '', espacios_remodelar = '' } = {}) {
     const areaNum = parseFloat(area) || 0;
     const pisosNum = parseInt(pisos) || 1;
+    const espaciosInput = (espacios_remodelar || espacios || '').trim();
 
     const isAmpliacion = tipo.toLowerCase().includes("segundo") || tipo.toLowerCase().includes("amplia");
     const isQuincho = tipo.toLowerCase().includes("quincho");
     const isRemodelacion = tipo.toLowerCase().includes("remodela");
+
+    const spacesAnalysis = isRemodelacion ? analyzeRemodelingSpaces(espaciosInput) : {
+        hasBano: false,
+        hasCocina: false,
+        hasSeco: false,
+        isHumedoPuro: false,
+        tipoHumedo: null,
+        notasAlcance: []
+    };
 
     let baseUFm2 = 19; // Fallback general
 
@@ -111,12 +184,22 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
 
     // Ajuste técnico para remodelaciones y recintos pequeños
     if (isRemodelacion) {
-        if (areaNum <= 8) {
-            const baseRecinto = (sistema === 'Metalcon' ? 60 : 70) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
-            totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
-        } else if (areaNum < 20) {
-            const baseRecinto = (sistema === 'Metalcon' ? 85 : 98) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
-            totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+        if (spacesAnalysis.isHumedoPuro) {
+            if (spacesAnalysis.tipoHumedo === 'Baño y Cocina') {
+                totalEstimado = 185;
+            } else if (spacesAnalysis.tipoHumedo === 'Baño') {
+                totalEstimado = 75;
+            } else if (spacesAnalysis.tipoHumedo === 'Cocina') {
+                totalEstimado = 110;
+            }
+        } else {
+            if (areaNum <= 8) {
+                const baseRecinto = (sistema === 'Metalcon' ? 60 : 70) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+            } else if (areaNum < 20) {
+                const baseRecinto = (sistema === 'Metalcon' ? 85 : 98) * (terminaciones === 'Premium' ? 1.18 : (terminaciones === 'Basico' ? 0.90 : 1.0));
+                totalEstimado = Math.max(totalEstimado, baseRecinto * factorComuna * factorPermisos);
+            }
         }
     }
 
@@ -146,7 +229,11 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
         isQuincho,
         isRemodelacion,
         areaNum,
-        pisosNum
+        pisosNum,
+        espacios_remodelar: espaciosInput,
+        isHumedoPuro: spacesAnalysis.isHumedoPuro,
+        tipoHumedo: spacesAnalysis.tipoHumedo,
+        notasAlcance: spacesAnalysis.notasAlcance
     };
 }
 
@@ -169,6 +256,7 @@ async function persistLeadToGoogleSheets(leadData) {
             email: leadData.email,
             telefono: leadData.telefono,
             tipo_obra: leadData.tipo,
+            espacios_remodelar: leadData.espacios_remodelar || '',
             sistema_constructivo: leadData.sistema,
             superficie_m2: leadData.areaNum,
             pisos: leadData.pisosNum,
@@ -236,7 +324,7 @@ const quoteHandler = async (req, res) => {
             return res.status(200).json({ success: true, message: 'Cotización generada y enviada correctamente' });
         }
 
-        const { tipo, sistema, area, pisos, terminaciones, comuna, permisos, nombre, email, telefono } = req.body;
+        const { tipo, sistema, area, pisos, terminaciones, comuna, permisos, nombre, email, telefono, espacios_remodelar } = req.body;
 
         // 2. Validación de campos obligatorios
         if (!tipo || !sistema || area === undefined || pisos === undefined || !terminaciones || !comuna || !nombre || !email || !telefono) {
@@ -276,7 +364,8 @@ const quoteHandler = async (req, res) => {
             pisos: pisosNum,
             terminaciones,
             comuna,
-            permisos
+            permisos,
+            espacios_remodelar: (espacios_remodelar || '').trim()
         });
 
         const {
@@ -291,7 +380,10 @@ const quoteHandler = async (req, res) => {
             minUF,
             maxUF,
             permisosData,
-            comunaHuman
+            comunaHuman,
+            isHumedoPuro,
+            tipoHumedo,
+            notasAlcance
         } = quote;
 
 
@@ -302,7 +394,7 @@ const quoteHandler = async (req, res) => {
         const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar una visita técnica a terreno.`);
         const clientWhatsappUrl = `https://wa.me/56927384075?text=${clientWaText}`;
 
-        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} (${areaNum} m²). ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
+        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} ${espacios_remodelar ? `(${espacios_remodelar}, ${areaNum} m²)` : `(${areaNum} m²)`}. ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
         const adminReplyWaUrl = `https://wa.me/${formattedClientPhone}?text=${adminWaText}`;
 
         // --- PERSISTENCIA FAIL-SAFE EN GOOGLE SHEETS (Antes de SMTP) ---
@@ -319,7 +411,8 @@ const quoteHandler = async (req, res) => {
             permisosData,
             minUF,
             maxUF,
-            totalEstimado
+            totalEstimado,
+            espacios_remodelar: (espacios_remodelar || '').trim()
         });
 
         // --- GENERACIÓN DE PDF PROFESIONAL EN MEMORIA (PDFKit) ---
@@ -359,13 +452,21 @@ const quoteHandler = async (req, res) => {
         doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('1. Parámetros Técnicos del Proyecto', 45, 148);
 
         const cardTop = 164;
-        doc.roundedRect(45, cardTop, 522, 72, 4).fillAndStroke('#f8fafc', '#e2e8f0');
+        const cardHeight = espacios_remodelar ? 84 : 72;
+        doc.roundedRect(45, cardTop, 522, cardHeight, 4).fillAndStroke('#f8fafc', '#e2e8f0');
         
         doc.fillColor('#2d3748').fontSize(9).font('Helvetica');
         doc.text(`• Tipo de Obra: ${tipo}`, 60, cardTop + 10);
-        doc.text(`• Sistema Constructivo: ${sistema}`, 60, cardTop + 24);
-        doc.text(`• Superficie Estimada: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 60, cardTop + 38);
-        doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 52);
+        if (espacios_remodelar) {
+            doc.text(`• Recintos: ${espacios_remodelar}`, 60, cardTop + 24, { width: 220 });
+            doc.text(`• Sistema Constructivo: ${sistema}`, 60, cardTop + 38);
+            doc.text(`• Superficie Estimada: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 60, cardTop + 52);
+            doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 66);
+        } else {
+            doc.text(`• Sistema Constructivo: ${sistema}`, 60, cardTop + 24);
+            doc.text(`• Superficie Estimada: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 60, cardTop + 38);
+            doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 52);
+        }
 
         doc.text(`• Sector / Ubicación: ${comunaHuman}`, 290, cardTop + 10, { width: 260 });
         doc.text(`• Estado Planos / DOM: ${permisosData.badgePdf}`, 290, cardTop + 24, { width: 260 });
@@ -373,7 +474,7 @@ const quoteHandler = async (req, res) => {
         doc.text('• Gestión Municipal: Asesoría Técnica DOM', 290, cardTop + 52);
 
         // 4. Inversión Estimada Referencial
-        const sec2Top = cardTop + 84;
+        const sec2Top = cardTop + cardHeight + 12;
         doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('2. Estimación Económica Referencial (Sin IVA)', 45, sec2Top);
         doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
            .text('Rango paramétrico preliminar calculado según m² y sistema constructivo seleccionado:', 45, sec2Top + 15);
@@ -399,9 +500,21 @@ const quoteHandler = async (req, res) => {
         doc.text(viciosText, 45, curY, { width: 522, lineGap: 2 });
         curY += (isRemodelacion ? 36 : 32);
         doc.text('• Gestión Normativa Integral: Asesoramos y gestionamos la tramitación de Permiso de Edificación y Recepción Final ante la Dirección de Obras Municipales (DOM).', 45, curY, { width: 522, lineGap: 2 });
+        curY += 20;
+
+        if (notasAlcance && notasAlcance.length > 0) {
+            doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#c05621').text('Alcance Técnico Específico (Partidas Incluidas / Excluidas):', 45, curY);
+            curY += 13;
+            doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568');
+            for (const nota of notasAlcance) {
+                doc.text(`• ${nota}`, 55, curY, { width: 505, lineGap: 1.5 });
+                curY += doc.heightOfString(`• ${nota}`, { width: 505, lineGap: 1.5 }) + 4;
+            }
+            curY += 4;
+        }
 
         // 6. Siguiente Paso — Coordinar Visita Técnica a Terreno
-        const sec4Top = curY + 22;
+        const sec4Top = curY + 6;
         doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('4. Siguiente Paso — Visita Técnica en Terreno', 45, sec4Top);
         doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
            .text('Para evaluar en terreno las condiciones de tu propiedad (deslindes, suelo, factibilidad municipal y distribución) y estructurar tu presupuesto definitivo a suma alzada, te invitamos a agendar una visita técnica.', 45, sec4Top + 15, { width: 522 });
@@ -498,6 +611,7 @@ const quoteHandler = async (req, res) => {
                     <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
                     <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
                         <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
+                        ${espacios_remodelar ? `<tr><td style="padding: 4px 0;"><strong>Recintos a remodelar:</strong></td><td>${espacios_remodelar}</td></tr>` : ''}
                         <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
                         <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>
                         <tr><td style="padding: 4px 0;"><strong>Planos / Permiso DOM:</strong></td><td>${permisosData.label}</td></tr>
@@ -510,6 +624,15 @@ const quoteHandler = async (req, res) => {
                         *Valores paramétricos calculados según m², sistema constructivo y estado del proyecto. Adjunto encontrarás el documento PDF oficial con el desglose técnico.
                     </p>
                 </div>
+
+                ${notasAlcance && notasAlcance.length > 0 ? `
+                <!-- Notas de Alcance Técnico Condicionales -->
+                <div style="background-color: #fffaf0; border: 1px solid #feebc8; border-left: 4px solid #dd6b20; border-radius: 6px; padding: 16px; margin: 20px 0;">
+                    <h4 style="margin: 0 0 8px 0; color: #9c4221; font-size: 14px;">Alcance Técnico de Partidas (Remodelación)</h4>
+                    ${notasAlcance.map(nota => `<p style="margin: 0 0 8px 0; font-size: 13px; line-height: 1.5; color: #7b341e;">• ${nota}</p>`).join('')}
+                    <p style="margin: 4px 0 0 0; font-size: 11.5px; color: #9c4221; font-style: italic;">*Detalle referencial preliminar. Las especificaciones y cubicaciones exactas se definen y valorizan en la propuesta definitiva tras la visita técnica en terreno.</p>
+                </div>
+                ` : ''}
 
                 <!-- Explicación del Siguiente Paso (Visita Técnica a Terreno) -->
                 <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 18px; margin: 24px 0;">
@@ -578,10 +701,14 @@ const quoteHandler = async (req, res) => {
                     <tr><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;"><a href="mailto:${email}">${email}</a></td></tr>
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Teléfono:</td><td style="padding: 8px;"><a href="tel:${telefono}">${telefono}</a></td></tr>
                     <tr><td style="padding: 8px; font-weight: bold;">Proyecto:</td><td style="padding: 8px;"><strong>${tipo}</strong> (${areaNum} m², ${pisosNum} piso${pisosNum > 1 ? 's' : ''}, ${sistema})</td></tr>
+                    ${espacios_remodelar ? `<tr style="background-color: #fef3c7;"><td style="padding: 8px; font-weight: bold; color: #92400e;">Recintos Remodelar:</td><td style="padding: 8px; font-weight: bold; color: #92400e;">${espacios_remodelar}</td></tr>` : ''}
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Terminaciones:</td><td style="padding: 8px;">${terminaciones}</td></tr>
                     <tr><td style="padding: 8px; font-weight: bold;">Ubicación:</td><td style="padding: 8px;">${comunaHuman}</td></tr>
                     <tr style="background-color: #fef3c7;"><td style="padding: 8px; font-weight: bold; color: #92400e;">Estado DOM / Planos:</td><td style="padding: 8px; font-weight: bold; color: #92400e;">${permisosData.adminBadge}</td></tr>
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Rango UF:</td><td style="padding: 8px; color: #c05621; font-weight: bold;">${minUF} a ${maxUF} UF (sin IVA)</td></tr>
+                    ${notasAlcance && notasAlcance.length > 0 ? `
+                    <tr><td style="padding: 8px; font-weight: bold; vertical-align: top;">Notas Alcance:</td><td style="padding: 8px; font-size: 12px; color: #4a5568;">${notasAlcance.join('<br><br>')}</td></tr>
+                    ` : ''}
                 </table>
 
                 <!-- BOTÓN 1-TOUCH WHATSAPP PARA CONTACTO RÁPIDO DESDE EL CELULAR -->
@@ -614,7 +741,7 @@ const quoteHandler = async (req, res) => {
             const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
             if (token) {
                 const adminPhone = "56979092027";
-                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} (${areaNum} m² - ${sistema})\n*Sector*: ${comunaHuman.split(',')[0].trim()}\n*Estado DOM*: ${permisosData.adminBadge}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
+                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} ${espacios_remodelar ? `(${espacios_remodelar}, ${areaNum} m² - ${sistema})` : `(${areaNum} m² - ${sistema})`}\n*Sector*: ${comunaHuman.split(',')[0].trim()}\n*Estado DOM*: ${permisosData.adminBadge}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
                 
                 await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
                     method: 'POST',
@@ -638,7 +765,13 @@ const quoteHandler = async (req, res) => {
         res.status(200).json({ 
             success: true, 
             message: 'Cotización generada y enviada correctamente',
-            calendarUrl: calendarUrl || null
+            calendarUrl: calendarUrl || null,
+            totalEstimado,
+            minUF,
+            maxUF,
+            isHumedoPuro: !!isHumedoPuro,
+            tipoHumedo: tipoHumedo || null,
+            notasAlcance: notasAlcance || []
         });
 
     } catch (error) {
@@ -650,6 +783,7 @@ const quoteHandler = async (req, res) => {
 
 module.exports = quoteHandler;
 module.exports.calculateQuote = calculateQuote;
+module.exports.analyzeRemodelingSpaces = analyzeRemodelingSpaces;
 module.exports.getComunaLabel = getComunaLabel;
 module.exports.getPermisosData = getPermisosData;
 module.exports.getFactorComuna = getFactorComuna;
