@@ -44,11 +44,12 @@
             showEspacios: false
         },
         'Ampliacion': {
-            sistemaLabel: 'Estructura Liviana de Sobreelevación',
+            sistemaLabel: 'Sistema Constructivo (Ampliación 1º piso o Sobreelevación 2º piso)',
             showSistema: true,
             sistemas: [
                 { value: "Metalcon", label: "Metalcom Estructural Liviano (desde 22 UF/m² +IVA)" },
-                { value: "SIP", label: "Panel SIP Aislante (desde 24 UF/m² +IVA)" }
+                { value: "SIP", label: "Panel SIP Aislante (desde 24 UF/m² +IVA)" },
+                { value: "Albanileria", label: "Albañilería Confinada / Tradicional (desde 27 UF/m² +IVA)" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 30 o 60',

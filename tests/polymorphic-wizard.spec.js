@@ -58,7 +58,7 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         await expect(page.locator('#step2')).toBeVisible();
     });
 
-    test('T01.3: Mutación a "Segundo Piso / Ampliación" (label sobreelevación, exclusión de albañilería pesada)', async ({ page }) => {
+    test('T01.3: Mutación a "Segundo Piso / Ampliación" (label ampliado, opciones Metalcom, SIP y Albañilería 27 UF)', async ({ page }) => {
         await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
 
         const tipoSelect = page.locator('#qTipo');
@@ -70,19 +70,27 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         await tipoSelect.selectOption('Ampliacion');
 
         await expect(sistemaContainer).toBeVisible();
-        expect(await sistemaLabel.innerText()).toMatch(/sobreelevaci[oó]n|liviana/i);
+        expect(await sistemaLabel.innerText()).toBe('Sistema Constructivo (Ampliación 1º piso o Sobreelevación 2º piso)');
 
         // Opciones visibles en select
         const options = await sistemaSelect.locator('option').allInnerTexts();
         const optionValues = await sistemaSelect.locator('option').evaluateAll(opts => opts.map(o => o.value));
 
-        // Debe contener Metalcom Liviano y SIP Aislante
+        // Debe contener Metalcom Liviano (22 UF), SIP Aislante (24 UF) y Albañilería (27 UF)
         expect(options.some(t => /metalco/i.test(t) && /22\s*UF/i.test(t))).toBe(true);
         expect(options.some(t => /sip/i.test(t) && /24\s*UF/i.test(t))).toBe(true);
+        expect(options.some(t => /albañilería|albanileria|tradicional/i.test(t) && /27\s*UF/i.test(t))).toBe(true);
 
-        // NO debe permitir albañilería pesada en ampliaciones
-        expect(options.some(t => /albañilería|albanileria|sólido/i.test(t))).toBe(false);
-        expect(optionValues).not.toContain('Albanileria');
+        expect(optionValues).toContain('Metalcon');
+        expect(optionValues).toContain('SIP');
+        expect(optionValues).toContain('Albanileria');
+
+        // Seleccionar Albañilería y avanzar al Paso 2
+        await sistemaSelect.selectOption('Albanileria');
+        await page.locator('#qArea').fill('45');
+        await page.locator('#step1 button:has-text("Siguiente")').click();
+
+        await expect(page.locator('#step2')).toBeVisible();
     });
 
     test('T01.4: Mutación a "Quincho" (label estructura/techumbre cobertizo, opciones Madera y Acero)', async ({ page }) => {
