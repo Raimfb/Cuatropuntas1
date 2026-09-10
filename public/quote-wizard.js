@@ -29,6 +29,66 @@
         { value: "Mixto", label: "Mixto (Muros exteriores sólidos y divisiones interiores en Metalcon)" }
     ];
 
+    const CONFIG_POR_TIPO = {
+        'Casa Nueva': {
+            sistemaLabel: 'Sistema Constructivo',
+            showSistema: true,
+            sistemas: [
+                { value: "Metalcon", label: "Metalcom Estructural (desde 19 UF/m² +IVA)" },
+                { value: "SIP", label: "Panel SIP Térmico (desde 21 UF/m² +IVA)" },
+                { value: "Albanileria", label: "Albañilería Confinada / Mixto (desde 25 UF/m² +IVA)" }
+            ],
+            defaultSistema: 'Metalcon',
+            areaPlaceholder: 'Ej: 50 o 120',
+            areaHelpText: '',
+            showEspacios: false
+        },
+        'Ampliacion': {
+            sistemaLabel: 'Estructura Liviana de Sobreelevación',
+            showSistema: true,
+            sistemas: [
+                { value: "Metalcon", label: "Metalcom Estructural Liviano (desde 22 UF/m² +IVA)" },
+                { value: "SIP", label: "Panel SIP Aislante (desde 24 UF/m² +IVA)" }
+            ],
+            defaultSistema: 'Metalcon',
+            areaPlaceholder: 'Ej: 30 o 60',
+            areaHelpText: '',
+            showEspacios: false
+        },
+        'Remodelacion': {
+            sistemaLabel: 'Sistema Constructivo',
+            showSistema: false,
+            sistemas: [
+                { value: "Metalcon", label: "Remodelación Estándar" }
+            ],
+            defaultSistema: 'Metalcon',
+            areaPlaceholder: 'Ej: 4 (baño), 15 (cocina) o 50 (casa)',
+            areaHelpText: 'Los recintos húmedos puros (baño o cocina) se cotizan por paquete cerrado con partidas integrales.',
+            showEspacios: true
+        },
+        'Quincho': {
+            sistemaLabel: 'Estructura y Techumbre del Cobertizo',
+            showSistema: true,
+            sistemas: [
+                { value: "Metalcon", label: "Madera Tratada / Pino Oregón (desde 12 UF/m² +IVA)" },
+                { value: "Albanileria", label: "Perfilería de Acero / Fierro Electrosoldado (desde 15 UF/m² +IVA)" }
+            ],
+            defaultSistema: 'Metalcon',
+            areaPlaceholder: 'Ej: 20 o 35',
+            areaHelpText: 'Tarifa base contempla cobertura, radier, asador refractario con manivela y campana.',
+            showEspacios: false
+        }
+    };
+
+    function getTipoConfig(tipoVal) {
+        if (!tipoVal) return CONFIG_POR_TIPO['Casa Nueva'];
+        const lower = String(tipoVal).toLowerCase();
+        if (lower.includes('remodela')) return CONFIG_POR_TIPO['Remodelacion'];
+        if (lower.includes('quincho')) return CONFIG_POR_TIPO['Quincho'];
+        if (lower.includes('amplia') || lower.includes('segundo')) return CONFIG_POR_TIPO['Ampliacion'];
+        return CONFIG_POR_TIPO['Casa Nueva'];
+    }
+
     const TIPOS_DEFAULT = [
         { value: "Casa Nueva", label: "Construcción Casa Nueva" },
         { value: "Ampliacion", label: "Segundo Piso / Ampliación" },
@@ -76,8 +136,9 @@
      */
     function createWizardHTML(config) {
         const defaultTipo = config.defaultTipo || 'Casa Nueva';
-        const defaultSistema = config.defaultSistema || 'Metalcon';
-        const placeholderArea = config.placeholderArea || 'Ej: 4 (baño), 15 (cocina) o 50 (casa)';
+        const initialTipoConfig = getTipoConfig(defaultTipo);
+        const defaultSistema = config.defaultSistema || initialTipoConfig.defaultSistema;
+        const placeholderArea = config.placeholderArea || initialTipoConfig.areaPlaceholder || 'Ej: 4 (baño), 15 (cocina) o 50 (casa)';
 
         const tipoOptions = (config.tipos || TIPOS_DEFAULT).map(t => {
             const val = typeof t === 'string' ? t : t.value;
@@ -86,11 +147,9 @@
             return `<option value="${val}" ${isSel}>${lbl}</option>`;
         }).join('');
 
-        const sistemaOptions = (config.sistemas || SISTEMAS_DEFAULT).map(s => {
-            const val = typeof s === 'string' ? s : s.value;
-            const lbl = typeof s === 'string' ? s : s.label;
-            const isSel = val === defaultSistema ? 'selected' : '';
-            return `<option value="${val}" ${isSel}>${lbl}</option>`;
+        const sistemaOptions = initialTipoConfig.sistemas.map(s => {
+            const isSel = s.value === defaultSistema ? 'selected' : '';
+            return `<option value="${s.value}" ${isSel}>${s.label}</option>`;
         }).join('');
 
         const comunaOptions = COMUNAS_RM.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -128,15 +187,16 @@
                             <input type="text" id="website_url" name="website_url" tabindex="-1" autocomplete="off" placeholder="Tú sitio web aquí">
                             <input type="text" id="_hp_check" name="_hp_check" tabindex="-1" autocomplete="off">
                         </div>
-                        <div>
-                            <label for="qSistema" class="block text-sm font-medium text-gray-700 mb-1">Sistema Constructivo</label>
-                            <select id="qSistema" aria-label="Seleccionar sistema constructivo" title="Seleccionar sistema constructivo" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white" required>
+                        <div id="qSistemaContainer" class="${initialTipoConfig.showSistema ? '' : 'hidden '}" style="${initialTipoConfig.showSistema ? '' : 'display: none;'}">
+                            <label id="qSistemaLabel" for="qSistema" class="block text-sm font-medium text-gray-700 mb-1">${initialTipoConfig.sistemaLabel}</label>
+                            <select id="qSistema" aria-label="Seleccionar sistema constructivo" title="Seleccionar sistema constructivo" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white" ${initialTipoConfig.showSistema ? 'required' : ''}>
                                 ${sistemaOptions}
                             </select>
                         </div>
-                        <div>
+                        <div id="qAreaContainer">
                             <label for="qArea" class="block text-sm font-medium text-gray-700 mb-1">Superficie Estimada (m²)</label>
-                            <input type="number" id="qArea" min="3" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="${placeholderArea}" required>
+                            <input type="number" id="qArea" min="3" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="${placeholderArea}" ${config.placeholderArea ? 'data-custom-placeholder="true"' : ''} required>
+                            <span id="qAreaHelpText" class="text-xs text-gray-500 mt-1 block ${initialTipoConfig.areaHelpText ? '' : 'hidden'}" style="${initialTipoConfig.areaHelpText ? '' : 'display: none;'}">${initialTipoConfig.areaHelpText || ''}</span>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-end">
@@ -254,6 +314,91 @@
     }
 
     /**
+     * Sincroniza dinámicamente el Paso 1 según la tipología del proyecto
+     */
+    function syncPolymorphicStep1(tipoVal) {
+        const tipoConfig = getTipoConfig(tipoVal);
+        const container = document.getElementById('qSistemaContainer');
+        const label = document.getElementById('qSistemaLabel');
+        const select = document.getElementById('qSistema');
+        const areaEl = document.getElementById('qArea');
+        const helpTextEl = document.getElementById('qAreaHelpText');
+        const espaciosContainer = document.getElementById('espaciosRemodelarContainer');
+        const espaciosInput = document.getElementById('espacios-remodelar');
+
+        // 1. Selector de Sistema y Label
+        if (container && select) {
+            if (tipoConfig.showSistema) {
+                container.classList.remove('hidden');
+                container.style.display = '';
+                select.setAttribute('required', 'required');
+
+                if (label) label.innerText = tipoConfig.sistemaLabel;
+
+                const currentVal = select.value;
+                select.innerHTML = tipoConfig.sistemas.map(s => {
+                    const isSel = (s.value === currentVal) ? 'selected' : '';
+                    return `<option value="${s.value}" ${isSel}>${s.label}</option>`;
+                }).join('');
+
+                const isValid = tipoConfig.sistemas.some(s => s.value === currentVal);
+                if (!isValid) {
+                    select.value = tipoConfig.defaultSistema;
+                }
+            } else {
+                container.classList.add('hidden');
+                container.style.display = 'none';
+                select.removeAttribute('required');
+                select.value = tipoConfig.defaultSistema || 'Metalcon';
+            }
+        }
+
+        // 2. Contenedor de Espacios a Remodelar
+        if (espaciosContainer) {
+            if (tipoConfig.showEspacios) {
+                espaciosContainer.classList.remove('hidden');
+                espaciosContainer.style.display = '';
+            } else {
+                espaciosContainer.classList.add('hidden');
+                espaciosContainer.style.display = 'none';
+                if (espaciosInput) espaciosInput.value = '';
+            }
+        }
+
+        // 3. Texto de Ayuda y Placeholder de Superficie
+        if (helpTextEl) {
+            if (tipoConfig.areaHelpText) {
+                helpTextEl.innerText = tipoConfig.areaHelpText;
+                helpTextEl.classList.remove('hidden');
+                helpTextEl.style.display = '';
+            } else {
+                helpTextEl.innerText = '';
+                helpTextEl.classList.add('hidden');
+                helpTextEl.style.display = 'none';
+            }
+        }
+
+        if (areaEl && !areaEl.getAttribute('data-custom-placeholder')) {
+            if (tipoConfig.areaPlaceholder) {
+                areaEl.placeholder = tipoConfig.areaPlaceholder;
+            }
+        }
+
+        // 4. Resúmenes de Paso 3
+        const resumenQuinchoEl = document.getElementById('step3QuinchoResumen');
+        if (resumenQuinchoEl && (!tipoVal || !tipoVal.toLowerCase().includes('quincho'))) {
+            resumenQuinchoEl.classList.add('hidden');
+            resumenQuinchoEl.style.display = 'none';
+        }
+        const resumenRemodelaEl = document.getElementById('step3RemodelacionResumen');
+        if (resumenRemodelaEl && (!tipoVal || !tipoVal.toLowerCase().includes('remodela'))) {
+            resumenRemodelaEl.classList.add('hidden');
+            resumenRemodelaEl.style.display = 'none';
+            resumenRemodelaEl.innerHTML = '';
+        }
+    }
+
+    /**
      * Máquina de estados de navegación entre pasos
      */
     function nextStep(step) {
@@ -354,16 +499,7 @@
         const sistemaEl = document.getElementById('qSistema');
         if (tipoEl && tipo) {
             tipoEl.value = tipo;
-            const container = document.getElementById('espaciosRemodelarContainer');
-            if (container) {
-                if (tipo === 'Remodelacion') {
-                    container.classList.remove('hidden');
-                    container.style.display = '';
-                } else {
-                    container.classList.add('hidden');
-                    container.style.display = 'none';
-                }
-            }
+            syncPolymorphicStep1(tipo);
         }
         if (sistemaEl && sistema) sistemaEl.value = sistema;
 
@@ -410,11 +546,7 @@
                 const el = document.getElementById('qTipo');
                 if (el) {
                     el.value = tipo;
-                    const container = document.getElementById('espaciosRemodelarContainer');
-                    if (container) {
-                        if (tipo === 'Remodelacion') container.classList.remove('hidden');
-                        else container.classList.add('hidden');
-                    }
+                    syncPolymorphicStep1(tipo);
                 }
             }
             if (espacios) {
@@ -589,36 +721,11 @@
             bindSubmitHandler(quoteForm);
 
             const tipoSelect = document.getElementById('qTipo');
-            const espaciosContainer = document.getElementById('espaciosRemodelarContainer');
-            const espaciosInput = document.getElementById('espacios-remodelar');
-
-            function syncEspaciosVisibility(val) {
-                if (espaciosContainer) {
-                    if (val === 'Remodelacion') {
-                        espaciosContainer.classList.remove('hidden');
-                        espaciosContainer.style.display = '';
-                    } else {
-                        espaciosContainer.classList.add('hidden');
-                        espaciosContainer.style.display = 'none';
-                        if (espaciosInput) espaciosInput.value = '';
-                    }
-                }
-                const resumenQuinchoEl = document.getElementById('step3QuinchoResumen');
-                if (resumenQuinchoEl && (!val || !val.toLowerCase().includes('quincho'))) {
-                    resumenQuinchoEl.classList.add('hidden');
-                }
-                const resumenRemodelaEl = document.getElementById('step3RemodelacionResumen');
-                if (resumenRemodelaEl && val !== 'Remodelacion') {
-                    resumenRemodelaEl.classList.add('hidden');
-                    resumenRemodelaEl.innerHTML = '';
-                }
-            }
-
             if (tipoSelect) {
                 tipoSelect.addEventListener('change', function() {
-                    syncEspaciosVisibility(this.value);
+                    syncPolymorphicStep1(this.value);
                 });
-                syncEspaciosVisibility(tipoSelect.value);
+                syncPolymorphicStep1(tipoSelect.value);
             }
 
             prefillFromURL();
