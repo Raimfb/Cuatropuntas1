@@ -191,6 +191,7 @@ test('Verificar cotizador con remodelación de baño pequeño (4 m²) en servici
 
     // Paso 1
     await page.locator('#qTipo').selectOption('Remodelacion');
+    await page.locator('#espacios-remodelar').fill('Baño completo');
     await page.locator('#qArea').fill('4');
     await page.locator('#step1 button:has-text("Siguiente")').click();
 

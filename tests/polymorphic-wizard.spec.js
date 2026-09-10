@@ -50,7 +50,8 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         await expect(areaHelpText).toBeVisible();
         expect(await areaHelpText.innerText()).toMatch(/húmedos|baño|cocina|paquete|partida/i);
 
-        // Llenar superficie y avanzar al Paso 2 sin error de validación
+        // Llenar espacios, superficie y avanzar al Paso 2 sin error de validación
+        await espaciosInput.fill('Cocina y Baño');
         await page.locator('#qArea').fill('25');
         await page.locator('#step1 button:has-text("Siguiente")').click();
 
