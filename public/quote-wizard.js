@@ -51,6 +51,7 @@
             ],
             defaultTerminaciones: "Estandar",
             showPermisos: true,
+            permisosLabel: 'Estado de Planos y Permiso Municipal (DOM)',
             defaultPermisos: "Idea"
         },
         'Ampliacion': {
@@ -81,6 +82,7 @@
             ],
             defaultTerminaciones: "Estandar",
             showPermisos: true,
+            permisosLabel: 'Estado de Planos y Permiso Municipal (DOM)',
             defaultPermisos: "Idea"
         },
         'Remodelacion': {
@@ -105,6 +107,7 @@
             ],
             defaultTerminaciones: "Estandar",
             showPermisos: false,
+            permisosLabel: 'Estado de Planos y Permiso Municipal (DOM)',
             defaultPermisos: "Idea"
         },
         'Quincho': {
@@ -129,7 +132,8 @@
                 { value: "Premium", label: "Premium (Porcelanato antideslizante, cubiertas granito/cuarzo, iluminación empotrada)" }
             ],
             defaultTerminaciones: "Estandar",
-            showPermisos: false,
+            showPermisos: true,
+            permisosLabel: 'Estado de Planos y Permiso Municipal (DOM)',
             defaultPermisos: "Idea"
         }
     };
@@ -478,6 +482,7 @@
         const termLabel = document.getElementById('qTerminacionesLabel');
         const termSelect = document.getElementById('qTerminaciones');
         const permisosContainer = document.getElementById('qPermisosContainer');
+        const permisosLabel = document.getElementById('qPermisosLabel');
         const permisosSelect = document.getElementById('qPermisos');
 
         // 1. Selector de Pisos / Ubicación
@@ -524,6 +529,7 @@
         // 3. Selector de Permisos DOM
         if (permisosContainer && permisosSelect) {
             if (tipoConfig.showPermisos) {
+                if (permisosLabel && tipoConfig.permisosLabel) permisosLabel.innerText = tipoConfig.permisosLabel;
                 permisosContainer.classList.remove('hidden');
                 permisosContainer.style.display = '';
                 permisosSelect.setAttribute('required', 'required');

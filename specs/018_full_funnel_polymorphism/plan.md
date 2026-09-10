@@ -175,7 +175,8 @@ const CONFIG_POR_TIPO = {
         ],
         defaultTerminaciones: 'Estandar',
 
-        showPermisos: false,
+        showPermisos: true,
+        permisosLabel: 'Estado de Planos y Permiso Municipal (DOM)',
         defaultPermisos: 'Idea'
     }
 };

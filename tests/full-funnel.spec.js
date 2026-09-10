@@ -122,7 +122,7 @@ test.describe('Spec 018: Polimorfismo Integral del Paso 2 y Sincronización del 
         await expect(page.locator('#step3RemodelacionResumen')).toBeVisible();
     });
 
-    test('T01.3: Polimorfismo Paso 2 para Quinchos (Pisos y Permisos ocultos, Terminaciones exteriores, tarjeta resumen)', async ({ page }) => {
+    test('T01.3: Polimorfismo Paso 2 para Quinchos (Pisos ocultos, Permisos DOM visibles y obligatorios, Terminaciones exteriores, tarjeta resumen)', async ({ page }) => {
         await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
 
         const tipoSelect = page.locator('#qTipo');
@@ -134,25 +134,44 @@ test.describe('Spec 018: Polimorfismo Integral del Paso 2 y Sincronización del 
 
         const pisosContainer = page.locator('#qPisosContainer');
         const permisosContainer = page.locator('#qPermisosContainer');
+        const permisosSelect = page.locator('#qPermisos');
+        const permisosLabel = page.locator('#qPermisosLabel');
         const terminacionesLabel = page.locator('#qTerminacionesLabel');
         const terminacionesSelect = page.locator('#qTerminaciones');
         const comunaSelect = page.locator('#qComuna');
 
-        // Pisos y Permisos ocultos
+        // Pisos oculto
         await expect(pisosContainer).toBeHidden();
-        await expect(permisosContainer).toBeHidden();
+
+        // Permisos DOM visible y obligatorio (normativa chilena de m² techados en cobertizos)
+        await expect(permisosContainer).toBeVisible();
+        expect(await permisosLabel.innerText()).toMatch(/planos|permiso|dom/i);
+        expect(await permisosSelect.evaluate(el => el.hasAttribute('required'))).toBe(true);
 
         // Label de terminaciones orientado a quinchos / exteriores
         expect(await terminacionesLabel.innerText()).toMatch(/pavimentos|quincho|terminaciones/i);
         const termTexts = await terminacionesSelect.locator('option').allInnerTexts();
         expect(termTexts.some(t => /radier|afinado|porcelanato/i.test(t))).toBe(true);
 
-        // Seleccionar comuna y avanzar al Paso 3
+        // Seleccionar comuna, estado de permisos y avanzar al Paso 3
         await comunaSelect.selectOption('Colina (Chicureo)');
+        await permisosSelect.selectOption('Planos');
         await page.locator('#step2 button:has-text("Siguiente")').click();
 
         await expect(page.locator('#step3')).toBeVisible();
         await expect(page.locator('#step3QuinchoResumen')).toBeVisible();
+
+        // Completar y verificar que el payload incluye el permiso seleccionado
+        await page.locator('#qNombre').fill('Cliente Quincho');
+        await page.locator('#qEmail').fill('cliente.quincho@example.com');
+        await page.locator('#qTelefono').fill('987654321');
+        await page.locator('#quoteSubmitBtn').click();
+
+        await expect(page.locator('#stepSuccess')).toBeVisible({ timeout: 5000 });
+        const interceptedPayload = await page.evaluate(() => window.__lastQuotePayload);
+        expect(interceptedPayload.tipo).toBe('Quincho');
+        expect(interceptedPayload.permisos).toBe('Planos');
+        expect(interceptedPayload.pisos).toBe(1);
     });
 
     test('T01.4: Polimorfismo Paso 2 para Ampliación (Ubicación 1º vs 2º piso, Permisos DOM activos)', async ({ page }) => {

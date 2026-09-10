@@ -52,7 +52,7 @@ La Spec 018 aborda el polimorfismo integral del Paso 2, adapta terminaciones a c
 - **[EARS-018-04] Paso 2 para Quinchos y Terrazas (`Quincho`):**  
   **Mientras** el tipo sea `Quincho`:
   * El sistema **DEBE** ocultar el contenedor `#qPisosContainer`, remover `required` de `#qPisos` y asegurar internamente el valor `1`.
-  * El sistema **DEBE** ocultar el contenedor `#qPermisosContainer`, remover `required` de `#qPermisos` y asegurar internamente el valor `'Idea'`.
+  * El sistema **DEBE** mantener visible y obligatorio `#qPermisosContainer` con label *"Estado de Planos y Permiso Municipal (DOM)"* conforme a la normativa chilena (OGUC para m² techados de cobertizos).
   * El sistema **DEBE** mostrar el contenedor `#qTerminacionesContainer` con el label *"Nivel de Terminaciones y Pavimentos"* y ofrecer las opciones:
     1. `Estandar`: *"Estándar (Radier afinado / Porcelanato rústico, parrilla y mesón en obra)"*
     2. `Premium`: *"Premium (Porcelanato antideslizante, cubiertas granito/cuarzo, iluminación empotrada)"*
