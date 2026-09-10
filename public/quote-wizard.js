@@ -22,13 +22,6 @@
         "Santiago Centro", "Talagante", "Tiltil", "Vitacura", "Otra comuna de la RM"
     ];
 
-    const SISTEMAS_DEFAULT = [
-        { value: "Metalcon", label: "Ligero (Estructura completa en Metalcon)" },
-        { value: "SIP", label: "Panel SIP (Aislación térmica y montaje por paneles)" },
-        { value: "Albanileria", label: "Sólido (Albañilería en todo el proyecto)" },
-        { value: "Mixto", label: "Mixto (Muros exteriores sólidos y divisiones interiores en Metalcon)" }
-    ];
-
     const CONFIG_POR_TIPO = {
         'Casa Nueva': {
             sistemaLabel: 'Sistema Constructivo',
@@ -707,10 +700,6 @@
                 if (tiposAttr) {
                     config.tipos = tiposAttr.split(',').map(s => s.trim());
                 }
-                const sistemasAttr = container.getAttribute('data-sistemas');
-                if (sistemasAttr) {
-                    config.sistemas = sistemasAttr.split(',').map(s => s.trim());
-                }
 
                 container.innerHTML = createWizardHTML(config);
             }
@@ -718,6 +707,9 @@
 
         const quoteForm = document.getElementById('quoteForm');
         if (quoteForm) {
+            if (quoteForm.dataset.wizardReady === 'true') return;
+            quoteForm.dataset.wizardReady = 'true';
+
             _renderedAt = Date.now();
             bindSubmitHandler(quoteForm);
 

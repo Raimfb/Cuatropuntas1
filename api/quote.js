@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
+const { isBotSubmission } = require('./_botGuard');
 
 // Mapeo legible de comunas para presentación ejecutiva
 function getComunaLabel(comunaVal) {
@@ -323,7 +324,6 @@ const quoteHandler = async (req, res) => {
     }
 
     try {
-        const { isBotSubmission } = require('./_botGuard');
         const botCheck = isBotSubmission(req.body);
 
         if (botCheck.isBot) {
@@ -377,14 +377,7 @@ const quoteHandler = async (req, res) => {
         });
 
         const {
-            baseUFm2,
-            multiplicador,
-            factorComuna,
-            factorPermisos,
-            costoM2Final,
             totalEstimado,
-            minUF_raw,
-            maxUF_raw,
             minUF,
             maxUF,
             permisosData,

@@ -121,6 +121,12 @@ test.describe('Spec 012: Generación Automatizada de Portadas con IA para el Blo
         const expectedImagePath = `/blog/images/${integrationSlug}.webp`;
         const postHtmlPath = path.join(rootDir, 'public', 'blog', 'posts', `${integrationSlug}.html`);
 
+        const sitemapPath = path.join(rootDir, 'public', 'sitemap.xml');
+        let originalSitemapContent = null;
+        if (fs.existsSync(sitemapPath)) {
+            originalSitemapContent = fs.readFileSync(sitemapPath, 'utf8');
+        }
+
         try {
             const publishResult = compileAndPublishPost({
                 title: "Post de Prueba Integración Portada WebP Única",
@@ -178,17 +184,8 @@ test.describe('Spec 012: Generación Automatizada de Portadas con IA para el Blo
                 } catch (e) {}
             }
 
-            const sitemapPath = path.join(rootDir, 'public', 'sitemap.xml');
-            if (fs.existsSync(sitemapPath)) {
-                try {
-                    let sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
-                    const locStr = `https://www.cuatropuntas.com/blog/posts/${integrationSlug}.html`;
-                    if (sitemapXml.includes(locStr)) {
-                        const urlNodeRegex = new RegExp(`\\s*<url>\\s*<loc>${locStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/loc>[\\s\\S]*?<\\/url>`, 'g');
-                        sitemapXml = sitemapXml.replace(urlNodeRegex, '');
-                        fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
-                    }
-                } catch (e) {}
+            if (originalSitemapContent !== null && fs.existsSync(sitemapPath)) {
+                fs.writeFileSync(sitemapPath, originalSitemapContent, 'utf8');
             }
         }
     });

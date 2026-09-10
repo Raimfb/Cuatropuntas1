@@ -57,14 +57,22 @@ function cleanupTestPost() {
     }
 }
 
+let originalSitemapContent = null;
+
 test.describe('Spec 003: Pipeline y Motor Automatizado de Publicación del Blog', () => {
 
     test.beforeAll(async () => {
+        if (fs.existsSync(sitemapPath)) {
+            originalSitemapContent = fs.readFileSync(sitemapPath, 'utf8');
+        }
         cleanupTestPost();
     });
 
     test.afterAll(async () => {
         cleanupTestPost();
+        if (originalSitemapContent !== null && fs.existsSync(sitemapPath)) {
+            fs.writeFileSync(sitemapPath, originalSitemapContent, 'utf8');
+        }
     });
 
     test('T01.1: El script scripts/publish-blog.js debe existir y exportar la función compileAndPublishPost', async () => {
