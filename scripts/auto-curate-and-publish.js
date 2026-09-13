@@ -22,6 +22,8 @@ const DRAFTS_DIR = path.join(ROOT_DIR, 'content', 'drafts');
 // Constantes de Curaduría
 const YOUTUBE_CHANNEL_ID = 'UCigCwSjY7u0zslMU1iMAGPA'; // @ConstruirSimple
 const YOUTUBE_FEED_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${YOUTUBE_CHANNEL_ID}`;
+const ARCHITECTURE_RSS_URL = 'https://www.plataformaarquitectura.cl/cl/feed';
+const EVERGREEN_CATALOG_PATH = path.join(ROOT_DIR, 'content', 'evergreen-topics.json');
 
 // Banco de Temas Técnicos de Contingencia (Chile)
 const CONTINGENCY_TOPIC_POOL = [
@@ -75,6 +77,121 @@ async function fetchYouTubeRssFeed(channelId = YOUTUBE_CHANNEL_ID, timeoutMs = 6
         clearTimeout(timer);
         console.warn(`⚠️ [CURATOR WARNING] No se pudo consultar feed de YouTube: ${err.message}`);
         return null;
+    }
+}
+
+/**
+ * Consulta el feed RSS de Arquitectura Chilena con timeout
+ */
+async function fetchArchitectureRssFeed(url = ARCHITECTURE_RSS_URL, timeoutMs = 6000) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+        const response = await fetch(url, {
+            signal: controller.signal,
+            headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CuatropuntasBlogBot/1.0)' }
+        });
+        clearTimeout(timer);
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status} al consultar feed de arquitectura`);
+        }
+        return await response.text();
+    } catch (err) {
+        clearTimeout(timer);
+        console.warn(`⚠️ [CURATOR WARNING] No se pudo consultar feed de arquitectura: ${err.message}`);
+        return null;
+    }
+}
+
+/**
+ * Extrae temas viables desde feeds RSS de arquitectura (RSS 2.0 o Atom)
+ */
+function extractArchitectureTopics(xmlContent) {
+    if (!xmlContent || typeof xmlContent !== 'string') return [];
+
+    const topics = [];
+    const itemRegex = /<(?:item|entry)[\s>]([\s\S]*?)<\/(?:item|entry)>/gi;
+    let match;
+
+    while ((match = itemRegex.exec(xmlContent)) !== null) {
+        const itemBlock = match[1];
+
+        // Extraer título
+        const titleMatch = itemBlock.match(/<title[^>]*>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([^<]+))<\/title>/i);
+        if (!titleMatch) continue;
+        let title = (titleMatch[1] || titleMatch[2] || '').trim();
+
+        // Extraer link
+        let url = '';
+        const linkMatch = itemBlock.match(/<link[^>]*href="([^"]+)"/i) || itemBlock.match(/<link[^>]*>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([^<]+))<\/link>/i);
+        if (linkMatch) {
+            url = (linkMatch[1] || linkMatch[2] || '').trim();
+        }
+
+        // Extraer fecha
+        let date = '';
+        const dateMatch = itemBlock.match(/<(?:pubDate|published|updated|dc:date)[^>]*>(?:<!\[CDATA\[([\s\S]*?)\]\]>|([^<]+))<\/(?:pubDate|published|updated|dc:date)>/i);
+        if (dateMatch) {
+            date = (dateMatch[1] || dateMatch[2] || '').trim();
+        }
+
+        // Limpiar sufijos típicos de medios de arquitectura
+        title = title
+            .replace(/\s*(\||\-)\s*(ArchDaily|Plataforma Arquitectura|Madera21|Chile).*$/i, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+        if (title.length < 5) continue;
+
+        topics.push({
+            title,
+            url,
+            date,
+            source: 'architecture_rss'
+        });
+    }
+
+    return topics;
+}
+
+/**
+ * Carga el catálogo evergreen desde el archivo JSON
+ */
+function loadEvergreenCatalog(catalogPath = EVERGREEN_CATALOG_PATH) {
+    if (!fs.existsSync(catalogPath)) {
+        return [];
+    }
+    try {
+        const content = fs.readFileSync(catalogPath, 'utf8');
+        return JSON.parse(content);
+    } catch (err) {
+        console.warn(`⚠️ [CURATOR WARNING] Error al leer catálogo evergreen: ${err.message}`);
+        return [];
+    }
+}
+
+/**
+ * Marca un tema del catálogo evergreen como utilizado y persiste la fecha
+ */
+function markEvergreenTopicAsUsed(catalogPath = EVERGREEN_CATALOG_PATH, topicId) {
+    if (!fs.existsSync(catalogPath)) {
+        return false;
+    }
+    try {
+        const topics = JSON.parse(fs.readFileSync(catalogPath, 'utf8'));
+        const topic = topics.find(t => t.id === topicId);
+        if (!topic) {
+            return false;
+        }
+        topic.used = true;
+        topic.lastUsedDate = new Date().toISOString().split('T')[0];
+        fs.writeFileSync(catalogPath, JSON.stringify(topics, null, 2) + '\n', 'utf8');
+        return true;
+    } catch (err) {
+        console.error(`⚠️ [CURATOR ERROR] No se pudo actualizar estado del tema ${topicId}: ${err.message}`);
+        return false;
     }
 }
 
@@ -178,7 +295,7 @@ function filterDuplicateTopics(candidateTopics, existingPosts = []) {
 }
 
 /**
- * Selecciona el próximo tema garantizando la cadencia semanal ininterrumpida
+ * Selecciona el próximo tema garantizando la cadencia semanal ininterrumpida (legacy)
  */
 function selectNextTopic(candidateTopics = [], fallbackPool = CONTINGENCY_TOPIC_POOL, existingPosts = []) {
     // 1. Intentar temas filtrados de YouTube
@@ -205,6 +322,60 @@ function selectNextTopic(candidateTopics = [], fallbackPool = CONTINGENCY_TOPIC_
 }
 
 /**
+ * Selección jerárquica multi-fuente (Spec 019):
+ * 1. YouTube -> 2. RSS Arquitectura -> 3. Catálogo Evergreen -> 4. Contingency Pool -> 5. Fallback Emergencia
+ */
+function selectNextTopicMultiSource({ youtubeTopics = [], rssTopics = [], evergreenTopics = [], existingPosts = [] } = {}) {
+    // 1. Fuente 1: YouTube
+    const viableYouTube = filterDuplicateTopics(youtubeTopics || [], existingPosts);
+    if (viableYouTube.length > 0) {
+        return {
+            ...viableYouTube[0],
+            source: viableYouTube[0].source || 'youtube'
+        };
+    }
+
+    // 2. Fuente 2: RSS Arquitectura
+    const viableRss = filterDuplicateTopics(rssTopics || [], existingPosts);
+    if (viableRss.length > 0) {
+        return {
+            ...viableRss[0],
+            source: viableRss[0].source || 'architecture_rss'
+        };
+    }
+
+    // 3. Fuente 3: Catálogo Evergreen
+    let unusedEvergreen = (evergreenTopics || []).filter(t => !t.used);
+    if (unusedEvergreen.length === 0 && (evergreenTopics || []).length > 0) {
+        // Reset cíclico: ordenar por lastUsedDate más antiguo
+        unusedEvergreen = [...evergreenTopics].sort((a, b) => (a.lastUsedDate || '').localeCompare(b.lastUsedDate || ''));
+    }
+    const viableEvergreen = filterDuplicateTopics(unusedEvergreen, existingPosts);
+    if (viableEvergreen.length > 0) {
+        return {
+            ...viableEvergreen[0],
+            source: 'evergreen_catalog'
+        };
+    }
+
+    // 4. Contingency Topic Pool (fallback)
+    const viableFallbacks = filterDuplicateTopics(CONTINGENCY_TOPIC_POOL, existingPosts);
+    if (viableFallbacks.length > 0) {
+        return {
+            ...viableFallbacks[0],
+            source: 'contingency_pool'
+        };
+    }
+
+    // 5. Fallback de emergencia último recurso
+    return {
+        title: "Guía de Presupuestos y Sistemas Constructivos en Santiago de Chile 2026",
+        category: "Precios & Cotización",
+        source: 'contingency_pool'
+    };
+}
+
+/**
  * Inyecta el SSOT estricto de Cuatropuntas en el prompt para Google Gemini
  */
 function buildGeminiPrompt(topicData) {
@@ -212,6 +383,11 @@ function buildGeminiPrompt(topicData) {
 
 Debes redactar un artículo técnico, pedagógico y comercial exhaustivo para el blog oficial de la empresa basado en el siguiente tema:
 TEMA: "${topicData.title}"
+
+=== AUDIENCIA Y ENFOQUE EDITORIAL B2C (DUEÑOS DE CASA) ===
+- Audiencia 100% B2C: El contenido está dirigido a dueños de casa, familias y propietarios de viviendas en la Región Metropolitana de Santiago, no a contratistas ni empresas constructoras.
+- Redacción ágil, entretenida y de alto valor: Debes elevar el nivel de conciencia del lector desde el problema cotidiano que vive en su hogar hacia una solución constructiva inteligente y duradera.
+- Desmitificación y claridad: Derribar mitos populares de construcción y evitar jerga técnica pesada o academicismos innecesarios. Explicar siempre el "por qué" y el beneficio tangible para la habitabilidad y el patrimonio familiar. Cero relleno y cero clichés de IA ("En resumen", "un tapiz de", etc.).
 
 === DIRECTRICES INVIOLABLES DE NEGOCIO Y SSOT (AGENTS.md) ===
 1. Vocabulario y contexto técnico chileno:
@@ -226,8 +402,11 @@ TEMA: "${topicData.title}"
    - WhatsApp Oficial: +56 9 2738 4075 (enlace: https://wa.me/56927384075).
    - Agendamiento Oficial: https://cal.com/cuatropuntas.com/visita-tecnica.
    - NÚMERO ESTRICTAMENTE PROHIBIDO: Queda terminantemente prohibido mencionar el número obsoleto 63482439.
-4. Tono y Estilo:
-   - Profesional, pedagógico, riguroso y transparente. Cero relleno y cero clichés de IA ("En resumen", "un tapiz de", etc.).
+4. Doble Llamado a la Acción (CTA de Cierre Obligatorio):
+   Todo artículo debe rematar al final con la siguiente sección obligatoria de conversión en dos pasos:
+   ### ¿Listo para dar el siguiente paso en tu proyecto?
+   - **Paso 1 (Cotización):** Genera tu presupuesto preliminar en nuestro cotizador web: https://www.cuatropuntas.com/#cotizador
+   - **Paso 2 (Agendamiento):** Agenda tu evaluación técnica presencial en terreno con nuestros profesionales: https://cal.com/cuatropuntas.com/visita-tecnica
 
 === FORMATO DE SALIDA OBLIGATORIO ===
 Entrega ÚNICAMENTE un documento Markdown válido que comience directamente con el bloque de Frontmatter YAML entre delimitadores '---', sin rodearlo de comillas invertidas (\`\`\`markdown):
@@ -253,7 +432,7 @@ faq:
     answer: "[Respuesta técnica clara de 2-3 oraciones]"
 ---
 
-## [Sección 1 con análisis técnico profundo]
+## [Sección 1 con análisis técnico profundo y pedagógico]
 [Contenido en párrafos y listas]
 
 ## [Sección 2 con comparativa técnica y costos]
@@ -268,7 +447,12 @@ A continuación presentamos una tabla comparativa de valores referenciales en Sa
 > **Regla técnica de obra:** [Consejo clave sobre normativa DOM o ejecución de fundaciones/techumbres]
 
 ## [Sección 3 con recomendaciones para propietarios en Santiago]
-[Contenido final consultivo]
+[Contenido consultivo y pedagógico]
+
+## ¿Listo para dar el siguiente paso en tu proyecto?
+Planificar con certeza técnica y financiera es la clave de una obra sin sobresaltos:
+1. **Cotiza en línea:** Estima los costos preliminares de tu obra en nuestro [cotizador en línea](https://www.cuatropuntas.com/#cotizador).
+2. **Agenda en terreno:** Coordina una [visita técnica presencial](https://cal.com/cuatropuntas.com/visita-tecnica) con nuestro equipo de ingeniería y arquitectura.
 `;
 }
 
@@ -319,6 +503,11 @@ Explicación detallada del proyecto según la normativa chilena vigente.
 | Albañilería Armada | Desde 25 UF/m² | 5 a 7 meses |
 
 > **Regla técnica de obra:** Siempre verificar el Permiso de Edificación en la DOM correspondiente.
+
+## ¿Listo para dar el siguiente paso en tu proyecto?
+
+1. **Cotiza en línea:** Estima los costos preliminares de tu obra en nuestro [cotizador en línea](https://www.cuatropuntas.com/#cotizador).
+2. **Agenda en terreno:** Coordina una [visita técnica presencial](https://cal.com/cuatropuntas.com/visita-tecnica) con nuestro equipo de ingeniería y arquitectura.
 `;
         }
         throw new Error('No se encontró GOOGLE_GENERATIVE_AI_API_KEY ni GEMINI_API_KEY en variables de entorno');
@@ -403,12 +592,31 @@ async function autoCurateAndPublish(options = {}) {
             source: 'manual_override'
         };
     } else {
-        console.log(`📡 Consultando feed RSS de YouTube (@ConstruirSimple)...`);
-        const xml = await fetchYouTubeRssFeed(YOUTUBE_CHANNEL_ID);
-        const candidateTopics = extractViableTopics(xml);
-        console.log(`   Se extrajeron ${candidateTopics.length} temas candidatos viables de YouTube.`);
+        console.log(`📡 Consultando cascada multi-fuente de curaduría...`);
 
-        selectedTopic = selectNextTopic(candidateTopics, CONTINGENCY_TOPIC_POOL, existingPosts);
+        // Fuente 1: YouTube
+        console.log(`   1. Consultando feed RSS de YouTube (@ConstruirSimple)...`);
+        const ytXml = await fetchYouTubeRssFeed(YOUTUBE_CHANNEL_ID);
+        const youtubeTopics = extractViableTopics(ytXml);
+        console.log(`      Se extrajeron ${youtubeTopics.length} temas candidatos viables de YouTube.`);
+
+        // Fuente 2: RSS Arquitectura
+        console.log(`   2. Consultando feed RSS de Arquitectura Chilena...`);
+        const rssXml = await fetchArchitectureRssFeed(ARCHITECTURE_RSS_URL);
+        const rssTopics = extractArchitectureTopics(rssXml);
+        console.log(`      Se extrajeron ${rssTopics.length} temas candidatos viables de Arquitectura.`);
+
+        // Fuente 3: Catálogo Evergreen
+        console.log(`   3. Cargando catálogo evergreen local...`);
+        const evergreenTopics = loadEvergreenCatalog(EVERGREEN_CATALOG_PATH);
+        console.log(`      Se cargaron ${evergreenTopics.length} temas del catálogo evergreen.`);
+
+        selectedTopic = selectNextTopicMultiSource({
+            youtubeTopics,
+            rssTopics,
+            evergreenTopics,
+            existingPosts
+        });
         console.log(`✅ Tema seleccionado (${selectedTopic.source}): "${selectedTopic.title}"`);
     }
 
@@ -455,6 +663,12 @@ async function autoCurateAndPublish(options = {}) {
     const { metadata, content } = parseMarkdownWithFrontmatter(markdownContent);
     const publishResult = compileAndPublishPost({ ...metadata, image: coverPath, content });
 
+    // Marcar tema evergreen como utilizado si proviene del catálogo
+    if (selectedTopic && selectedTopic.id) {
+        markEvergreenTopicAsUsed(EVERGREEN_CATALOG_PATH, selectedTopic.id);
+        console.log(`📌 Tema evergreen "${selectedTopic.id}" marcado como utilizado.`);
+    }
+
     console.log(`🎉 [PUBLICACIÓN EXITOSA]`);
     console.log(`   Slug: ${publishResult.slug}`);
     console.log(`   URL:  ${publishResult.url}`);
@@ -489,12 +703,19 @@ if (require.main === module) {
 
 module.exports = {
     fetchYouTubeRssFeed,
+    fetchArchitectureRssFeed,
     extractViableTopics,
+    extractArchitectureTopics,
+    loadEvergreenCatalog,
+    markEvergreenTopicAsUsed,
     filterDuplicateTopics,
     selectNextTopic,
+    selectNextTopicMultiSource,
     buildGeminiPrompt,
     generatePostWithGemini,
     autoCurateAndPublish,
     CONTINGENCY_TOPIC_POOL,
+    EVERGREEN_CATALOG_PATH,
+    ARCHITECTURE_RSS_URL,
     YOUTUBE_CHANNEL_ID
 };

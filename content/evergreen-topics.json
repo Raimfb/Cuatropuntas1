@@ -1,0 +1,262 @@
+[
+  {
+    "id": "eg-01",
+    "title": "Construir en sitio propio en Santiago: Guía paso a paso desde el estudio de suelo hasta la recepción DOM",
+    "category": "Casas Nuevas",
+    "service": "Casas Nuevas",
+    "keywords": ["sitio propio", "estudio de suelo", "permiso dom", "recepcion municipal", "santiago"],
+    "intent": "comercial_educativo",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-02",
+    "title": "Metalcom vs Panel SIP vs Albañilería: Cuál elegir según tu comuna y presupuesto en la Región Metropolitana",
+    "category": "Materiales & Sistemas",
+    "service": "Casas Nuevas",
+    "keywords": ["metalcom", "panel sip", "albanileria", "comparativa sistemas", "precios uf"],
+    "intent": "comparativo_decision",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-03",
+    "title": "El radier de hormigón en Santiago: Espesores, malla acma y por qué el polietileno de 0.2 mm evita la humedad de cimientos",
+    "category": "Materiales & Sistemas",
+    "service": "Casas Nuevas",
+    "keywords": ["radier", "malla acma", "polietileno", "humedad cimientos", "hormigon h-20"],
+    "intent": "tecnico_preventivo",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-04",
+    "title": "Contrato de construcción a suma alzada: Cómo proteger el patrimonio de tu familia y evitar cobros sorpresa",
+    "category": "Precios & Cotización",
+    "service": "Casas Nuevas",
+    "keywords": ["contrato suma alzada", "itemizado", "presupuesto cerrado", "cobros sorpresa", "garantias"],
+    "intent": "confianza_financiera",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-05",
+    "title": "Recepción Final en la DOM: Qué documentos y certificados de instalaciones (SEC, Aguas) exige el municipio para habitar",
+    "category": "Guías Prácticas",
+    "service": "Casas Nuevas",
+    "keywords": ["recepcion final", "dom", "sec te1", "instalaciones sanitarias", "certificado recepcion"],
+    "intent": "normativo_tramitacion",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-06",
+    "title": "Ampliación de casa vs. comprar una vivienda nueva: Por qué ampliar en tu terreno ahorra millones frente a un crédito hipotecario",
+    "category": "Segundos Pisos & Ampliaciones",
+    "service": "Ampliacion",
+    "keywords": ["ampliacion casa", "mudanza", "credito hipotecario", "plusvalia", "costo m2"],
+    "intent": "economico_familiar",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-07",
+    "title": "Construir un segundo piso liviano en Metalcom: Cómo verificar las fundaciones del primer piso sin romper de más",
+    "category": "Segundos Pisos & Ampliaciones",
+    "service": "Ampliacion",
+    "keywords": ["segundo piso", "metalcom liviano", "fundaciones", "calculo estructural", "sobrecarga"],
+    "intent": "seguridad_estructural",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-08",
+    "title": "¿Extensión hacia el patio o sobreelevación de segundo piso? Factores para decidir el rumbo de tu ampliación",
+    "category": "Segundos Pisos & Ampliaciones",
+    "service": "Ampliacion",
+    "keywords": ["ampliacion patio", "segundo piso", "coeficiente constructibilidad", "terreno", "habitabilidad"],
+    "intent": "diseno_estrategico",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-09",
+    "title": "Aislación acústica y térmica de entrepisos: Cómo evitar que los pasos del segundo piso retumben en el living",
+    "category": "Materiales & Sistemas",
+    "service": "Ampliacion",
+    "keywords": ["aislacion acustica", "entrepiso", "ruido pasos", "lana mineral", "placa estructural"],
+    "intent": "confort_habitabilidad",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-10",
+    "title": "Regularizar ampliaciones ante la DOM: El impacto real en la tasación bancaria y la venta futura de tu propiedad",
+    "category": "Guías Prácticas",
+    "service": "Ampliacion",
+    "keywords": ["regularizacion dom", "tasacion bancaria", "ley del mono", "rol sii", "permiso edificacion"],
+    "intent": "plusvalia_patrimonio",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-11",
+    "title": "Ampliación por etapas y faena limpia: Protocolos para construir sin alterar la rutina escolar y laboral del hogar",
+    "category": "Segundos Pisos & Ampliaciones",
+    "service": "Ampliacion",
+    "keywords": ["faena limpia", "construccion habitada", "etapas obra", "tiempos montaje", "polvo"],
+    "intent": "tranquilidad_familiar",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-12",
+    "title": "Remodelación de cocinas: La trampa de cambiar muebles sin renovar cañerías de agua, gas y circuitos eléctricos",
+    "category": "Precios & Remodelaciones",
+    "service": "Remodelacion",
+    "keywords": ["remodelacion cocina", "canerias cobre", "gas sec", "enchufes sobrecubierta", "muebles cocina"],
+    "intent": "prevencion_errores",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-13",
+    "title": "Impermeabilización de duchas y shower doors: Por qué el fragüe y la cerámica no reemplazan una membrana líquida continua",
+    "category": "Precios & Remodelaciones",
+    "service": "Remodelacion",
+    "keywords": ["impermeabilizacion ducha", "membrana liquida", "shower door", "filtracion bano", "humedad muro"],
+    "intent": "tecnico_proteccion",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-14",
+    "title": "Remodelación en casas antiguas de Santiago: Cómo diagnosticar y reemplazar cañerías de fierro galvanizado y plomo",
+    "category": "Precios & Remodelaciones",
+    "service": "Remodelacion",
+    "keywords": ["casas antiguas", "canerias plomo", "fierro galvanizado", "remodelacion integral", "presion agua"],
+    "intent": "renovacion_seguridad",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-15",
+    "title": "Concepto abierto y derribo de tabiques: Cuándo un muro es estructural y cómo instalar vigas de refuerzo IPN con seguridad",
+    "category": "Precios & Remodelaciones",
+    "service": "Remodelacion",
+    "keywords": ["concepto abierto", "muro estructural", "viga ipn", "refuerzo estructural", "living comedor"],
+    "intent": "diseno_ingenieria",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-16",
+    "title": "Por qué cotizar un baño por metro cuadrado lineal es un error: Partidas fijas, artefactos y griferías explicadas",
+    "category": "Precios & Remodelaciones",
+    "service": "Remodelacion",
+    "keywords": ["bano completo", "partidas fijas", "artefactos bano", "costo remodelacion", "uf bano"],
+    "intent": "educativo_presupuesto",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-17",
+    "title": "Quinchos habitables todo el año: Diseño de cobertizos con vigas a la vista y cerramientos para el invierno en Santiago",
+    "category": "Quinchos",
+    "service": "Quincho",
+    "keywords": ["quincho invierno", "cobertizo vigas", "pino oregon", "cerramiento terraza", "quincho santiago"],
+    "intent": "inspiracional_estilo",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-18",
+    "title": "El secreto del tiraje perfecto: Cómo calcular la campana y ducto de tu asador en obra para evitar humo en el comedor",
+    "category": "Quinchos",
+    "service": "Quincho",
+    "keywords": ["asador obra", "campana quincho", "tiraje humo", "ladrillo refractario", "parrilla manivela"],
+    "intent": "solucion_cotidiana",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-19",
+    "title": "Instalaciones sanitarias y eléctricas en el quincho: Por qué requieren evaluación técnica en terreno según la pendiente y alcantarillado",
+    "category": "Quinchos",
+    "service": "Quincho",
+    "keywords": ["redes quincho", "alcantarillado terraza", "lavacopas", "tablero electrico", "visita terreno"],
+    "intent": "transparencia_alcance",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-20",
+    "title": "Pavimentos para quinchos de alto tráfico: Radier afinado vs Porcelanato rústico antideslizante ante grasas y lavado exterior",
+    "category": "Quinchos",
+    "service": "Quincho",
+    "keywords": ["pavimento quincho", "porcelanato rustico", "radier afinado", "manchas grasa", "terraza"],
+    "intent": "materialidad_practica",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-21",
+    "title": "Permiso de edificación DOM para quinchos y cobertizos: Cuándo un techo exterior suma metros cuadrados construidos a tu predio",
+    "category": "Quinchos",
+    "service": "Quincho",
+    "keywords": ["permiso quincho", "oguc cobertizo", "metros techados", "dom santiago", "obra menor"],
+    "intent": "legal_normativo",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-22",
+    "title": "Acondicionamiento térmico en techumbres residenciales: Espesor de lana de vidrio y barrera de vapor para no asfixiarse en verano",
+    "category": "Materiales & Sistemas",
+    "service": "Normativa & DOM",
+    "keywords": ["techumbre termica", "lana de vidrio", "barrera vapor", "zona 3 rm", "calor santiago"],
+    "intent": "confort_eficiencia",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-23",
+    "title": "Ventanas termopanel con marco de PVC: La barrera definitiva contra el ruido del tráfico y el frío invernal en la RM",
+    "category": "Materiales & Sistemas",
+    "service": "Normativa & DOM",
+    "keywords": ["termopanel pvc", "aislacion acustica", "doble vidriado", "ahorro calefaccion", "confort"],
+    "intent": "calidad_vida",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-24",
+    "title": "Garantías legales en la construcción de viviendas (Art. 18 LGUC): Cuáles son los plazos de 3, 5 y 10 años que te amparan",
+    "category": "Guías Prácticas",
+    "service": "Normativa & DOM",
+    "keywords": ["garantias lguc", "art 18 lguc", "vicios construccion", "garantia decenal", "constructora chile"],
+    "intent": "seguridad_juridica",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-25",
+    "title": "Paso a paso para preparar tu terreno antes de construir: Desmalezado, cierres perimetrales y empalmes provisorios de luz y agua",
+    "category": "Guías Prácticas",
+    "service": "Casas Nuevas",
+    "keywords": ["preparar terreno", "empalme provisorio", "cierre perimetral", "movimiento tierras", "faena"],
+    "intent": "organizacion_obra",
+    "used": false,
+    "lastUsedDate": null
+  },
+  {
+    "id": "eg-26",
+    "title": "Ampliación de living y cocina: Claves de iluminación natural, ventilación cruzada y distribución para disfrutar en familia",
+    "category": "Segundos Pisos & Ampliaciones",
+    "service": "Ampliacion",
+    "keywords": ["iluminacion natural", "ventilacion cruzada", "ampliacion cocina", "living familiar", "diseno funcional"],
+    "intent": "bienestar_diseno",
+    "used": false,
+    "lastUsedDate": null
+  }
+]
