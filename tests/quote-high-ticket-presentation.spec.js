@@ -45,7 +45,7 @@ test.describe('Spec 020: Optimización High-Ticket de Presupuesto por Correo y F
         expect(emailQuincho.subject).toMatch(/^📐 Diagnóstico y Presupuesto Preliminar: Quincho en Colina \(Chicureo\) — Cuatropuntas$/);
     });
 
-    test('T01.2: Copywriting High-Ticket B2C en el Correo (Art. 18 LGUC, Suma Alzada, Cupos y Doble CTA)', async () => {
+    test('T01.2: Copywriting High-Ticket B2C en el Correo (Art. 18 LGUC, Suma Alzada, Cupos y Único CTA Cal.com)', async () => {
         const quoteModule = require(quoteApiPath);
         const emailData = quoteModule.generateEmailData({
             nombre: 'Roberto Gomez',
@@ -82,9 +82,10 @@ test.describe('Spec 020: Optimización High-Ticket de Presupuesto por Correo y F
         expect(html).toMatch(/3 a 4/i);
         expect(html).toMatch(/supervisi[oó]n|cupos|faenas/i);
 
-        // 6. Doble llamado a la acción con enlaces canónicos oficiales (SSOT)
+        // 6. Único llamado a la acción enfocado a Cal.com (blindaje contra loops de WhatsApp)
         expect(html).toContain('https://cal.com/cuatropuntas.com/visita-tecnica');
-        expect(html).toContain('56927384075');
+        expect(html).not.toMatch(/wa\.me/i);
+        expect(html).not.toMatch(/whatsapp/i);
     });
 
     test('T01.3: Ficha Técnica PDF en Estricta Página Única Letter para las 4 Tipologías', async () => {

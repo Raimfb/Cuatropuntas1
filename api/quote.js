@@ -556,11 +556,6 @@ function generateEmailData(data) {
     const cleanComuna = comunaHuman.split(',')[0].trim();
     const calendarUrl = "https://cal.com/cuatropuntas.com/visita-tecnica";
 
-    const cleanClientPhone = (telefono || '').replace(/\D/g, '');
-    const formattedClientPhone = cleanClientPhone.startsWith('56') ? cleanClientPhone : (cleanClientPhone.length === 9 ? `56${cleanClientPhone}` : cleanClientPhone);
-    const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar una visita técnica a terreno.`);
-    const clientWhatsappUrl = `https://wa.me/56927384075?text=${clientWaText}`;
-
     const subject = `📐 Diagnóstico y Presupuesto Preliminar: ${tipo} en ${cleanComuna} — Cuatropuntas`;
 
     const faqTimelineAnswer = isRemodelacion
@@ -649,20 +644,12 @@ function generateEmailData(data) {
             </p>
         </div>
 
-        <!-- DOBLE LLAMADO A LA ACCIÓN (VISITA TÉCNICA + CONSULTAS WHATSAPP) -->
+        <!-- LLAMADO A LA ACCIÓN PRINCIPAL (VISITA TÉCNICA) -->
         <div style="text-align: center; margin: 28px 0 20px 0;">
-            <!-- Botón 1: Visita Técnica -->
-            <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 12px;">
+            <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
                 Agendar Visita Técnica a Terreno
             </a>
-            
-            <!-- Botón 2: WhatsApp -->
-            <div>
-                <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #128C7E; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    ¿Tienes dudas previas? Chatear por WhatsApp
-                </a>
-            </div>
-            <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica y coordinación de visitas en terreno: Lunes a Viernes de 09:00 a 18:30 hrs</p>
+            <p style="font-size: 12px; color: #718096; margin-top: 12px;">Atención técnica y coordinación de visitas en terreno: Lunes a Viernes de 09:00 a 18:30 hrs</p>
         </div>
 
         ${faqEmailHtml}
@@ -670,7 +657,7 @@ function generateEmailData(data) {
         <!-- Footer -->
         <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px;">
             <p style="margin: 0; font-size: 13px; color: #718096; font-weight: bold;">Constructora Cuatropuntas SpA</p>
-            <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 2738 4075</p>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a></p>
         </div>
     </div>
     `;
