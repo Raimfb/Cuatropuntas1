@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const { isBotSubmission } = require('./_botGuard');
+const { generateQrMatrix } = require('./_qrMatrix');
 
 // Mapeo legible de comunas para presentación ejecutiva
 function getComunaLabel(comunaVal) {
@@ -302,6 +303,384 @@ async function persistLeadToGoogleSheets(leadData) {
     }
 }
 
+/**
+ * Genera el documento PDF oficial en memoria (PDFKit) con QR Vectorial y Metodología en 4 Pasos.
+ * Restricción estricta: Exactamente 1 sola página Letter (Letter = 612x792 pt, márgenes 45 pt).
+ */
+async function generatePdfBuffer(data) {
+    const {
+        tipo = 'Casa Nueva',
+        sistema = 'Metalcon',
+        terminaciones = 'Estandar',
+        comuna = 'Las Condes',
+        permisos = 'Idea',
+        nombre = 'Cliente',
+        email = '',
+        telefono = '',
+        espacios_remodelar = ''
+    } = data;
+
+    const areaNum = parseFloat(data.area !== undefined ? data.area : (data.areaNum || 50));
+    const pisosNum = parseInt(data.pisos !== undefined ? data.pisos : (data.pisosNum || 1));
+
+    const quote = calculateQuote({
+        tipo,
+        sistema,
+        area: areaNum,
+        pisos: pisosNum,
+        terminaciones,
+        comuna,
+        permisos,
+        espacios_remodelar: (espacios_remodelar || '').trim()
+    });
+
+    const minUF = data.minUF || quote.minUF;
+    const maxUF = data.maxUF || quote.maxUF;
+    const permisosData = data.permisosData || quote.permisosData;
+    const comunaHuman = data.comunaHuman || quote.comunaHuman || getComunaLabel(comuna);
+    const notasAlcance = data.notasAlcance || quote.notasAlcance || [];
+    const isQuincho = quote.isQuincho;
+    const isRemodelacion = tipo.toLowerCase().includes("remodela");
+    const calendarUrl = data.calendarUrl || "https://cal.com/cuatropuntas.com/visita-tecnica";
+
+    const doc = new PDFDocument({ margin: 45, size: 'LETTER' });
+    const buffers = [];
+    doc.on('data', buffers.push.bind(buffers));
+
+    const pdfPromise = new Promise((resolve) => {
+        doc.on('end', () => resolve(Buffer.concat(buffers)));
+    });
+
+    // 1. Encabezado Institucional
+    doc.rect(45, 45, 522, 4).fill('#c05621'); // Barra decorativa terracota
+
+    // Marca y Subtítulo
+    doc.fontSize(17).font('Helvetica-Bold').fillColor('#1a365d').text('CONSTRUCTORA CUATROPUNTAS', 45, 56);
+    doc.fontSize(8.5).font('Helvetica').fillColor('#718096').text('Arquitectura, Ingeniería & Construcción Habitacional  |  www.cuatropuntas.com', 45, 75);
+
+    // Metadatos a la derecha
+    const fechaEmision = new Date().toLocaleDateString('es-CL');
+    doc.fontSize(8).font('Helvetica-Bold').fillColor('#4a5568').text(`Fecha: ${fechaEmision}`, 400, 56, { width: 167, align: 'right' });
+    doc.fontSize(8).font('Helvetica').fillColor('#718096').text('Validez referencia: 30 días', 400, 69, { width: 167, align: 'right' });
+
+    // Línea divisoria
+    doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 88).lineTo(567, 88).stroke();
+
+    // 2. Título Principal y Datos del Cliente
+    doc.fontSize(11.5).font('Helvetica-Bold').fillColor('#1a202c').text('DIAGNÓSTICO Y ESTIMACIÓN REFERENCIAL DE PROYECTO', 45, 96);
+    doc.fontSize(8.5).font('Helvetica').fillColor('#4a5568')
+       .text(`Cliente: ${nombre}   |   Email: ${email}   |   Teléfono: ${telefono}`, 45, 111);
+
+    // 3. Ficha Resumen del Proyecto
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('1. Parámetros Técnicos del Proyecto', 45, 126);
+
+    const cardTop = 138;
+    const cardHeight = espacios_remodelar ? 64 : 52;
+    doc.roundedRect(45, cardTop, 522, cardHeight, 4).fillAndStroke('#f8fafc', '#e2e8f0');
+    
+    doc.fillColor('#2d3748').fontSize(8).font('Helvetica');
+    doc.text(`• Tipo de Obra: ${tipo}`, 55, cardTop + 8);
+    if (espacios_remodelar) {
+        doc.text(`• Recintos: ${espacios_remodelar}`, 55, cardTop + 20, { width: 235 });
+        doc.text(`• Sistema Constructivo: ${sistema}`, 55, cardTop + 34);
+        doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''}) | Term.: ${terminaciones}`, 55, cardTop + 48);
+    } else {
+        doc.text(`• Sistema Constructivo: ${sistema}`, 55, cardTop + 20);
+        doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 55, cardTop + 32);
+        doc.text(`• Nivel Terminaciones: ${terminaciones}`, 55, cardTop + 44);
+    }
+
+    doc.text(`• Sector / Ubicación: ${comunaHuman}`, 305, cardTop + 8, { width: 250 });
+    doc.text(`• Estado Planos / DOM: ${permisosData.badgePdf}`, 305, cardTop + 20, { width: 250 });
+    doc.text('• Modalidad: Llave en Mano Integral a Suma Alzada', 305, cardTop + 32);
+    doc.text('• Gestión Municipal: Asesoría Técnica y DOM', 305, cardTop + (espacios_remodelar ? 48 : 44));
+
+    // 4. Inversión Estimada Referencial
+    const sec2Top = cardTop + cardHeight + 8;
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('2. Estimación Económica Referencial (Sin IVA)', 45, sec2Top);
+    doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568')
+       .text('Rango paramétrico preliminar calculado según m², sistema constructivo y sector:', 45, sec2Top + 12);
+
+    const priceBoxTop = sec2Top + 24;
+    doc.roundedRect(45, priceBoxTop, 522, 34, 4).fillAndStroke('#fffaf5', '#fed7aa');
+    doc.fillColor('#c05621').fontSize(14).font('Helvetica-Bold')
+       .text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, 45, priceBoxTop + 6, { width: 522, align: 'center' });
+    doc.fontSize(7).font('Helvetica').fillColor('#9c4221')
+       .text('Presupuesto definitivo cerrado a suma alzada sujeto a evaluación técnica en terreno.', 45, priceBoxTop + 22, { width: 522, align: 'center' });
+
+    // 5. Bloque Garantía y Seguridad Contractual (Art. 18 LGUC)
+    const sec3Top = priceBoxTop + 40;
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('3. Garantía y Seguridad Contractual (Art. 18 LGUC)', 45, sec3Top);
+    
+    doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568');
+    let curY = sec3Top + 14;
+    doc.text('• Contrato a Suma Alzada: Presupuesto cerrado e inalterable sobre el 100% de las partidas y especificaciones acordadas, protegiendo tu inversión sin cobros imprevistos.', 45, curY, { width: 522, lineGap: 1 });
+    curY += 15;
+    doc.text('• Garantía Legal Art. 18 LGUC: Respaldo contractual formal de 10 años en estructura soportante, 5 años en instalaciones y redes, y 3 años en terminaciones.', 45, curY, { width: 522, lineGap: 1 });
+    curY += 15;
+    const viciosPdfText = isRemodelacion
+        ? '• Protocolo ante Imprevistos: En remodelaciones, inspeccionamos redes preexistentes. Si surgen vicios ocultos, se emite informe técnico pericial y presupuesto complementario aprobado por el mandante.'
+        : '• Protocolo ante Imprevistos: Ante preexistencias no visibles preliminarmente (asbesto, refuerzos de suelo), se emite informe técnico y presupuesto previo aprobado por el mandante antes de intervenir.';
+    doc.text(viciosPdfText, 45, curY, { width: 522, lineGap: 1 });
+    curY += 17;
+
+    // 6. Infografía: Metodología Cuatropuntas en 4 Pasos
+    const sec4Top = curY + 2;
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('4. Metodología de Ejecución en 4 Pasos', 45, sec4Top);
+    doc.fontSize(7.5).font('Helvetica').fillColor('#718096')
+       .text('Proceso estructurado de ingeniería para garantizar plazos, costos y calidad en obra:', 45, sec4Top + 12);
+
+    const gridY = sec4Top + 24;
+    const cardW = 124.5;
+    const cardH = 46;
+    const gap = 8;
+    const stepsData = [
+        { title: '1. Diagnóstico', desc: 'Levantamiento en terreno: cotas, deslindes, suelo y factibilidad DOM.' },
+        { title: '2. Presupuesto', desc: 'Itemizado detallado a suma alzada con cubicaciones exactas y cerradas.' },
+        { title: '3. Contrato', desc: 'Firma con plazos garantizados y respaldo legal Art. 18 LGUC.' },
+        { title: '4. Recepción', desc: 'Entrega llave en mano de carpeta municipal DOM y obra conforme.' }
+    ];
+
+    for (let i = 0; i < 4; i++) {
+        const boxX = 45 + i * (cardW + gap);
+        doc.roundedRect(boxX, gridY, cardW, cardH, 4).fillAndStroke('#f8fafc', '#cbd5e1');
+        doc.fillColor('#1a365d').fontSize(8).font('Helvetica-Bold').text(stepsData[i].title, boxX + 6, gridY + 6, { width: cardW - 12 });
+        doc.fillColor('#4a5568').fontSize(6.5).font('Helvetica').text(stepsData[i].desc, boxX + 6, gridY + 18, { width: cardW - 12, lineGap: 1 });
+    }
+
+    curY = gridY + cardH + 8;
+
+    // Notas de Alcance Condicionales (si aplica)
+    if (notasAlcance && notasAlcance.length > 0) {
+        doc.fontSize(7.5).font('Helvetica-Bold').fillColor('#c05621').text(`Alcance Específico de Partidas (${isQuincho ? 'Quincho / Terraza' : 'Remodelación'}):`, 45, curY);
+        curY += 10;
+        doc.fontSize(6.8).font('Helvetica').fillColor('#4a5568');
+        for (const nota of notasAlcance) {
+            doc.text(`• ${nota}`, 55, curY, { width: 505, lineGap: 1 });
+            curY += doc.heightOfString(`• ${nota}`, { width: 505, lineGap: 1 }) + 2;
+        }
+        curY += 2;
+    }
+
+    // 7. Siguiente Paso — Coordinar Visita Técnica en Terreno
+    const sec5Top = curY + 4;
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('4. Siguiente Paso — Visita Técnica en Terreno', 45, sec5Top);
+    doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568')
+       .text('Para evaluar en terreno las condiciones de tu propiedad (deslindes, cotas, suelo, preexistencias y DOM) y estructurar tu presupuesto definitivo a suma alzada, te invitamos a agendar una visita técnica:', 45, sec5Top + 12, { width: 522 });
+
+    const ctaY = sec5Top + 32;
+    // Columna Izquierda: Botón interactivo Cal.com y texto
+    const btnW = 325;
+    const btnH = 32;
+    doc.roundedRect(45, ctaY, btnW, btnH, 6).fill('#c05621');
+    doc.fillColor('#ffffff').fontSize(10).font('Helvetica-Bold')
+       .text('AGENDAR VISITA TÉCNICA A TERRENO', 45, ctaY + 10, { 
+           width: btnW, 
+           align: 'center' 
+       });
+    doc.link(45, ctaY, btnW, btnH, calendarUrl);
+
+    doc.fontSize(7).font('Helvetica').fillColor('#718096')
+       .text('Haz clic en el botón o escanea el código QR contiguo para coordinar tu cita en Cal.com.\nConsultas directas a contacto@cuatropuntas.com o WhatsApp +56 9 2738 4075', 45, ctaY + 36, { width: btnW });
+
+    // Columna Derecha: Código QR Vectorial
+    const qrSize = 58;
+    const qrX = 440;
+    const qrY = ctaY - 8;
+    const qrMatrix = generateQrMatrix(calendarUrl);
+    const moduleCount = qrMatrix.length;
+    const cellSize = qrSize / moduleCount;
+
+    doc.save();
+    doc.fillColor('#1a365d');
+    for (let r = 0; r < moduleCount; r++) {
+        for (let c = 0; c < moduleCount; c++) {
+            if (qrMatrix[r][c]) {
+                doc.rect(qrX + c * cellSize, qrY + r * cellSize, cellSize, cellSize).fill();
+            }
+        }
+    }
+    doc.restore();
+
+    doc.fontSize(6.5).font('Helvetica-Bold').fillColor('#4a5568')
+       .text('📱 Escanear con smartphone', qrX - 20, qrY + qrSize + 4, { width: qrSize + 40, align: 'center' });
+
+    // 8. Pie de Página
+    doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 718).lineTo(567, 718).stroke();
+    doc.fontSize(7).font('Helvetica').fillColor('#a0aec0')
+       .text('Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com · +56 9 2738 4075 · Documento técnico referencial conforme a Ley 21.305 y LGUC.', 45, 726, { width: 522, align: 'center' });
+
+    doc.end();
+    return await pdfPromise;
+}
+
+/**
+ * Genera el Asunto dinámico y el cuerpo HTML del correo con Copywriting High-Ticket B2C.
+ */
+function generateEmailData(data) {
+    const {
+        tipo = 'Casa Nueva',
+        sistema = 'Metalcon',
+        terminaciones = 'Estandar',
+        comuna = 'Las Condes',
+        permisos = 'Idea',
+        nombre = 'Cliente',
+        email = '',
+        telefono = '',
+        espacios_remodelar = ''
+    } = data;
+
+    const areaNum = parseFloat(data.area !== undefined ? data.area : (data.areaNum || 50));
+    const pisosNum = parseInt(data.pisos !== undefined ? data.pisos : (data.pisosNum || 1));
+
+    const quote = calculateQuote({
+        tipo,
+        sistema,
+        area: areaNum,
+        pisos: pisosNum,
+        terminaciones,
+        comuna,
+        permisos,
+        espacios_remodelar: (espacios_remodelar || '').trim()
+    });
+
+    const minUF = data.minUF || quote.minUF;
+    const maxUF = data.maxUF || quote.maxUF;
+    const permisosData = data.permisosData || quote.permisosData;
+    const comunaHuman = data.comunaHuman || quote.comunaHuman || getComunaLabel(comuna);
+    const notasAlcance = data.notasAlcance || quote.notasAlcance || [];
+    const isQuincho = quote.isQuincho;
+    const isRemodelacion = tipo.toLowerCase().includes("remodela");
+
+    const firstName = (nombre || '').trim().split(' ')[0] || 'Cliente';
+    const cleanComuna = comunaHuman.split(',')[0].trim();
+    const calendarUrl = "https://cal.com/cuatropuntas.com/visita-tecnica";
+
+    const cleanClientPhone = (telefono || '').replace(/\D/g, '');
+    const formattedClientPhone = cleanClientPhone.startsWith('56') ? cleanClientPhone : (cleanClientPhone.length === 9 ? `56${cleanClientPhone}` : cleanClientPhone);
+    const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar una visita técnica a terreno.`);
+    const clientWhatsappUrl = `https://wa.me/56927384075?text=${clientWaText}`;
+
+    const subject = `📐 Diagnóstico y Presupuesto Preliminar: ${tipo} en ${cleanComuna} — Cuatropuntas`;
+
+    const faqTimelineAnswer = isRemodelacion
+        ? 'En remodelaciones, el plazo típico varía entre 1 y 3 meses tras coordinar partidas y materiales.'
+        : 'Como referencia orientativa: una casa nueva de 50 a 100 m² toma entre 3 y 5 meses; una ampliación o segundo piso, entre 2 y 4 meses; y un quincho completo, entre 4 y 8 semanas.';
+
+    const faqEmailHtml = `
+        <div style="background-color:#fffaf5; border:1px solid #fed7aa; border-radius:8px; padding:18px; margin:24px 0; color:#4a5568; line-height:1.55;">
+            <h3 style="margin:0 0 14px 0; color:#1a202c; font-size:16px;">Preguntas Frecuentes de Nuestros Clientes</h3>
+            <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cómo funciona el diagnóstico técnico en terreno?</strong><br>Coordinamos una inspección donde evaluamos deslindes, cotas, estado del suelo o muros preexistentes, empalmes de servicios y factibilidad municipal ante la DOM.</p>
+            <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cómo se manejan los imprevistos en obra?</strong><br>Trabajamos con presupuestos cerrados a suma alzada sobre las partidas contratadas. Si surge un vicio oculto no visible al inicio (ej. necesidad de retiro de asbesto por norma o refuerzo de cimientos previos), se emite un informe técnico y cotización previa aprobada por ti.</p>
+            <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cuánto demora la obra?</strong><br>${faqTimelineAnswer}</p>
+            <p style="margin:0; font-size:14px;"><strong>¿Trabajan con subsidio MINVU?</strong><br>Sí, ejecutamos obras de <strong>Construcción en Sitio Propio (DS1 y DS49)</strong> para beneficiarios con subsidio ya adjudicado y terreno propio.</p>
+        </div>
+    `;
+
+    const html = `
+    <div style="font-family: Arial, Helvetica, sans-serif; max-width: 620px; margin: auto; padding: 24px; color: #2d3748; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;">
+        <!-- Header -->
+        <div style="text-align: center; border-bottom: 2px solid #c05621; padding-bottom: 16px; margin-bottom: 20px;">
+            <h1 style="color: #1a365d; margin: 0; font-size: 22px; letter-spacing: 0.5px;">CONSTRUCTORA CUATROPUNTAS</h1>
+            <p style="color: #c05621; font-weight: bold; margin: 4px 0 0 0; font-size: 13px;">Arquitectura, Ingeniería & Construcción Habitacional</p>
+        </div>
+
+        <!-- Saludo cálido y validación de proyecto -->
+        <p style="font-size: 16px; margin-bottom: 12px;">Estimado(a) <strong>${firstName}</strong>,</p>
+        <p style="font-size: 15px; line-height: 1.6; color: #4a5568; margin-top: 0;">
+            Agradecemos tu interés en cotizar con nosotros. Planificar tu <strong>${tipo} de ${areaNum} m²</strong> en <strong>${comunaHuman}</strong> es una decisión fundamental para tu patrimonio familiar. En Cuatropuntas te acompañamos con respaldo técnico, rigor de ingeniería y absoluta transparencia contractual.
+        </p>
+
+        <!-- Tarjeta Resumen Visual Inmediato -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #c05621; border-radius: 6px; padding: 18px; margin: 20px 0;">
+            <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
+                <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
+                ${espacios_remodelar ? `<tr><td style="padding: 4px 0;"><strong>Recintos a remodelar:</strong></td><td>${espacios_remodelar}</td></tr>` : ''}
+                <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
+                <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>
+                <tr><td style="padding: 4px 0;"><strong>Planos / Permiso DOM:</strong></td><td>${permisosData.label}</td></tr>
+                <tr>
+                    <td style="padding: 8px 0 4px 0;"><strong>Inversión Estimada:</strong></td>
+                    <td style="padding: 8px 0 4px 0;"><span style="color: #c05621; font-size: 18px; font-weight: bold;">${minUF} a ${maxUF} UF</span> <span style="font-size: 12px; color: #718096;">(sin IVA)</span></td>
+                </tr>
+            </table>
+            <p style="margin: 10px 0 0 0; font-size: 12px; color: #718096;">
+                *Valores paramétricos calculados según m², sistema constructivo y sector. Adjunto encontrarás el documento PDF oficial con el desglose técnico y código QR de agendamiento.
+            </p>
+        </div>
+
+        ${notasAlcance && notasAlcance.length > 0 ? `
+        <!-- Notas de Alcance Técnico Condicionales -->
+        <div style="background-color: #fffaf0; border: 1px solid #feebc8; border-left: 4px solid #dd6b20; border-radius: 6px; padding: 16px; margin: 20px 0;">
+            <h4 style="margin: 0 0 8px 0; color: #9c4221; font-size: 14px;">Alcance Técnico de Partidas (${isQuincho ? 'Quincho / Terraza' : 'Remodelación'})</h4>
+            ${notasAlcance.map(nota => `<p style="margin: 0 0 8px 0; font-size: 13px; line-height: 1.5; color: #7b341e;">• ${nota}</p>`).join('')}
+            <p style="margin: 4px 0 0 0; font-size: 11.5px; color: #9c4221; font-style: italic;">*Detalle referencial preliminar. Las especificaciones y cubicaciones exactas se definen y valorizan en la propuesta definitiva tras la visita técnica en terreno.</p>
+        </div>
+        ` : ''}
+
+        <!-- Bloque Cero Sobrecostos y Garantía Legal Art. 18 LGUC -->
+        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; border-left: 4px solid #16a34a; border-radius: 8px; padding: 18px; margin: 24px 0;">
+            <h3 style="margin: 0 0 12px 0; color: #166534; font-size: 16px;">Compromiso Cero Sobrecostos y Garantía Legal Art. 18 LGUC</h3>
+            <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #15803d;">
+                • <strong>Contrato a Suma Alzada con Itemizado Detallado:</strong> Tu presupuesto definitivo es cerrado e inalterable sobre el 100% de las partidas, planos y especificaciones acordadas en el contrato. Total transparencia sin cobros imprevistos ni costos ocultos durante la obra.
+            </p>
+            <p style="margin: 0 0 10px 0; font-size: 14px; line-height: 1.6; color: #15803d;">
+                • <strong>Respaldo y Garantía Legal (Art. 18 de la LGUC):</strong> Todas nuestras obras cuentan con el marco legal de garantías más riguroso de Chile:
+                <br>&nbsp;&nbsp;— <strong>10 años</strong> en estructura soportante (fundaciones, muros portantes y techumbre).
+                <br>&nbsp;&nbsp;— <strong>5 años</strong> en elementos constructivos e instalaciones (redes de agua potable, electricidad y alcantarillado).
+                <br>&nbsp;&nbsp;— <strong>3 años</strong> en terminaciones y revestimientos superficiales.
+            </p>
+            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #15803d;">
+                • <strong>Protocolo Transparente ante Imprevistos:</strong> ${isRemodelacion ? 'En remodelaciones y recintos húmedos, inspeccionamos redes preexistentes. Si surge alguna anomalía oculta no visible, emitimos un informe técnico pericial y presupuesto complementario aprobado previamente por ti antes de ejecutar.' : 'Si en la obra surgen preexistencias o vicios no visibles preliminarmente (ej. refuerzos de cimientos o retiro normado de asbesto), nuestro equipo emite informe técnico y cotización complementaria con tu aprobación previa.'}
+            </p>
+        </div>
+
+        <!-- Cláusula Honesta de Capacidad Operativa -->
+        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 18px; margin: 20px 0; font-size: 13.5px; color: #4a5568; line-height: 1.55;">
+            <strong>Supervisión Técnica Directa y Cupos Limitados:</strong> Para asegurar la presencia permanente de nuestros directores de obra en faena y un estricto control de calidad, limitamos el inicio simultáneo de proyectos a un <strong>máximo de 3 a 4 faenas por mes</strong>.
+        </div>
+
+        <!-- Explicación del Siguiente Paso (Diagnóstico Técnico de Factibilidad en Terreno) -->
+        <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 18px; margin: 24px 0;">
+            <h3 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 16px;">¿Cómo pasamos de esta estimación a tu proyecto definitivo?</h3>
+            <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1e40af;">
+                Para estructurar tu <strong>presupuesto definitivo cerrado a suma alzada</strong> y congelar los valores de tu obra, el siguiente paso es coordinar un <strong>Diagnóstico Técnico de Factibilidad en Terreno</strong>. En esta inspección, nuestro equipo de ingeniería y arquitectura audita en tu propiedad deslindes, cotas, tipo de suelo o muros preexistentes, empalmes de servicios y viabilidad normativa ante la DOM.
+            </p>
+        </div>
+
+        <!-- DOBLE LLAMADO A LA ACCIÓN (VISITA TÉCNICA + CONSULTAS WHATSAPP) -->
+        <div style="text-align: center; margin: 28px 0 20px 0;">
+            <!-- Botón 1: Visita Técnica -->
+            <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 12px;">
+                Agendar Visita Técnica a Terreno
+            </a>
+            
+            <!-- Botón 2: WhatsApp -->
+            <div>
+                <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #128C7E; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    ¿Tienes dudas previas? Chatear por WhatsApp
+                </a>
+            </div>
+            <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica y coordinación de visitas en terreno: Lunes a Viernes de 09:00 a 18:30 hrs</p>
+        </div>
+
+        ${faqEmailHtml}
+
+        <!-- Footer -->
+        <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px;">
+            <p style="margin: 0; font-size: 13px; color: #718096; font-weight: bold;">Constructora Cuatropuntas SpA</p>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 2738 4075</p>
+        </div>
+    </div>
+    `;
+
+    return {
+        subject,
+        html
+    };
+}
+
 const quoteHandler = async (req, res) => {
 
 
@@ -415,159 +794,42 @@ const quoteHandler = async (req, res) => {
             totalEstimado,
             espacios_remodelar: (espacios_remodelar || '').trim()
         });
-
-        // --- GENERACIÓN DE PDF PROFESIONAL EN MEMORIA (PDFKit) ---
-
-        const doc = new PDFDocument({ margin: 45, size: 'LETTER' });
-        let buffers = [];
-        doc.on('data', buffers.push.bind(buffers));
-        
-        const pdfPromise = new Promise((resolve) => {
-            doc.on('end', () => {
-                const pdfData = Buffer.concat(buffers);
-                resolve(pdfData);
-            });
+        // --- GENERACIÓN DE PDF PROFESIONAL EN MEMORIA (PDFKit con QR Vectorial) ---
+        const pdfBuffer = await generatePdfBuffer({
+            nombre,
+            email,
+            telefono,
+            tipo,
+            sistema,
+            areaNum,
+            pisosNum,
+            terminaciones,
+            comunaHuman,
+            permisosData,
+            minUF,
+            maxUF,
+            espacios_remodelar,
+            notasAlcance,
+            calendarUrl
         });
 
-        // 1. Encabezado Institucional
-        doc.rect(45, 45, 522, 4).fill('#c05621'); // Barra decorativa terracota
-
-        // Marca y Subtítulo
-        doc.fontSize(18).font('Helvetica-Bold').fillColor('#1a365d').text('CONSTRUCTORA CUATROPUNTAS', 45, 58);
-        doc.fontSize(9).font('Helvetica').fillColor('#718096').text('Arquitectura, Ingeniería & Construcción Habitacional  |  www.cuatropuntas.com', 45, 78);
-
-        // Metadatos a la derecha
-        const fechaEmision = new Date().toLocaleDateString('es-CL');
-        doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#4a5568').text(`Fecha: ${fechaEmision}`, 400, 58, { width: 167, align: 'right' });
-        doc.fontSize(8.5).font('Helvetica').fillColor('#718096').text('Validez referencia: 30 días', 400, 72, { width: 167, align: 'right' });
-
-        // Línea divisoria
-        doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 96).lineTo(567, 96).stroke();
-
-        // 2. Título Principal y Datos del Cliente
-        doc.fontSize(13).font('Helvetica-Bold').fillColor('#1a202c').text('ESTIMACIÓN REFERENCIAL DE PROYECTO', 45, 108);
-        doc.fontSize(9.5).font('Helvetica').fillColor('#4a5568')
-           .text(`Cliente: ${nombre}   |   Email: ${email}   |   Teléfono: ${telefono}`, 45, 126);
-
-        // 3. Ficha Resumen del Proyecto
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('1. Parámetros Técnicos del Proyecto', 45, 148);
-
-        const cardTop = 164;
-        const cardHeight = espacios_remodelar ? 84 : 72;
-        doc.roundedRect(45, cardTop, 522, cardHeight, 4).fillAndStroke('#f8fafc', '#e2e8f0');
-        
-        doc.fillColor('#2d3748').fontSize(9).font('Helvetica');
-        doc.text(`• Tipo de Obra: ${tipo}`, 60, cardTop + 10);
-        if (espacios_remodelar) {
-            doc.text(`• Recintos: ${espacios_remodelar}`, 60, cardTop + 24, { width: 220 });
-            doc.text(`• Sistema Constructivo: ${sistema}`, 60, cardTop + 38);
-            doc.text(`• Superficie Estimada: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 60, cardTop + 52);
-            doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 66);
-        } else {
-            doc.text(`• Sistema Constructivo: ${sistema}`, 60, cardTop + 24);
-            doc.text(`• Superficie Estimada: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 60, cardTop + 38);
-            doc.text(`• Nivel Terminaciones: ${terminaciones}`, 60, cardTop + 52);
-        }
-
-        doc.text(`• Sector / Ubicación: ${comunaHuman}`, 290, cardTop + 10, { width: 260 });
-        doc.text(`• Estado Planos / DOM: ${permisosData.badgePdf}`, 290, cardTop + 24, { width: 260 });
-        doc.text('• Modalidad: Llave en Mano Integral', 290, cardTop + 38);
-        doc.text('• Gestión Municipal: Asesoría Técnica DOM', 290, cardTop + 52);
-
-        // 4. Inversión Estimada Referencial
-        const sec2Top = cardTop + cardHeight + 12;
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('2. Estimación Económica Referencial (Sin IVA)', 45, sec2Top);
-        doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
-           .text('Rango paramétrico preliminar calculado según m² y sistema constructivo seleccionado:', 45, sec2Top + 15);
-
-        const priceBoxTop = sec2Top + 30;
-        doc.roundedRect(45, priceBoxTop, 522, 44, 4).fillAndStroke('#fffaf5', '#fed7aa');
-        doc.fillColor('#c05621').fontSize(16).font('Helvetica-Bold')
-           .text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, 45, priceBoxTop + 10, { width: 522, align: 'center' });
-        doc.fontSize(8).font('Helvetica').fillColor('#9c4221')
-           .text('Presupuesto definitivo sujeto a evaluación en terreno y desarrollo de especialidades.', 45, priceBoxTop + 28, { width: 522, align: 'center' });
-
-        // 5. Compromiso de Transparencia Técnica y Modelo Constructivo
-        const sec3Top = priceBoxTop + 56;
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('3. Compromiso de Transparencia y Modelo Llave en Mano', 45, sec3Top);
-        
-        doc.fontSize(8.5).font('Helvetica').fillColor('#4a5568');
-        let curY = sec3Top + 16;
-        doc.text('• Contrato a Suma Alzada: El presupuesto de la propuesta definitiva es cerrado para todas las partidas, planos y especificaciones acordadas en el contrato.', 45, curY, { width: 522, lineGap: 2 });
-        curY += 22;
-        const viciosText = isRemodelacion
-            ? '• Protocolo ante Imprevistos y Vicios Ocultos: En remodelaciones y recintos húmedos (baños/cocinas), la propuesta definitiva se valida tras inspeccionar el estado de redes de agua, desagües y preexistencias. Si surgen cañerías deterioradas no visibles preliminarmente, nuestro equipo emite informe técnico y cotización previa aprobada por ti.'
-            : '• Protocolo ante Imprevistos y Vicios Ocultos: Si en la intervención se detectan preexistencias no visibles preliminarmente (ej. retiro normado de asbesto por empresas autorizadas, refuerzos de fundaciones o fallas en instalaciones preexistentes), nuestro equipo elabora un informe técnico y cotización complementaria con tu aprobación previa antes de ejecutar.';
-        doc.text(viciosText, 45, curY, { width: 522, lineGap: 2 });
-        curY += (isRemodelacion ? 36 : 32);
-        doc.text('• Gestión Normativa Integral: Asesoramos y gestionamos la tramitación de Permiso de Edificación y Recepción Final ante la Dirección de Obras Municipales (DOM).', 45, curY, { width: 522, lineGap: 2 });
-        curY += 20;
-
-        if (notasAlcance && notasAlcance.length > 0) {
-            doc.fontSize(8.5).font('Helvetica-Bold').fillColor('#c05621').text('Alcance Técnico Específico (Partidas Incluidas / Excluidas):', 45, curY);
-            curY += 13;
-            doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568');
-            for (const nota of notasAlcance) {
-                doc.text(`• ${nota}`, 55, curY, { width: 505, lineGap: 1.5 });
-                curY += doc.heightOfString(`• ${nota}`, { width: 505, lineGap: 1.5 }) + 4;
-            }
-            curY += 4;
-        }
-
-        // 6. Siguiente Paso — Coordinar Visita Técnica a Terreno
-        const sec4Top = curY + 6;
-        doc.fontSize(11).font('Helvetica-Bold').fillColor('#1a202c').text('4. Siguiente Paso — Visita Técnica en Terreno', 45, sec4Top);
-        doc.fontSize(9).font('Helvetica').fillColor('#4a5568')
-           .text('Para evaluar en terreno las condiciones de tu propiedad (deslindes, suelo, factibilidad municipal y distribución) y estructurar tu presupuesto definitivo a suma alzada, te invitamos a agendar una visita técnica.', 45, sec4Top + 15, { width: 522 });
-
-        // Botón Interactivo Centrado
-        const btnX = 135;
-        const btnY = sec4Top + 48;
-        const btnWidth = 340;
-        const btnHeight = 36;
-        
-        doc.roundedRect(btnX, btnY, btnWidth, btnHeight, 6).fill('#c05621');
-        doc.fillColor('#ffffff').fontSize(11).font('Helvetica-Bold')
-           .text('AGENDAR VISITA TÉCNICA A TERRENO', btnX, btnY + 12, { 
-               width: btnWidth, 
-               align: 'center' 
-           });
-        doc.link(btnX, btnY, btnWidth, btnHeight, calendarUrl);
-
-        doc.fontSize(8).font('Helvetica').fillColor('#718096')
-           .text('Haz clic en el botón superior o escríbenos a contacto@cuatropuntas.com', 45, btnY + 44, { width: 522, align: 'center' });
-
-        // 7. Pie de Página
-        doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 730).lineTo(567, 730).stroke();
-        doc.fontSize(7.5).font('Helvetica').fillColor('#a0aec0')
-           .text('Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com · Documento informativo referencial.', 45, 738, { width: 522, align: 'center' });
-
-        doc.end();
-
-        const pdfBuffer = await pdfPromise;
-
-        const faqPriceAnswer = isRemodelacion
-            ? 'En remodelaciones integrales la referencia parte desde 11 UF/m² (Metalcon) y 13 UF/m² (albañilería). Para recintos específicos (baños y cocinas), el valor se estructura por paquete de partidas (redes, impermeabilización y terminaciones) con un rango referencial de 65 a 95 UF por baño completo y 90 a 160 UF por cocina integral.'
-            : isQuincho
-                ? 'Para quinchos de alto estándar, la referencia parte desde 12 UF/m² en Metalcon y 15 UF/m² en albañilería en obra, según equipamiento, techumbre y terminaciones.'
-                : (isAmpliacion || pisosNum >= 2)
-                    ? 'Para segundos pisos y ampliaciones, la referencia parte desde 22 UF/m² en Metalcon, 24 UF/m² en panel SIP y 27 UF/m² en albañilería sólida, dependiendo del refuerzo de la estructura existente y terminaciones.'
-                    : 'Para casas nuevas completas, la referencia parte desde 19 UF/m² en Metalcon, 21 UF/m² en panel SIP y 25 UF/m² en albañilería tradicional sólida.';
-
-
-        const faqTimelineAnswer = isRemodelacion
-            ? 'En remodelaciones, el plazo típico varía entre 1 y 3 meses tras coordinar partidas y materiales.'
-            : 'Como referencia orientativa: una casa nueva de 50 a 100 m² toma entre 3 y 5 meses; una ampliación o segundo piso, entre 2 y 4 meses; y un quincho completo, entre 4 y 8 semanas.';
-
-        const faqEmailHtml = `
-            <div style="background-color:#fffaf5; border:1px solid #fed7aa; border-radius:8px; padding:18px; margin:24px 0; color:#4a5568; line-height:1.55;">
-                <h3 style="margin:0 0 14px 0; color:#1a202c; font-size:16px;">Preguntas Frecuentes de Nuestros Clientes</h3>
-                <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cómo funciona la visita técnica en terreno?</strong><br>Coordinamos una inspección para evaluar deslindes, estado del suelo o vivienda existente, orientación solar y factibilidad ante la DOM.</p>
-                <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cómo se manejan los imprevistos en obra?</strong><br>Trabajamos con presupuestos cerrados a suma alzada sobre las partidas contratadas. Si surge un vicio oculto no visible al inicio (ej. necesidad de retiro de asbesto por norma o refuerzo de cimientos previos), se emite un informe técnico y cotización previa aprobada por ti.</p>
-                <p style="margin:0 0 12px 0; font-size:14px;"><strong>¿Cuánto demora la obra?</strong><br>${faqTimelineAnswer}</p>
-                <p style="margin:0; font-size:14px;"><strong>¿Trabajan con subsidio MINVU?</strong><br>Sí, ejecutamos obras de <strong>Construcción en Sitio Propio (DS1 y DS49)</strong> para beneficiarios con subsidio ya adjudicado y terreno propio.</p>
-            </div>
-        `;
+        // --- PREPARACIÓN DE CORREO HIGH-TICKET AL CLIENTE ---
+        const emailData = generateEmailData({
+            nombre,
+            email,
+            telefono,
+            tipo,
+            sistema,
+            areaNum,
+            pisosNum,
+            terminaciones,
+            comunaHuman,
+            permisosData,
+            minUF,
+            maxUF,
+            espacios_remodelar,
+            notasAlcance
+        });
 
         // --- ENVÍO DE CORREOS TRANSACCIONALES VÍA NODEMAILER ---
         const user = process.env.ZOHO_USER || 'contacto@cuatropuntas.com';
@@ -588,96 +850,12 @@ const quoteHandler = async (req, res) => {
             }
         });
 
-        // 1. Enviar correo al CLIENTE con PDF adjunto y Copy de Alta Conversión
+        // 1. Enviar correo al CLIENTE con PDF adjunto y Copy High-Ticket
         const mailToClient = {
             from: `"Constructora Cuatropuntas" <${user}>`,
             to: email,
-            subject: `Estimación para ${tipo}: ${minUF} a ${maxUF} UF | Constructora Cuatropuntas`,
-            html: `
-            <div style="font-family: Arial, Helvetica, sans-serif; max-width: 620px; margin: auto; padding: 24px; color: #2d3748; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px;">
-                <!-- Header -->
-                <div style="text-align: center; border-bottom: 2px solid #c05621; padding-bottom: 16px; margin-bottom: 20px;">
-                    <h1 style="color: #1a365d; margin: 0; font-size: 22px; letter-spacing: 0.5px;">CONSTRUCTORA CUATROPUNTAS</h1>
-                    <p style="color: #c05621; font-weight: bold; margin: 4px 0 0 0; font-size: 13px;">Arquitectura, Ingeniería & Construcción Habitacional</p>
-                </div>
-
-                <!-- Saludo cálido y validación -->
-                <p style="font-size: 16px; margin-bottom: 12px;">Estimado(a) <strong>${firstName}</strong>,</p>
-                <p style="font-size: 15px; line-height: 1.6; color: #4a5568; margin-top: 0;">
-                    Agradecemos tu interés en cotizar con nosotros. Planificar tu <strong>${tipo} de ${areaNum} m²</strong> es un paso importante. En Cuatropuntas te acompañamos con respaldo técnico, materiales certificados y absoluta transparencia de costos.
-                </p>
-
-                <!-- Tarjeta Resumen Visual Inmediato -->
-                <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #c05621; border-radius: 6px; padding: 18px; margin: 20px 0;">
-                    <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
-                        <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
-                        ${espacios_remodelar ? `<tr><td style="padding: 4px 0;"><strong>Recintos a remodelar:</strong></td><td>${espacios_remodelar}</td></tr>` : ''}
-                        <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
-                        <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>
-                        <tr><td style="padding: 4px 0;"><strong>Planos / Permiso DOM:</strong></td><td>${permisosData.label}</td></tr>
-                        <tr>
-                            <td style="padding: 8px 0 4px 0;"><strong>Inversión Estimada:</strong></td>
-                            <td style="padding: 8px 0 4px 0;"><span style="color: #c05621; font-size: 18px; font-weight: bold;">${minUF} a ${maxUF} UF</span> <span style="font-size: 12px; color: #718096;">(sin IVA)</span></td>
-                        </tr>
-                    </table>
-                    <p style="margin: 10px 0 0 0; font-size: 12px; color: #718096;">
-                        *Valores paramétricos calculados según m², sistema constructivo y estado del proyecto. Adjunto encontrarás el documento PDF oficial con el desglose técnico.
-                    </p>
-                </div>
-
-                ${notasAlcance && notasAlcance.length > 0 ? `
-                <!-- Notas de Alcance Técnico Condicionales -->
-                <div style="background-color: #fffaf0; border: 1px solid #feebc8; border-left: 4px solid #dd6b20; border-radius: 6px; padding: 16px; margin: 20px 0;">
-                    <h4 style="margin: 0 0 8px 0; color: #9c4221; font-size: 14px;">Alcance Técnico de Partidas (${isQuincho ? 'Quincho / Terraza' : 'Remodelación'})</h4>
-                    ${notasAlcance.map(nota => `<p style="margin: 0 0 8px 0; font-size: 13px; line-height: 1.5; color: #7b341e;">• ${nota}</p>`).join('')}
-                    <p style="margin: 4px 0 0 0; font-size: 11.5px; color: #9c4221; font-style: italic;">*Detalle referencial preliminar. Las especificaciones y cubicaciones exactas se definen y valorizan en la propuesta definitiva tras la visita técnica en terreno.</p>
-                </div>
-                ` : ''}
-
-                <!-- Explicación del Siguiente Paso (Visita Técnica a Terreno) -->
-                <div style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 18px; margin: 24px 0;">
-                    <h3 style="margin: 0 0 8px 0; color: #1e3a8a; font-size: 16px;">¿Cómo pasamos de esta estimación a tu proyecto definitivo?</h3>
-                    <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #1e40af;">
-                        Para evaluar en terreno las condiciones de tu propiedad (deslindes, estado del suelo, factibilidad municipal y distribución) y estructurar un <strong>presupuesto definitivo cerrado a suma alzada</strong>, el siguiente paso es coordinar una <strong>Visita Técnica a Terreno</strong> con nuestro equipo de profesionales.
-                    </p>
-                </div>
-
-                <!-- DOBLE LLAMADO A LA ACCIÓN (VISITA TÉCNICA + CONSULTAS WHATSAPP) -->
-                <div style="text-align: center; margin: 28px 0 20px 0;">
-                    <!-- Botón 1: Visita Técnica -->
-                    <a href="${calendarUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #c05621; color: #ffffff; padding: 15px 30px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 15px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 12px;">
-                        Agendar Visita Técnica a Terreno
-                    </a>
-                    
-                    <!-- Botón 2: WhatsApp -->
-                    <div>
-                        <a href="${clientWhatsappUrl}" target="_blank" rel="noopener noreferrer" style="background-color: #128C7E; color: #ffffff; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                            ¿Tienes dudas previas? Chatear por WhatsApp
-                        </a>
-                    </div>
-                    <p style="font-size: 12px; color: #718096; margin-top: 10px;">Atención técnica y coordinación de visitas en terreno: Lunes a Viernes de 09:00 a 18:30 hrs</p>
-                </div>
-
-                <!-- Pilares de Confianza y Transparencia Cuatropuntas -->
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin: 24px 0;">
-                    <h4 style="margin: 0 0 10px 0; color: #1a202c; font-size: 15px;">Nuestros Compromisos de Calidad y Transparencia:</h4>
-                    <ul style="margin: 0; padding-left: 20px; font-size: 13.5px; color: #4a5568; line-height: 1.6;">
-                        <li><strong>Contratos a Suma Alzada:</strong> Precio garantizado y cerrado para todas las partidas acordadas en el proyecto definitivo.</li>
-                        <li><strong>Transparencia ante Imprevistos:</strong> Si durante la obra surgen preexistencias o vicios ocultos (ej. retiro normado de asbesto por empresa autorizada o refuerzos estructurales), se presenta un informe técnico y cotización previa aprobada por ti.</li>
-                        <li><strong>Gestión Integral DOM:</strong> Asesoría técnica en tramitación de Permisos de Edificación y Recepción Final.</li>
-                    </ul>
-                </div>
-
-                ${faqEmailHtml}
-
-                <!-- Footer -->
-                <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 24px;">
-                    <p style="margin: 0; font-size: 13px; color: #718096; font-weight: bold;">Constructora Cuatropuntas SpA</p>
-                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #718096;">Santiago de Chile · <a href="https://www.cuatropuntas.com" style="color: #c05621; text-decoration: none;">www.cuatropuntas.com</a> · +56 9 2738 4075</p>
-                </div>
-            </div>
-            `,
+            subject: emailData.subject,
+            html: emailData.html,
             attachments: [
                 {
                     filename: `Cotizacion_Cuatropuntas_${firstName}_${tipo.replace(/\s+/g, '_')}.pdf`,
@@ -789,5 +967,7 @@ module.exports.getComunaLabel = getComunaLabel;
 module.exports.getPermisosData = getPermisosData;
 module.exports.getFactorComuna = getFactorComuna;
 module.exports.persistLeadToGoogleSheets = persistLeadToGoogleSheets;
+module.exports.generatePdfBuffer = generatePdfBuffer;
+module.exports.generateEmailData = generateEmailData;
 
 
