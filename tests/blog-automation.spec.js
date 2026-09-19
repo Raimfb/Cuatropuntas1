@@ -257,4 +257,103 @@ test.describe('Spec 003: Pipeline y Motor Automatizado de Publicación del Blog'
         expect(responseBody.url).toBe(`https://www.cuatropuntas.com/blog/posts/${testSlug}.html`);
     });
 
+    test('T01.8: Agente Centinela auto-repara borrador corrupto (sin frontmatter YAML, sin fecha y sin imagen) y completa la publicación', async () => {
+        const { selfHealBlog } = require(path.join(rootDir, 'scripts', 'self-heal-blog.js'));
+        const corruptedDraftName = 'test-corrupted-draft-sentinel.md';
+        const draftsDir = path.join(rootDir, 'content', 'drafts');
+        if (!fs.existsSync(draftsDir)) fs.mkdirSync(draftsDir, { recursive: true });
+        const corruptedDraftPath = path.join(draftsDir, corruptedDraftName);
+
+        // Contenido intencionalmente roto: sin delimitadores ---, sin fecha, sin slug, sin imagen
+        const brokenContent = `# Radieres de Hormigón H-20 para Viviendas en Santiago
+
+En este artículo explicamos por qué el radier de hormigón armado H-20 es la solución estándar para construir viviendas sólidas y de Metalcom en la Región Metropolitana.
+
+## Especificaciones Técnicas y Dosificación
+
+- Dosificación de cemento certificada para resistencia R28.
+- Malla electrosoldada C-139 con separadores plásticos.
+- Polietileno de 0.2 mm como barrera de vapor contra la humedad del suelo.
+`;
+        fs.writeFileSync(corruptedDraftPath, brokenContent, 'utf8');
+
+        // Respaldar estado del sitemap
+        let originalSitemap = null;
+        if (fs.existsSync(sitemapPath)) {
+            originalSitemap = fs.readFileSync(sitemapPath, 'utf8');
+        }
+
+        let healedSlug = null;
+        try {
+            const healResult = await selfHealBlog({
+                targetDraft: corruptedDraftPath,
+                dryRun: false
+            });
+
+            expect(healResult).toBeDefined();
+            expect(healResult.success).toBe(true);
+            expect(healResult.slug).toBeDefined();
+            healedSlug = healResult.slug;
+
+            // 1. El borrador ahora tiene Frontmatter YAML canónico entre ---
+            const healedContent = fs.readFileSync(corruptedDraftPath, 'utf8');
+            expect(healedContent).toMatch(/^---\n[\s\S]*?\n---\n/);
+            expect(healedContent).toContain('title:');
+            expect(healedContent).toContain('slug:');
+            expect(healedContent).toContain('image:');
+
+            // 2. El archivo HTML existe físicamente
+            const generatedHtmlPath = path.join(blogPostsDir, `${healedSlug}.html`);
+            expect(fs.existsSync(generatedHtmlPath)).toBe(true);
+
+            // 3. La portada WebP existe físicamente y cumple presupuesto < 100 KB
+            const expectedWebp = path.join(publicDir, 'blog', 'images', `${healedSlug}.webp`);
+            expect(fs.existsSync(expectedWebp)).toBe(true);
+            const stats = fs.statSync(expectedWebp);
+            expect(stats.size).toBeLessThan(100 * 1024);
+
+            // 4. posts.json contiene la entrada actualizada
+            const posts = JSON.parse(fs.readFileSync(postsJsonPath, 'utf8'));
+            const entry = posts.find(p => p.slug === healedSlug);
+            expect(entry).toBeDefined();
+            expect(entry.slug).toBe(healedSlug);
+
+        } finally {
+            // Teardown limpio
+            if (fs.existsSync(corruptedDraftPath)) {
+                try { fs.unlinkSync(corruptedDraftPath); } catch (e) {}
+            }
+            if (healedSlug) {
+                const generatedHtmlPath = path.join(blogPostsDir, `${healedSlug}.html`);
+                if (fs.existsSync(generatedHtmlPath)) {
+                    try { fs.unlinkSync(generatedHtmlPath); } catch (e) {}
+                }
+                const generatedWebp = path.join(publicDir, 'blog', 'images', `${healedSlug}.webp`);
+                if (fs.existsSync(generatedWebp)) {
+                    try { fs.unlinkSync(generatedWebp); } catch (e) {}
+                }
+                if (fs.existsSync(postsJsonPath)) {
+                    try {
+                        const posts = JSON.parse(fs.readFileSync(postsJsonPath, 'utf8'));
+                        const filtered = posts.filter(p => p.slug !== healedSlug);
+                        fs.writeFileSync(postsJsonPath, JSON.stringify(filtered, null, 2), 'utf8');
+                    } catch (e) {}
+                }
+                if (fs.existsSync(blogIndexPath)) {
+                    try {
+                        let indexHtml = fs.readFileSync(blogIndexPath, 'utf8');
+                        const cardRegex = new RegExp(`\\s*<!-- Post Card: ${healedSlug} -->[\\s\\S]*?<!-- End Post Card: ${healedSlug} -->`, 'gi');
+                        if (indexHtml.includes(healedSlug)) {
+                            indexHtml = indexHtml.replace(cardRegex, '');
+                            fs.writeFileSync(blogIndexPath, indexHtml, 'utf8');
+                        }
+                    } catch (e) {}
+                }
+            }
+            if (originalSitemap && fs.existsSync(sitemapPath)) {
+                try { fs.writeFileSync(sitemapPath, originalSitemap, 'utf8'); } catch (e) {}
+            }
+        }
+    });
+
 });

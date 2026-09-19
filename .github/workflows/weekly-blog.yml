@@ -74,3 +74,12 @@ jobs:
             git push origin main
             echo "✅ Artículo publicado y empujado a la rama main con éxito."
           fi
+
+      - name: Agente Centinela de Auto-Reparación (Self-Healing)
+        if: failure()
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY || secrets.GEMINI_API_KEY }}
+        run: |
+          echo "🛡️ Activando Agente Centinela de Auto-Reparación ante fallo en el pipeline..."
+          node scripts/self-heal-blog.js --ci

@@ -13,6 +13,7 @@ try { require('dotenv').config(); } catch (e) {}
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { compileAndPublishPost, sanitizeContent } = require('./publish-blog');
 const { generateBlogCover } = require('./generate-blog-cover');
+const { selfHealBlog } = require('./self-heal-blog');
 
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
@@ -671,7 +672,26 @@ async function autoCurateAndPublish(options = {}) {
 
     const { parseMarkdownWithFrontmatter } = require('./publish-blog');
     const { metadata, content } = parseMarkdownWithFrontmatter(markdownContent);
-    const publishResult = compileAndPublishPost({ ...metadata, image: coverPath, content });
+    let publishResult;
+
+    try {
+        publishResult = compileAndPublishPost({ ...metadata, image: coverPath, content });
+    } catch (publishErr) {
+        console.warn(`⚠️ [AUTO-CURATE WARNING] Fallo al compilar post (${publishErr.message}). Invocando Agente Centinela...`);
+        const healRes = await selfHealBlog({ targetDraft: draftPath, dryRun: options.dryRun });
+        if (healRes && healRes.success) {
+            console.log(`✅ [AUTO-CURATE RECOVERED] Publicación rescatada exitosamente por el Agente Centinela.`);
+            return {
+                success: true,
+                recovered: true,
+                slug: healRes.slug,
+                url: healRes.url,
+                filePath: healRes.filePath,
+                topic: selectedTopic
+            };
+        }
+        throw publishErr;
+    }
 
     // Marcar tema evergreen como utilizado si proviene del catálogo
     if (selectedTopic && selectedTopic.id) {
@@ -707,8 +727,18 @@ if (require.main === module) {
         .then(res => {
             process.exit(0);
         })
-        .catch(err => {
+        .catch(async err => {
             console.error(`❌ [ERROR CRON]: ${err.message}`);
+            console.log(`🛡️ Invocando Agente Centinela de Auto-Reparación ante fallo general...`);
+            try {
+                const healResult = await selfHealBlog({ dryRun: isDryRun });
+                if (healResult && healResult.success) {
+                    console.log(`✅ [AUTO-HEAL RESOLVED] Publicación salvada por el Centinela.`);
+                    process.exit(0);
+                }
+            } catch (healErr) {
+                console.error(`🚨 [FATAL]: Falló la auto-reparación: ${healErr.message}`);
+            }
             process.exit(1);
         });
 }
