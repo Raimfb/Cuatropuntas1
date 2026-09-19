@@ -190,4 +190,46 @@ test.describe('Spec 012: Generación Automatizada de Portadas con IA para el Blo
         }
     });
 
+    test('T01.6: Tier 3 Resilient Fallback genera portada WebP válida (< 100 KB) sin dependencias externas (sin Pillow ni FFmpeg)', async () => {
+        const coverModule = require(scriptCoverPath);
+        const resilientSlug = 'test-tier3-resilience-spec012';
+        const resilientPhysicalPath = path.join(imagesDir, `${resilientSlug}.webp`);
+
+        if (fs.existsSync(resilientPhysicalPath)) {
+            try { fs.unlinkSync(resilientPhysicalPath); } catch (e) {}
+        }
+
+        try {
+            const topic = {
+                title: "Guía de Metalcom y Estructuras de Acero Galvanizado",
+                category: "Materiales & Sistemas"
+            };
+
+            // Forzar modo sin herramientas externas (simula runner sin Pillow ni FFmpeg)
+            const result = await coverModule.generateBlogCover(topic, resilientSlug, {
+                apiKey: 'AIzaSy_SIMULATED_FAILING_API_KEY',
+                forceNoExternalTools: true,
+                dryRun: false
+            });
+
+            expect(result.success).toBe(true);
+            expect(result.fallback).toBe(true);
+            expect(result.imagePath).toBe(`/blog/images/${resilientSlug}.webp`);
+            expect(fs.existsSync(resilientPhysicalPath)).toBe(true);
+
+            // Validar cabecera WebP y tamaño < 100 KB
+            const stats = fs.statSync(resilientPhysicalPath);
+            expect(stats.size).toBeLessThan(100 * 1024);
+            expect(stats.size).toBeGreaterThan(1000);
+
+            const buffer = fs.readFileSync(resilientPhysicalPath);
+            expect(buffer.toString('ascii', 0, 4)).toBe('RIFF');
+            expect(buffer.toString('ascii', 8, 12)).toBe('WEBP');
+        } finally {
+            if (fs.existsSync(resilientPhysicalPath)) {
+                try { fs.unlinkSync(resilientPhysicalPath); } catch (e) {}
+            }
+        }
+    });
+
 });

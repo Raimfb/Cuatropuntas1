@@ -19,22 +19,25 @@ try { require('dotenv').config(); } catch (e) {}
 const ROOT_DIR = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT_DIR, 'public');
 const IMAGES_DIR = path.join(PUBLIC_DIR, 'blog', 'images');
+const TEMPLATES_DIR = path.join(IMAGES_DIR, 'templates');
 
-// Catálogo base de assets limpios de contingencia por categoría
+// Catálogo base de assets limpios de contingencia por categoría (WebP nativo < 90 KB)
 const FALLBACK_CATEGORY_ASSETS = {
-    'casas-nuevas': path.join(PUBLIC_DIR, 'blog_precios_construccion.jpg'),
-    'casas nuevas': path.join(PUBLIC_DIR, 'blog_precios_construccion.jpg'),
-    'materiales & sistemas': path.join(PUBLIC_DIR, 'blog_comparativa_sistemas.jpg'),
-    'materiales y sistemas': path.join(PUBLIC_DIR, 'blog_comparativa_sistemas.jpg'),
-    'segundos pisos': path.join(PUBLIC_DIR, 'blog_regularizar_ampliacion.jpg'),
-    'segundos-pisos': path.join(PUBLIC_DIR, 'blog_regularizar_ampliacion.jpg'),
-    'ampliaciones': path.join(PUBLIC_DIR, 'blog_regularizar_ampliacion.jpg'),
-    'guías prácticas': path.join(PUBLIC_DIR, 'blog_consejos_construir.jpg'),
-    'guias practicas': path.join(PUBLIC_DIR, 'blog_consejos_construir.jpg'),
-    'remodelaciones': path.join(PUBLIC_DIR, 'blog_remodelacion_bano_cocina.jpg'),
-    'precios & cotización': path.join(PUBLIC_DIR, 'blog_precios_construccion.jpg'),
-    'quinchos': path.join(PUBLIC_DIR, 'quincho_premium_chile_1770071485791.webp'),
-    'default': path.join(PUBLIC_DIR, 'blog_precios_construccion.jpg')
+    'casas-nuevas': path.join(TEMPLATES_DIR, 'template-casas-nuevas.webp'),
+    'casas nuevas': path.join(TEMPLATES_DIR, 'template-casas-nuevas.webp'),
+    'materiales & sistemas': path.join(TEMPLATES_DIR, 'template-materiales-sistemas.webp'),
+    'materiales y sistemas': path.join(TEMPLATES_DIR, 'template-materiales-sistemas.webp'),
+    'segundos pisos': path.join(TEMPLATES_DIR, 'template-segundos-pisos.webp'),
+    'segundos-pisos': path.join(TEMPLATES_DIR, 'template-segundos-pisos.webp'),
+    'ampliaciones': path.join(TEMPLATES_DIR, 'template-segundos-pisos.webp'),
+    'guías prácticas': path.join(TEMPLATES_DIR, 'template-default.webp'),
+    'guias practicas': path.join(TEMPLATES_DIR, 'template-default.webp'),
+    'remodelaciones': path.join(TEMPLATES_DIR, 'template-remodelaciones.webp'),
+    'precios & cotización': path.join(TEMPLATES_DIR, 'template-casas-nuevas.webp'),
+    'precios & cotizacion': path.join(TEMPLATES_DIR, 'template-casas-nuevas.webp'),
+    'precios & remodelaciones': path.join(TEMPLATES_DIR, 'template-remodelaciones.webp'),
+    'quinchos': path.join(TEMPLATES_DIR, 'template-quinchos.webp'),
+    'default': path.join(TEMPLATES_DIR, 'template-default.webp')
 };
 
 /**
@@ -118,8 +121,8 @@ async function processImageToWebp(inputBufferOrPath, targetPath, options = {}) {
     let success = false;
     let lastError = null;
 
-    // 1. Intento A: Python Pillow (disponible en entorno local Windows y con WebP support)
-    const pythonBin = findExecutable('python') || findExecutable('python3');
+    // 1. Intento A: Python Pillow (disponible en entorno local Windows o runners con Pillow)
+    const pythonBin = !options.forceNoExternalTools ? (findExecutable('python') || findExecutable('python3')) : null;
     if (pythonBin) {
         try {
             const pythonScript = `
@@ -153,7 +156,7 @@ else:
 img = img.resize((tw, th), Image.Resampling.LANCZOS)
 
 # Bucle dinámico de compresión (< 100 KB)
-for q in [80, 72, 65, 55, 45]:
+for q in [80, 72, 65, 55, 45, 38, 30]:
     img.save(out_path, 'WEBP', quality=q, method=6)
     if os.path.getsize(out_path) < mb:
         break
@@ -177,8 +180,8 @@ for q in [80, 72, 65, 55, 45]:
         }
     }
 
-    // 2. Intento B: FFmpeg (pre-instalado por defecto en GitHub Actions Ubuntu runners)
-    if (!success) {
+    // 2. Intento B: FFmpeg (si está presente en el sistema y tiene soporte webp)
+    if (!success && !options.forceNoExternalTools) {
         const ffmpegBin = findExecutable('ffmpeg', [
             'C:\\Users\\raimu\\.gemini\\antigravity\\scratch\\ffmpeg.exe',
             '/usr/bin/ffmpeg',
@@ -209,6 +212,46 @@ for q in [80, 72, 65, 55, 45]:
                 }
             } catch (e) {
                 lastError = e;
+            }
+        }
+    }
+
+    // 3. Intento C (Tier 3 Zero-Dependency Resilient Fallback):
+    // Si las herramientas externas no están instaladas o fallaron, usar copia directa de WebP nativo
+    if (!success) {
+        // ¿El archivo de entrada es un WebP existente y conforme?
+        if (inputPath.toLowerCase().endsWith('.webp') && fs.existsSync(inputPath)) {
+            try {
+                fs.copyFileSync(inputPath, targetPath);
+                success = true;
+                console.log(`ℹ️ [COVER TIER 3] Copia directa de WebP nativo a: ${path.basename(targetPath)}`);
+            } catch (copyErr) {
+                lastError = copyErr;
+            }
+        }
+
+        // Si la entrada no era WebP, recurrir a la plantilla WebP pre-optimizada
+        if (!success) {
+            const templateCandidate = options.templatePath || FALLBACK_CATEGORY_ASSETS['default'];
+            if (templateCandidate && fs.existsSync(templateCandidate)) {
+                try {
+                    fs.copyFileSync(templateCandidate, targetPath);
+                    success = true;
+                    console.log(`ℹ️ [COVER TIER 3] Fallback defensivo: plantilla WebP nativa ${path.basename(templateCandidate)} copiada a: ${path.basename(targetPath)}`);
+                } catch (copyErr) {
+                    lastError = copyErr;
+                }
+            }
+        }
+
+        // Último recurso de supervivencia absoluta: cualquier plantilla en TEMPLATES_DIR
+        if (!success && fs.existsSync(TEMPLATES_DIR)) {
+            const files = fs.readdirSync(TEMPLATES_DIR).filter(f => f.endsWith('.webp'));
+            if (files.length > 0) {
+                const emergencyTemplate = path.join(TEMPLATES_DIR, files[0]);
+                fs.copyFileSync(emergencyTemplate, targetPath);
+                success = true;
+                console.log(`ℹ️ [COVER TIER 3] Plantilla de emergencia ${files[0]} copiada a: ${path.basename(targetPath)}`);
             }
         }
     }
@@ -318,7 +361,9 @@ async function generateBlogCover(topicData = {}, slug = '', options = {}) {
         await processImageToWebp(fallbackSource, targetPhysicalPath, {
             width: 1200,
             height: 675,
-            maxBytes: 100 * 1024
+            maxBytes: 100 * 1024,
+            templatePath: fallbackSource,
+            forceNoExternalTools: options.forceNoExternalTools || false
         });
 
         return {
@@ -330,10 +375,13 @@ async function generateBlogCover(topicData = {}, slug = '', options = {}) {
     }
 
     // Procesar buffer descargado de IA
+    const fallbackTemplate = resolveFallbackAsset(topicData.category);
     await processImageToWebp(aiGeneratedBuffer, targetPhysicalPath, {
         width: 1200,
         height: 675,
-        maxBytes: 100 * 1024
+        maxBytes: 100 * 1024,
+        templatePath: fallbackTemplate,
+        forceNoExternalTools: options.forceNoExternalTools || false
     });
 
     return {
@@ -371,5 +419,6 @@ module.exports = {
     generateBlogCover,
     resolveFallbackAsset,
     FALLBACK_CATEGORY_ASSETS,
-    IMAGES_DIR
+    IMAGES_DIR,
+    TEMPLATES_DIR
 };

@@ -638,6 +638,16 @@ async function autoCurateAndPublish(options = {}) {
         markdownContent = markdownContent.replace(/^slug:\s*.+$/m, `$&\nimage: "${coverPath}"`);
     }
 
+    // Sincronizar fecha opcional (ej. para publicaciones retroactivas o crons retrasados)
+    if (options.postDate || options.date) {
+        const targetDate = options.postDate || options.date;
+        if (/^date:\s*.+$/m.test(markdownContent)) {
+            markdownContent = markdownContent.replace(/^date:\s*.+$/m, `date: "${targetDate}"`);
+        } else {
+            markdownContent = markdownContent.replace(/^slug:\s*.+$/m, `$&\ndate: "${targetDate}"`);
+        }
+    }
+
     // 4. Guardar borrador en content/drafts
     if (!fs.existsSync(DRAFTS_DIR)) {
         fs.mkdirSync(DRAFTS_DIR, { recursive: true });
@@ -690,8 +700,10 @@ if (require.main === module) {
     const isDryRun = args.includes('--dry-run');
     const forceTopicArg = args.find(a => a.startsWith('--force-topic='));
     const forceTopic = forceTopicArg ? forceTopicArg.replace('--force-topic=', '').replace(/^["']|["']$/g, '') : null;
+    const postDateArg = args.find(a => a.startsWith('--post-date=') || a.startsWith('--date='));
+    const postDate = postDateArg ? postDateArg.split('=')[1].replace(/^["']|["']$/g, '') : null;
 
-    autoCurateAndPublish({ dryRun: isDryRun, forceTopic })
+    autoCurateAndPublish({ dryRun: isDryRun, forceTopic, postDate })
         .then(res => {
             process.exit(0);
         })

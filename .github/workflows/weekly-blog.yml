@@ -28,11 +28,21 @@ jobs:
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
+
+      - name: Configurar Entorno Python y Pillow (Compresión WebP)
+        run: |
+          python3 -m pip install --quiet --break-system-packages pillow || python3 -m pip install --quiet pillow || true
 
       - name: Instalar Dependencias
         run: npm ci
+
+      - name: Diagnóstico Pre-flight del Pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY || secrets.GEMINI_API_KEY }}
+        run: node scripts/preflight-check.js
 
       - name: Ejecutar Piloto Automático de Curaduría y Generación
         env:
