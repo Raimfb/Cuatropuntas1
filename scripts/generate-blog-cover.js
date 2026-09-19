@@ -47,24 +47,26 @@ function buildVisualPrompt(topicData = {}) {
     const title = (topicData.title || '').toLowerCase();
     const category = (topicData.category || '').toLowerCase();
 
-    // Detección de materialidad contextual
-    let materialFocus = "perfiles de acero galvanizado Metalcom estructural y losa de hormigón armado";
+    // Detección de materialidad contextual chilena
+    let materialFocus = "perfiles de acero galvanizado Metalcom estructural y losa de hormigón armado (radier)";
     if (title.includes('sip') || title.includes('panel')) {
-        materialFocus = "paneles SIP estructurales con alma aislante de alta densidad y ventanales termopanel";
+        materialFocus = "paneles SIP estructurales con alma aislante de alta densidad y ventanales termopanel herméticos";
     } else if (title.includes('albañilería') || title.includes('ladrillo') || title.includes('sólida')) {
         materialFocus = "albañilería confinada armada con cadenas de hormigón visto y detalles modernos";
     } else if (title.includes('quincho') || category.includes('quincho')) {
-        materialFocus = "quincho contemporáneo de alto estándar con vigas a la vista, mesones de cuarzo y asador en obra";
+        materialFocus = "quincho contemporáneo chileno con vigas a la vista, mesones de cuarzo y asador en obra";
     } else if (title.includes('remodel') || title.includes('baño') || title.includes('cocina')) {
-        materialFocus = "arquitectura interior y exterior de remodelación premium con porcelanato, cubiertas pulidas y termopanel";
+        materialFocus = "arquitectura interior y exterior de remodelación chilena con porcelanato, cubiertas pulidas y termopanel";
     } else if (title.includes('térmic') || title.includes('aislac') || title.includes('oguc')) {
-        materialFocus = "envolvente térmica continua eficiente, doble vidriado hermético DVH y fachada de arquitectura bioclimática";
+        materialFocus = "envolvente térmica continua eficiente Zona 3 RM, doble vidriado hermético DVH y fachada bioclimática";
+    } else if (title.includes('acero') || title.includes('steel') || title.includes('metalcom')) {
+        materialFocus = "estructura de perfiles de acero galvanizado ligero (Metalcom / Steel Frame), radier afinado de hormigón y ventanas termopanel en PVC";
     }
 
-    const prompt = `Architectural photography of a contemporary modern residential house in Santiago de Chile. Built with ${materialFocus}, large double-glazed hermetic windows (termopanel), clean geometry, flat or low-pitch roof, concrete foundation. Clear blue sky with Andean mountain foothills in soft natural morning sunlight. Editorial architectural magazine quality, 8k resolution, photorealistic exterior view.`;
+    const prompt = `Architectural photography of a contemporary residential single-family house in Santiago, Chile. Built with ${materialFocus}, large double-glazed hermetic windows (termopanel), clean geometry, flat or low-pitch roof, concrete foundation. Clear blue sky with Andean mountain foothills in soft natural morning sunlight. Editorial architectural magazine quality, 8k resolution, photorealistic exterior view of a realistic Chilean suburban home.`;
 
-    // Negative prompt estricto según EARS-012-02
-    const negativePrompt = `people, humans, faces, silhouettes, typography, text, watermark, signature, logo, low resolution, 3d cartoon render, blur, distorted, surreal, miniature model`;
+    // Negative prompt estricto según EARS-012-02 (evitando mansiones de lujo o renders irreales)
+    const negativePrompt = `luxury mansion, mega villa, swimming pool, futuristic, skyscraper, high rise, people, humans, faces, silhouettes, typography, text, watermark, signature, logo, low resolution, 3d cartoon render, blur, distorted, surreal, miniature model`;
 
     return { prompt, negativePrompt };
 }
@@ -328,8 +330,14 @@ async function generateBlogCover(topicData = {}, slug = '', options = {}) {
             const { GoogleGenerativeAI } = require('@google/generative-ai');
             const genAI = new GoogleGenerativeAI(apiKey);
 
-            // Intentar modelos compatibles de imagen
-            const modelCandidates = ['gemini-2.5-flash-image', 'gemini-3.1-flash-image', 'gemini-3-pro-image'];
+            // Intentar modelos compatibles de imagen (Nano Banana / Imagen multimodales)
+            const modelCandidates = [
+                'nano-banana-pro-preview',
+                'gemini-2.5-flash-image',
+                'gemini-3.1-flash-image',
+                'gemini-3-pro-image',
+                'gemini-3.1-flash-lite-image'
+            ];
             for (const modelName of modelCandidates) {
                 try {
                     const model = genAI.getGenerativeModel({ model: modelName });
