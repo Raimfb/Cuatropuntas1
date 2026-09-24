@@ -369,7 +369,7 @@ async function generatePdfBuffer(data) {
     // 2. Título Principal y Datos del Cliente
     doc.fontSize(11.5).font('Helvetica-Bold').fillColor('#1a202c').text('DIAGNÓSTICO Y ESTIMACIÓN REFERENCIAL DE PROYECTO', 45, 96);
     doc.fontSize(8.5).font('Helvetica').fillColor('#4a5568')
-       .text(`Cliente: ${nombre}   |   Email: ${email}   |   Teléfono: ${telefono}`, 45, 111);
+       .text(`Cliente: ${nombre}   |   Email: ${email}   |   Santiago de Chile`, 45, 111);
 
     // 3. Ficha Resumen del Proyecto
     doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('1. Parámetros Técnicos del Proyecto', 45, 126);
@@ -408,25 +408,28 @@ async function generatePdfBuffer(data) {
     doc.fontSize(7).font('Helvetica').fillColor('#9c4221')
        .text('Presupuesto definitivo cerrado a suma alzada sujeto a evaluación técnica en terreno.', 45, priceBoxTop + 22, { width: 522, align: 'center' });
 
-    // 5. Bloque Garantía y Seguridad Contractual (Art. 18 LGUC)
+    // 5. Bloque Garantía y Seguridad Contractual (Art. 18 LGUC) - Espaciado Dinámico
     const sec3Top = priceBoxTop + 40;
     doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('3. Garantía y Seguridad Contractual (Art. 18 LGUC)', 45, sec3Top);
     
     doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568');
     let curY = sec3Top + 14;
-    doc.text('• Contrato a Suma Alzada: Presupuesto cerrado e inalterable sobre el 100% de las partidas y especificaciones acordadas, protegiendo tu inversión sin cobros imprevistos.', 45, curY, { width: 522, lineGap: 1 });
-    curY += 15;
-    doc.text('• Garantía Legal Art. 18 LGUC: Respaldo contractual formal de 10 años en estructura soportante, 5 años en instalaciones y redes, y 3 años en terminaciones.', 45, curY, { width: 522, lineGap: 1 });
-    curY += 15;
-    const viciosPdfText = isRemodelacion
-        ? '• Protocolo ante Imprevistos: En remodelaciones, inspeccionamos redes preexistentes. Si surgen vicios ocultos, se emite informe técnico pericial y presupuesto complementario aprobado por el mandante.'
-        : '• Protocolo ante Imprevistos: Ante preexistencias no visibles preliminarmente (asbesto, refuerzos de suelo), se emite informe técnico y presupuesto previo aprobado por el mandante antes de intervenir.';
-    doc.text(viciosPdfText, 45, curY, { width: 522, lineGap: 1 });
-    curY += 17;
+    const sec3Bullets = [
+        '• Contrato a Suma Alzada: Presupuesto cerrado e inalterable sobre el 100% de las partidas acordadas: total certeza sin cobros sorpresa.',
+        '• Garantía Legal Art. 18 LGUC: Respaldo contractual de 10 años en estructura soportante, 5 años en instalaciones y 3 años en terminaciones.',
+        isRemodelacion
+            ? '• Protocolo ante Preexistencias: Inspección de redes previas. Si surgen vicios ocultos, se emite informe técnico y presupuesto aprobado por el mandante.'
+            : '• Protocolo ante Preexistencias: Ante imprevistos ocultos en terreno (suelo o asbesto), se emite informe técnico y presupuesto aprobado por el mandante.'
+    ];
+
+    for (const bullet of sec3Bullets) {
+        doc.text(bullet, 45, curY, { width: 522, lineGap: 1.5 });
+        curY += doc.heightOfString(bullet, { width: 522, lineGap: 1.5 }) + 3;
+    }
 
     // 6. Infografía: Metodología Cuatropuntas en 4 Pasos
     const sec4Top = curY + 2;
-    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('4. Metodología de Ejecución en 4 Pasos', 45, sec4Top);
+    doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('Metodología de Ejecución en 4 Pasos', 45, sec4Top);
     doc.fontSize(7.5).font('Helvetica').fillColor('#718096')
        .text('Proceso estructurado de ingeniería para garantizar plazos, costos y calidad en obra:', 45, sec4Top + 12);
 
@@ -481,7 +484,7 @@ async function generatePdfBuffer(data) {
     doc.link(45, ctaY, btnW, btnH, calendarUrl);
 
     doc.fontSize(7).font('Helvetica').fillColor('#718096')
-       .text('Haz clic en el botón o escanea el código QR contiguo para coordinar tu cita en Cal.com.\nConsultas directas a contacto@cuatropuntas.com o WhatsApp +56 9 2738 4075', 45, ctaY + 36, { width: btnW });
+       .text('Haz clic en el botón o escanea el código QR contiguo para coordinar tu cita en Cal.com.\nConsultas y coordinación directa a contacto@cuatropuntas.com', 45, ctaY + 36, { width: btnW });
 
     // Columna Derecha: Código QR Vectorial
     const qrSize = 58;
@@ -508,7 +511,7 @@ async function generatePdfBuffer(data) {
     // 8. Pie de Página
     doc.strokeColor('#e2e8f0').lineWidth(1).moveTo(45, 718).lineTo(567, 718).stroke();
     doc.fontSize(7).font('Helvetica').fillColor('#a0aec0')
-       .text('Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com · +56 9 2738 4075 · Documento técnico referencial conforme a Ley 21.305 y LGUC.', 45, 726, { width: 522, align: 'center' });
+       .text('Constructora Cuatropuntas SpA · Santiago de Chile · www.cuatropuntas.com · contacto@cuatropuntas.com · Documento técnico referencial conforme a Ley 21.305 y LGUC.', 45, 726, { width: 522, align: 'center' });
 
     doc.end();
     return await pdfPromise;
@@ -754,12 +757,9 @@ const quoteHandler = async (req, res) => {
         } = quote;
 
 
-        // Enlaces directos a WhatsApp para máxima conversión
+        // Enlace directo a WhatsApp para contacto interno comercial de Cuatropuntas
         const cleanClientPhone = (telefono || '').replace(/\D/g, '');
         const formattedClientPhone = cleanClientPhone.startsWith('56') ? cleanClientPhone : (cleanClientPhone.length === 9 ? `56${cleanClientPhone}` : cleanClientPhone);
-        
-        const clientWaText = encodeURIComponent(`Hola Constructora Cuatropuntas, recibí mi cotización referencial para mi proyecto de ${tipo} (${areaNum} m²) y me gustaría coordinar una visita técnica a terreno.`);
-        const clientWhatsappUrl = `https://wa.me/56927384075?text=${clientWaText}`;
 
         const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} ${espacios_remodelar ? `(${espacios_remodelar}, ${areaNum} m²)` : `(${areaNum} m²)`}. ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
         const adminReplyWaUrl = `https://wa.me/${formattedClientPhone}?text=${adminWaText}`;
@@ -824,7 +824,7 @@ const quoteHandler = async (req, res) => {
 
         if (!pass) {
             console.error("ERROR: Variable de entorno ZOHO_PASS no configurada.");
-            return res.status(500).json({ error: 'Error en el servidor de correo. Por favor contáctanos por WhatsApp.' });
+            return res.status(500).json({ error: 'Error en el servidor de correo. Por favor escríbenos a contacto@cuatropuntas.com o intenta nuevamente más tarde.' });
         }
 
         const transporter = nodemailer.createTransport({

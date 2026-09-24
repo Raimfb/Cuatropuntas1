@@ -335,9 +335,9 @@
                             <input type="email" id="qEmail" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="juan@ejemplo.com" required>
                         </div>
                         <div>
-                            <label for="qTelefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono (WhatsApp activo)</label>
+                            <label for="qTelefono" class="block text-sm font-medium text-gray-700 mb-1">Teléfono Móvil (+56 9)</label>
                             <input type="tel" id="qTelefono" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="+56 9 1234 5678" required>
-                            <span class="text-xs text-gray-500 mt-1 block">Ingresa tu número móvil chileno (+56 9) para recibir alertas y PDF por WhatsApp.</span>
+                            <span class="text-xs text-gray-500 mt-1 block">Ingresa tu número móvil chileno (+56 9) para coordinar la visita técnica a terreno.</span>
                         </div>
                     </div>
                     <p class="text-xs text-gray-500 mt-4 leading-relaxed">

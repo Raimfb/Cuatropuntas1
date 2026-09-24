@@ -86,6 +86,7 @@ test.describe('Spec 020: Optimización High-Ticket de Presupuesto por Correo y F
         expect(html).toContain('https://cal.com/cuatropuntas.com/visita-tecnica');
         expect(html).not.toMatch(/wa\.me/i);
         expect(html).not.toMatch(/whatsapp/i);
+        expect(html).not.toMatch(/\+?56\s*9\s*\d{4}\s*\d{4}/);
     });
 
     test('T01.3: Ficha Técnica PDF en Estricta Página Única Letter para las 4 Tipologías', async () => {
@@ -214,6 +215,14 @@ test.describe('Spec 020: Optimización High-Ticket de Presupuesto por Correo y F
 
         // Validar Metodología en 4 pasos
         expect(fullText).toMatch(/Metodolog[ií]a|4 Pasos/i);
+
+        // 3. Spec 022: Blindaje Anti-Loop estricto en el PDF (cero WhatsApp, cero teléfonos)
+        expect(fullText, 'El PDF no debe mencionar WhatsApp').not.toMatch(/whatsapp/i);
+        expect(fullText, 'El PDF no debe contener enlaces wa.me').not.toMatch(/wa\.me/i);
+        expect(fullText, 'El PDF no debe contener números telefónicos (+56 9)').not.toMatch(/(?:\+?56\s*9|\b569\d{8}\b)/);
+        expect(rawPdfString, 'El PDF raw no debe contener wa.me').not.toMatch(/wa\.me/i);
+        expect(rawPdfString, 'El PDF raw no debe contener WhatsApp').not.toMatch(/whatsapp/i);
+        expect(fullText.replace(/\s+/g, '')).toContain('contacto@cuatropuntas.com');
     });
 
     test('T01.5: Módulo api/_qrMatrix.js genera matriz de bits pura para el enlace Cal.com', async () => {
