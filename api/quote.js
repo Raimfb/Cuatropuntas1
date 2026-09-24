@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const { isBotSubmission } = require('./_botGuard');
 const { generateQrMatrix } = require('./_qrMatrix');
+const { setLeadState } = require('../lib/leads-state');
 
 // Mapeo legible de comunas para presentación ejecutiva
 function getComunaLabel(comunaVal) {
@@ -901,7 +902,25 @@ const quoteHandler = async (req, res) => {
             transporter.sendMail(mailToAdmin)
         ]);
 
-        // 4. Intentar alerta WhatsApp al Administrador (+56 9 7909 2027) vía Meta Graph API (si token está disponible)
+        // 4. Siembra en Máquina de Estados (Spec 023: estado inicial COTIZADO)
+        try {
+            setLeadState(formattedClientPhone, {
+                name: nombre,
+                email: email,
+                estado: 'COTIZADO',
+                tipo: tipo,
+                areaNum: areaNum,
+                comunaHuman: comunaHuman,
+                sistema: sistema,
+                minUF: minUF,
+                maxUF: maxUF,
+                permisos: permisosData ? permisosData.adminBadge : ''
+            });
+        } catch (stateErr) {
+            console.warn('⚠️ No se pudo registrar estado en leads-state:', stateErr.message);
+        }
+
+        // 5. Intentar alerta WhatsApp al Administrador (+56 9 7909 2027) vía Meta Graph API (si token está disponible)
         try {
             const token = process.env.WHATSAPP_TOKEN;
             const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
