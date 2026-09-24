@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "build": "echo 'Static build'",
-    "build:css": "tailwindcss -i ./src/input.css -o ./public/tailwind.min.css --minify"
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/tailwind.min.css --minify",
+    "calcom:sync": "node scripts/configure-calcom-event.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
