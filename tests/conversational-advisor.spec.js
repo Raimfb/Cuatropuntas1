@@ -52,15 +52,15 @@ test.describe('Spec 023: Agente Asesor Consultivo y Orquestación de Estados', (
         expect(lead.bookingId).toBe('cal_test_123');
     });
 
-    test('T01.2: Regla canBotReply(phone) asegura silencio en visitas agendadas y no registrados', async () => {
+    test('T01.2: Regla canBotReply(phone) responde a leads nuevos/cotizados y silencia SOLO en visitas agendadas', async () => {
         const leadsState = require('../lib/leads-state');
         leadsState.resetStateStore();
 
         const phoneA = '+56 9 1111 2222'; // Lead cotizado
         const phoneB = '+56 9 3333 4444'; // Lead desconocido (frío)
 
-        // Lead desconocido -> canBotReply === false
-        expect(leadsState.canBotReply(phoneB)).toBe(false);
+        // Lead desconocido / no registrado -> canBotReply === true (atendido por SDR inicial)
+        expect(leadsState.canBotReply(phoneB)).toBe(true);
 
         // Lead sembrado en COTIZADO -> canBotReply === true
         leadsState.setLeadState(phoneA, { name: 'Mariana', email: 'mariana@ejemplo.com', tipo: 'Quincho' });
@@ -318,6 +318,151 @@ test.describe('Spec 023: Agente Asesor Consultivo y Orquestación de Estados', (
         expect(lead.tipo).toBe('Casa Nueva');
         expect(lead.areaNum).toBe(100);
         expect(leadsState.canBotReply(testPhone)).toBe(true);
+    });
+
+    test('T01.8: Comando Backdoor/QA ("reset" y "#reset") reinicia la memoria y confirma por WhatsApp', async () => {
+        const whatsappWebhook = require('../api/webhooks/whatsapp');
+        const leadsState = require('../lib/leads-state');
+        const metaClient = require('../lib/meta-client');
+        leadsState.resetStateStore();
+        metaClient.clearSentMessages();
+
+        const testPhone = '56912341234';
+        // Simular lead en VISITA_AGENDADA
+        leadsState.setLeadState(testPhone, { name: 'Ignacio', estado: 'VISITA_AGENDADA' });
+        expect(leadsState.getLeadState(testPhone)).not.toBeNull();
+        expect(leadsState.canBotReply(testPhone)).toBe(false);
+
+        // 1. Enviar comando "reset"
+        const reqReset = {
+            method: 'POST',
+            body: {
+                entry: [{
+                    changes: [{
+                        value: {
+                            messages: [{
+                                from: testPhone,
+                                text: { body: 'Reset' }
+                            }]
+                        }
+                    }]
+                }]
+            }
+        };
+
+        let status = 0;
+        const res = {
+            status: (code) => { status = code; return res; },
+            send: () => {}
+        };
+
+        await whatsappWebhook(reqReset, res);
+        expect(status).toBe(200);
+
+        // Estado borrado
+        expect(leadsState.getLeadState(testPhone)).toBeNull();
+        expect(leadsState.canBotReply(testPhone)).toBe(true);
+
+        // Confirmación enviada
+        const sent = metaClient.getSentMessages();
+        expect(sent.length).toBe(1);
+        expect(sent[0].to).toBe(testPhone);
+        expect(sent[0].text).toContain('🔄 Memoria reiniciada con éxito. Eres un lead nuevo para el sistema.');
+
+        // 2. Probar variante "#reset"
+        leadsState.setLeadState(testPhone, { name: 'Ignacio', estado: 'COTIZADO' });
+        const reqHashReset = {
+            method: 'POST',
+            body: {
+                entry: [{
+                    changes: [{
+                        value: {
+                            messages: [{
+                                from: testPhone,
+                                text: { body: '#reset' }
+                            }]
+                        }
+                    }]
+                }]
+            }
+        };
+        await whatsappWebhook(reqHashReset, res);
+        expect(leadsState.getLeadState(testPhone)).toBeNull();
+    });
+
+    test('T01.9: Atención a Leads Nuevos/Fríos como SDR inicial invitando a cotizar en la web', async () => {
+        const whatsappWebhook = require('../api/webhooks/whatsapp');
+        const leadsState = require('../lib/leads-state');
+        const metaClient = require('../lib/meta-client');
+        leadsState.resetStateStore();
+        metaClient.clearSentMessages();
+
+        const coldPhone = '56966667777';
+        // Lead completamente no registrado
+        expect(leadsState.getLeadState(coldPhone)).toBeNull();
+        expect(leadsState.canBotReply(coldPhone)).toBe(true);
+
+        const reqCold = {
+            method: 'POST',
+            body: {
+                entry: [{
+                    changes: [{
+                        value: {
+                            messages: [{
+                                from: coldPhone,
+                                text: { body: 'Hola buenas, me interesa cotizar una remodelación' }
+                            }]
+                        }
+                    }]
+                }]
+            }
+        };
+
+        let status = 0;
+        const res = {
+            status: (code) => { status = code; return res; },
+            send: () => {}
+        };
+
+        await whatsappWebhook(reqCold, res);
+        expect(status).toBe(200);
+
+        // Se envía mensaje SDR con enlace a https://www.cuatropuntas.com
+        const sent = metaClient.getSentMessages();
+        expect(sent.length).toBe(1);
+        expect(sent[0].to).toBe(coldPhone);
+        expect(sent[0].text).toContain('https://www.cuatropuntas.com');
+        expect(sent[0].text).toMatch(/Constructora Cuatropuntas|cotizador|presupuesto/i);
+
+        // Se registra el lead en EN_CONVERSACION
+        const registered = leadsState.getLeadState(coldPhone);
+        expect(registered).not.toBeNull();
+        expect(registered.estado).toBe('EN_CONVERSACION');
+    });
+
+    test('T01.10: Expiración Automática de Lead tras 14 días de inactividad (TTL)', async () => {
+        const leadsState = require('../lib/leads-state');
+        leadsState.resetStateStore();
+
+        const phone = '56955554444';
+        leadsState.setLeadState(phone, {
+            name: 'Valeria Rojas',
+            estado: 'COTIZADO'
+        });
+
+        // Dentro del TTL (< 14 días)
+        expect(leadsState.getLeadState(phone)).not.toBeNull();
+
+        // Simular lead con inactividad superior a 14 días (ej. 15 días atrás)
+        const expiredTimestamp = Date.now() - (15 * 24 * 60 * 60 * 1000);
+        const rawStoreLead = leadsState.getLeadState(phone);
+        rawStoreLead.updatedAt = expiredTimestamp;
+
+        // getLeadState debe retornar null por expiración y eliminarlo del store
+        expect(leadsState.getLeadState(phone)).toBeNull();
+
+        // Al haber expirado, canBotReply debe ser true para reiniciar el ciclo como lead nuevo
+        expect(leadsState.canBotReply(phone)).toBe(true);
     });
 
 });
