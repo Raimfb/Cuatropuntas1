@@ -126,4 +126,10 @@
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>https://www.cuatropuntas.com/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades.html</loc>
+        <lastmod>2026-10-02</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+    </url>
 </urlset>
