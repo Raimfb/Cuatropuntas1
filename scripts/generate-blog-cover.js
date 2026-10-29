@@ -276,11 +276,27 @@ for q in [80, 72, 65, 55, 45, 38, 30]:
 }
 
 /**
- * Resuelve el asset base de contingencia según la categoría del post
+ * Resuelve el asset base de contingencia según la categoría del post y slug (rotación determinista)
  */
-function resolveFallbackAsset(category = '') {
+function resolveFallbackAsset(category = '', slug = '') {
     const key = (category || '').toLowerCase().trim();
     if (FALLBACK_CATEGORY_ASSETS[key] && fs.existsSync(FALLBACK_CATEGORY_ASSETS[key])) {
+        // Si hay un slug provisto y existen múltiples plantillas, verificar rotación para evitar repeticiones consecutivas
+        if (slug && fs.existsSync(TEMPLATES_DIR)) {
+            const templates = fs.readdirSync(TEMPLATES_DIR)
+                .filter(f => f.endsWith('.webp'))
+                .map(f => path.join(TEMPLATES_DIR, f));
+            if (templates.length > 1) {
+                let hash = 0;
+                const seed = `${slug}-${category}`;
+                for (let i = 0; i < seed.length; i++) {
+                    hash = ((hash << 5) - hash) + seed.charCodeAt(i);
+                    hash |= 0;
+                }
+                const selected = templates[Math.abs(hash) % templates.length];
+                if (fs.existsSync(selected)) return selected;
+            }
+        }
         return FALLBACK_CATEGORY_ASSETS[key];
     }
     return FALLBACK_CATEGORY_ASSETS['default'];
@@ -365,7 +381,7 @@ async function generateBlogCover(topicData = {}, slug = '', options = {}) {
     // Mecanismo Graceful Fallback (EARS-012-08)
     if (!aiGeneratedBuffer) {
         console.log(`ℹ️ [COVER FALLBACK] Utilizando plantilla base limpia optimizada para "${slug}"...`);
-        const fallbackSource = resolveFallbackAsset(topicData.category);
+        const fallbackSource = resolveFallbackAsset(topicData.category, slug);
         await processImageToWebp(fallbackSource, targetPhysicalPath, {
             width: 1200,
             height: 675,
@@ -383,7 +399,7 @@ async function generateBlogCover(topicData = {}, slug = '', options = {}) {
     }
 
     // Procesar buffer descargado de IA
-    const fallbackTemplate = resolveFallbackAsset(topicData.category);
+    const fallbackTemplate = resolveFallbackAsset(topicData.category, slug);
     await processImageToWebp(aiGeneratedBuffer, targetPhysicalPath, {
         width: 1200,
         height: 675,
