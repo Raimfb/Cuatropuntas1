@@ -78,6 +78,24 @@ Esta especificación implementa una solución visual de 4 categorías en la cabe
 
 ---
 
+### 2.5. Refinamiento Corporativo y Eliminación de Precios Prematuros (Spec 024.1 y 024.2)
+
+- **[EARS-024-06] Iconografía Vectorial Arquitectónica:**  
+  * El sistema **DEBE** prescindir totalmente de emojis en las tarjetas de tipología y chips de remodelación.
+  * El sistema **DEBE** renderizar iconos técnicos SVG monocromáticos limpios (`stroke="currentColor"`, `stroke-width="1.75"`):
+    - Casa Nueva: Icono de vivienda estructurada.
+    - Ampliación / 2º Piso: Icono de capas arquitectónicas y elevación.
+    - Remodelación Integral: Icono de compás / trazado técnico de interiores.
+    - Quinchos y Terrazas: Icono de pérgola / estructura de cubierta.
+- **[EARS-024-07] Eliminación de Fricción por Precios Prematuros:**  
+  * Para evitar comparaciones prematuras que frenen la conversión de prospectos antes de la captura del lead:
+    - Las tarjetas de tipología en `#step1` **DEBEN** omitir badges de precio en UF/m², mostrando únicamente el icono técnico, título y alcance.
+    - Las opciones de `#qSistema` **DEBEN** desplegar nombres técnicos descriptivos claros sin tarifas en UF entre paréntesis.
+    - Los chips de remodelación **DEBEN** mostrar etiquetas limpias (`Baño Completo`, `Cocina Integral`, `Baño y Cocina`, `Living / Dormitorios`) sin UF entre paréntesis.
+  * El motor matemático del backend (`api/quote.js`) permanece 100% inalterado y entrega el presupuesto detallado por correo y WhatsApp tras completar el formulario.
+
+---
+
 ## 3. Criterios de Aceptación y Validación
 
 1. **Pruebas de Unidad y E2E (Playwright):**

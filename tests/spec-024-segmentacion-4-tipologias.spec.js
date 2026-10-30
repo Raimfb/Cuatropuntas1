@@ -6,7 +6,7 @@ const indexUrl = `file:///${path.join(publicDir, 'index.html').replace(/\\/g, '/
 
 test.describe('Spec 024: Segmentación Visual de 4 Tipologías, Preselección Web y Chips de Remodelación ("Zero-Breakage")', () => {
 
-    test('T024.1: Renderizado de 4 tarjetas visuales en #step1 con tarifas y estado activo inicial', async ({ page }) => {
+    test('T024.1: Renderizado de 4 tarjetas visuales en #step1 con iconos y estado activo inicial', async ({ page }) => {
         await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
 
         const cardsContainer = page.locator('#tipoCardsContainer');
@@ -18,20 +18,21 @@ test.describe('Spec 024: Segmentación Visual de 4 Tipologías, Preselección We
         // Casa Nueva activa por defecto
         const casaCard = page.locator('.tipo-card[data-tipo-card="Casa Nueva"]');
         await expect(casaCard).toHaveAttribute('aria-checked', 'true');
-        await expect(casaCard).toContainText('19 UF/m²');
+        await expect(casaCard).toContainText('Construcción Casa Nueva');
+        await expect(casaCard).toContainText('Vivienda llave en mano en sitio propio');
 
         // Tarjetas inactivas
         const ampliaCard = page.locator('.tipo-card[data-tipo-card="Ampliacion"]');
         await expect(ampliaCard).toHaveAttribute('aria-checked', 'false');
-        await expect(ampliaCard).toContainText('22 UF/m²');
+        await expect(ampliaCard).toContainText('Ampliación / 2º Piso');
 
         const remodelaCard = page.locator('.tipo-card[data-tipo-card="Remodelacion"]');
         await expect(remodelaCard).toHaveAttribute('aria-checked', 'false');
-        await expect(remodelaCard).toContainText('11 UF/m²');
+        await expect(remodelaCard).toContainText('Remodelación Integral');
 
         const quinchoCard = page.locator('.tipo-card[data-tipo-card="Quincho"]');
         await expect(quinchoCard).toHaveAttribute('aria-checked', 'false');
-        await expect(quinchoCard).toContainText('12 UF/m²');
+        await expect(quinchoCard).toContainText('Quinchos y Terrazas');
     });
 
     test('T024.2: Clic en tarjeta visual sincroniza bidireccionalmente #qTipo y gatilla polimorfismo', async ({ page }) => {
@@ -51,9 +52,9 @@ test.describe('Spec 024: Segmentación Visual de 4 Tipologías, Preselección We
         const sistemaLabel = page.locator('#qSistemaLabel');
         await expect(sistemaLabel).toContainText('Estructura y Techumbre');
 
-        // Opciones de Quincho (12 UF madera, 15 UF acero)
+        // Opciones de Quincho con nombres técnicos
         const optionsText = await page.locator('#qSistema option').allInnerTexts();
-        expect(optionsText.some(t => /madera/i.test(t) && /12\s*UF/i.test(t))).toBe(true);
+        expect(optionsText.some(t => /madera|pino oregón/i.test(t))).toBe(true);
 
         // Ahora cambiar a Ampliación mediante clic en tarjeta
         const ampliaCard = page.locator('.tipo-card[data-tipo-card="Ampliacion"]');

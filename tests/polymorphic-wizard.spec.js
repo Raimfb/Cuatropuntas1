@@ -59,7 +59,7 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         await expect(page.locator('#step2')).toBeVisible();
     });
 
-    test('T01.3: Mutación a "Segundo Piso / Ampliación" (label ampliado, opciones Metalcom, SIP y Albañilería 27 UF)', async ({ page }) => {
+    test('T01.3: Mutación a "Segundo Piso / Ampliación" (label ampliado, opciones Metalcom, SIP y Albañilería)', async ({ page }) => {
         await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
 
         const tipoSelect = page.locator('#qTipo');
@@ -77,10 +77,10 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         const options = await sistemaSelect.locator('option').allInnerTexts();
         const optionValues = await sistemaSelect.locator('option').evaluateAll(opts => opts.map(o => o.value));
 
-        // Debe contener Metalcom Liviano (22 UF), SIP Aislante (24 UF) y Albañilería (27 UF)
-        expect(options.some(t => /metalco/i.test(t) && /22\s*UF/i.test(t))).toBe(true);
-        expect(options.some(t => /sip/i.test(t) && /24\s*UF/i.test(t))).toBe(true);
-        expect(options.some(t => /albañilería|albanileria|tradicional/i.test(t) && /27\s*UF/i.test(t))).toBe(true);
+        // Debe contener Metalcom Liviano (Ideal 1º y 2º Piso), SIP Termoacústico y Albañilería / Mixta
+        expect(options.some(t => /metalco/i.test(t) && /1º|2º|piso/i.test(t))).toBe(true);
+        expect(options.some(t => /sip/i.test(t) && /termoacústico|termoacustico/i.test(t))).toBe(true);
+        expect(options.some(t => /albañilería|albanileria|mixta/i.test(t))).toBe(true);
 
         expect(optionValues).toContain('Metalcon');
         expect(optionValues).toContain('SIP');
@@ -110,12 +110,12 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
 
         const options = await sistemaSelect.locator('option').allInnerTexts();
 
-        // Opciones de Madera y Fierro/Acero con tarifas respectivas
-        expect(options.some(t => /madera/i.test(t) && /12\s*UF/i.test(t))).toBe(true);
-        expect(options.some(t => /acero|fierro/i.test(t) && /15\s*UF/i.test(t))).toBe(true);
+        // Opciones de Madera y Fierro/Acero con nombres técnicos
+        expect(options.some(t => /madera|pino oregón/i.test(t))).toBe(true);
+        expect(options.some(t => /acero|perfilería|albañilería/i.test(t))).toBe(true);
 
         // Comprobar mapeo transparente a claves de backend
-        const maderaOpt = sistemaSelect.locator('option:has-text("Madera")');
+        const maderaOpt = sistemaSelect.locator('option:has-text("Madera"), option:has-text("Pino")');
         expect(await maderaOpt.getAttribute('value')).toBe('Metalcon');
 
         const aceroOpt = sistemaSelect.locator('option:has-text("Acero"), option:has-text("Fierro")');
@@ -138,9 +138,9 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         expect(await sistemaLabel.innerText()).toMatch(/sistema constructivo/i);
 
         const options = await sistemaSelect.locator('option').allInnerTexts();
-        expect(options.some(t => /metalco/i.test(t) && /19\s*UF/i.test(t))).toBe(true);
-        expect(options.some(t => /sip/i.test(t) && /21\s*UF/i.test(t))).toBe(true);
-        expect(options.some(t => /albañilería|albanileria|mixto/i.test(t) && /25\s*UF/i.test(t))).toBe(true);
+        expect(options.some(t => /metalco/i.test(t) && /galvanizado/i.test(t))).toBe(true);
+        expect(options.some(t => /sip/i.test(t) && /termoacústica|termoacustica|eficiencia/i.test(t))).toBe(true);
+        expect(options.some(t => /albañilería|albanileria|hormigón|hormigon|tradicional/i.test(t))).toBe(true);
     });
 
     test('T01.6: Montaje polimórfico inicial en servicios/remodelaciones.html y servicios/quinchos.html', async ({ page }) => {

@@ -27,9 +27,9 @@
             sistemaLabel: 'Sistema Constructivo',
             showSistema: true,
             sistemas: [
-                { value: "Metalcon", label: "Metalcom Estructural (desde 19 UF/m² +IVA)" },
-                { value: "SIP", label: "Panel SIP Térmico (desde 21 UF/m² +IVA)" },
-                { value: "Albanileria", label: "Albañilería Confinada / Mixto (desde 25 UF/m² +IVA)" }
+                { value: "Metalcon", label: "Metalcom Estructural (Acero Galvanizado)" },
+                { value: "SIP", label: "Panel SIP (Alta Eficiencia Termoacústica)" },
+                { value: "Albanileria", label: "Albañilería Tradicional / Hormigón" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 50 o 120',
@@ -58,9 +58,9 @@
             sistemaLabel: 'Sistema Constructivo (Ampliación 1º piso o Sobreelevación 2º piso)',
             showSistema: true,
             sistemas: [
-                { value: "Metalcon", label: "Metalcom Estructural Liviano (desde 22 UF/m² +IVA)" },
-                { value: "SIP", label: "Panel SIP Aislante (desde 24 UF/m² +IVA)" },
-                { value: "Albanileria", label: "Albañilería Confinada / Tradicional (desde 27 UF/m² +IVA)" }
+                { value: "Metalcon", label: "Metalcom Estructural (Ideal 1º y 2º Piso)" },
+                { value: "SIP", label: "Panel SIP Termoacústico" },
+                { value: "Albanileria", label: "Albañilería / Estructura Mixta" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 30 o 60',
@@ -114,8 +114,9 @@
             sistemaLabel: 'Estructura y Techumbre del Cobertizo',
             showSistema: true,
             sistemas: [
-                { value: "Metalcon", label: "Madera Tratada / Pino Oregón (desde 12 UF/m² +IVA)" },
-                { value: "Albanileria", label: "Perfilería de Acero / Fierro Electrosoldado (desde 15 UF/m² +IVA)" }
+                { value: "Metalcon", label: "Estructura en Pino Oregón / Madera Seleccionada" },
+                { value: "SIP", label: "Estructura Mixta con Cubierta Termoaislada" },
+                { value: "Albanileria", label: "Perfilería de Acero y Albañilería a la Vista" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 20 o 35',
@@ -261,9 +262,6 @@
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Construcción Casa Nueva</div>
                                         <div class="text-[11px] text-gray-500 mt-1 leading-normal">Vivienda llave en mano en sitio propio</div>
                                     </div>
-                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Casa Nueva' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
-                                        Desde 19 UF/m² +IVA
-                                    </div>
                                 </button>
 
                                 <!-- Card 2: Ampliacion -->
@@ -284,9 +282,6 @@
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Ampliación / 2º Piso</div>
                                         <div class="text-[11px] text-gray-500 mt-1 leading-normal">Extensión habitacional y sobreelevación</div>
                                     </div>
-                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Ampliacion' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
-                                        Desde 22 UF/m² +IVA
-                                    </div>
                                 </button>
 
                                 <!-- Card 3: Remodelacion -->
@@ -306,9 +301,6 @@
                                         </div>
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Remodelación Integral</div>
                                         <div class="text-[11px] text-gray-500 mt-1 leading-normal">Cocinas, baños o interiores completos</div>
-                                    </div>
-                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Remodelacion' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
-                                        Desde 11 UF/m² · Fijos
                                     </div>
                                 </button>
 
@@ -334,9 +326,6 @@
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Quinchos y Terrazas</div>
                                         <div class="text-[11px] text-gray-500 mt-1 leading-normal">Cobertizos, terrazas y asadores en obra</div>
                                     </div>
-                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Quincho' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
-                                        Desde 12 UF/m² +IVA
-                                    </div>
                                 </button>
                             </div>
                             <div id="qTipoSelectContainer" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
@@ -349,9 +338,9 @@
                         <div id="espaciosRemodelarContainer" class="${defaultTipo === 'Remodelacion' ? '' : 'hidden '}transition-all duration-300" style="${defaultTipo === 'Remodelacion' ? '' : 'display: none;'}">
                             <label for="espacios-remodelar" class="block text-sm font-medium text-gray-700 mb-1">Espacio o espacios a remodelar</label>
                             <div class="flex flex-wrap gap-2 mb-2.5" id="remodelaChipsContainer">
-                                <button type="button" data-remodela-chip="Baño completo" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño Completo · 75 UF</button>
-                                <button type="button" data-remodela-chip="Cocina integral" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Cocina Integral · 110 UF</button>
-                                <button type="button" data-remodela-chip="Baño y Cocina" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño y Cocina · 185 UF</button>
+                                <button type="button" data-remodela-chip="Baño completo" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño Completo</button>
+                                <button type="button" data-remodela-chip="Cocina integral" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Cocina Integral</button>
+                                <button type="button" data-remodela-chip="Baño y Cocina" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño y Cocina</button>
                                 <button type="button" data-remodela-chip="Living y dormitorios" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Living / Dormitorios</button>
                             </div>
                             <input type="text" id="espacios-remodelar" name="espacios_remodelar" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="Ej: Cocina y baño, o dormitorio y living, o baño y comedor...">
@@ -503,7 +492,6 @@
                 ((norm.includes('casa') || norm.includes('nueva')) && cardNorm.includes('casa'));
 
             const iconWrap = card.querySelector('.tipo-icon-wrap');
-            const badge = card.querySelector('.tipo-badge');
             const check = card.querySelector('.tipo-check-indicator');
 
             if (isMatch) {
@@ -513,10 +501,6 @@
                 if (iconWrap) {
                     iconWrap.classList.add('bg-amber-100', 'text-amber-900');
                     iconWrap.classList.remove('bg-slate-100', 'text-slate-600');
-                }
-                if (badge) {
-                    badge.classList.add('bg-amber-100', 'text-amber-900', 'border-amber-300');
-                    badge.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
                 }
                 if (check) {
                     check.classList.add('bg-secondary', 'text-white', 'border-secondary');
@@ -529,10 +513,6 @@
                 if (iconWrap) {
                     iconWrap.classList.remove('bg-amber-100', 'text-amber-900');
                     iconWrap.classList.add('bg-slate-100', 'text-slate-600');
-                }
-                if (badge) {
-                    badge.classList.remove('bg-amber-100', 'text-amber-900', 'border-amber-300');
-                    badge.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200');
                 }
                 if (check) {
                     check.classList.remove('bg-secondary', 'text-white', 'border-secondary');
