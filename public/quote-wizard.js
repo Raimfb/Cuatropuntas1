@@ -122,7 +122,7 @@
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 20 o 35',
-            areaHelpText: 'Tarifa base contempla cobertura, radier, asador refractario con manivela y campana.',
+            areaHelpText: 'El alcance contempla cobertura, radier, asador refractario con manivela y campana.',
             showEspacios: false,
             minArea: 10,
             showPisos: false,
