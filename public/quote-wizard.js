@@ -240,14 +240,66 @@
                 <div id="step1" class="step-container transition-opacity duration-300">
                     <h3 class="text-lg font-bold mb-4">Detalles del Proyecto</h3>
                     <div class="space-y-4">
+                        <!-- Selector Visual de 4 Tipologías (Spec 024) -->
                         <div>
-                            <label for="qTipo" class="block text-sm font-medium text-gray-700 mb-1">Tipo de Proyecto</label>
-                            <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white" required>
-                                ${tipoOptions}
-                            </select>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">¿Qué tipo de proyecto deseas cotizar?</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-3" id="tipoCardsContainer" role="radiogroup" aria-label="Tipo de Proyecto">
+                                <button type="button" data-tipo-card="Casa Nueva" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Casa Nueva' ? 'true' : 'false'}">
+                                    <div>
+                                        <div class="text-xl mb-1">🏠</div>
+                                        <div class="font-bold text-gray-900 text-sm leading-snug">Casa Nueva</div>
+                                        <div class="text-[11px] text-gray-500 mt-0.5">Vivienda llave en mano en sitio propio</div>
+                                    </div>
+                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                        Desde 19 UF/m² +IVA
+                                    </div>
+                                </button>
+                                <button type="button" data-tipo-card="Ampliacion" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Ampliacion' ? 'true' : 'false'}">
+                                    <div>
+                                        <div class="text-xl mb-1">📐</div>
+                                        <div class="font-bold text-gray-900 text-sm leading-snug">Ampliación / 2º Piso</div>
+                                        <div class="text-[11px] text-gray-500 mt-0.5">Extensión habitacional y sobreelevación</div>
+                                    </div>
+                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                        Desde 22 UF/m² +IVA
+                                    </div>
+                                </button>
+                                <button type="button" data-tipo-card="Remodelacion" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Remodelacion' ? 'true' : 'false'}">
+                                    <div>
+                                        <div class="text-xl mb-1">🛠️</div>
+                                        <div class="font-bold text-gray-900 text-sm leading-snug">Remodelación Integral</div>
+                                        <div class="text-[11px] text-gray-500 mt-0.5">Cocinas, baños o interiores completos</div>
+                                    </div>
+                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                        Desde 11 UF/m² · Fijos
+                                    </div>
+                                </button>
+                                <button type="button" data-tipo-card="Quincho" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Quincho' ? 'true' : 'false'}">
+                                    <div>
+                                        <div class="text-xl mb-1">🔥</div>
+                                        <div class="font-bold text-gray-900 text-sm leading-snug">Quinchos y Terrazas</div>
+                                        <div class="text-[11px] text-gray-500 mt-0.5">Cobertizos, terrazas y asadores en obra</div>
+                                    </div>
+                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                        Desde 12 UF/m² +IVA
+                                    </div>
+                                </button>
+                            </div>
+                            <div id="qTipoSelectContainer">
+                                <label for="qTipo" class="block text-xs font-medium text-gray-600 mb-1">Tipo de Proyecto (seleccionado)</label>
+                                <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white text-sm" required>
+                                    ${tipoOptions}
+                                </select>
+                            </div>
                         </div>
                         <div id="espaciosRemodelarContainer" class="${defaultTipo === 'Remodelacion' ? '' : 'hidden '}transition-all duration-300" style="${defaultTipo === 'Remodelacion' ? '' : 'display: none;'}">
                             <label for="espacios-remodelar" class="block text-sm font-medium text-gray-700 mb-1">Espacio o espacios a remodelar</label>
+                            <div class="flex flex-wrap gap-1.5 mb-2.5" id="remodelaChipsContainer">
+                                <button type="button" data-remodela-chip="Baño completo" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🚿 Baño Completo (75 UF)</button>
+                                <button type="button" data-remodela-chip="Cocina integral" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🍳 Cocina (110 UF)</button>
+                                <button type="button" data-remodela-chip="Baño y Cocina" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🚿+🍳 Baño y Cocina (185 UF)</button>
+                                <button type="button" data-remodela-chip="Living y dormitorios" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🛋️ Living / Dormitorios</button>
+                            </div>
                             <input type="text" id="espacios-remodelar" name="espacios_remodelar" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="Ej: Cocina y baño, o dormitorio y living, o baño y comedor...">
                             <span class="text-xs text-gray-500 mt-1 block">Indícanos si incluye zonas húmedas (baño, cocina) o recintos secos para ajustar el alcance técnico.</span>
                         </div>
@@ -304,6 +356,7 @@
                                 <option value="PermisoAprobado">Tengo Permiso de Edificación DOM Aprobado (Listo para construir)</option>
                                 <option value="ArquitectoPropio">Tengo arquitecto propio que tramita la DOM (Solo requiero construcción)</option>
                             </select>
+                            <span id="qPermisosHelpText" class="text-xs text-gray-500 mt-1.5 block ${defaultTipo === 'Quincho' ? '' : 'hidden'}" style="${defaultTipo === 'Quincho' ? '' : 'display: none;'}">Tranquilo: si aún no tienes permisos municipales para tu quincho, selecciona 'Solo tengo la idea' y lo evaluamos en la visita técnica.</span>
                         </div>
                     </div>
                     <div class="mt-6 flex justify-between">
@@ -380,9 +433,38 @@
     }
 
     /**
+     * Sincroniza el estado visual activo de las 4 tarjetas de tipología (Spec 024)
+     */
+    function syncTipoCards(tipoVal) {
+        if (!tipoVal) return;
+        const norm = String(tipoVal).toLowerCase();
+        const cards = document.querySelectorAll('.tipo-card[data-tipo-card]');
+        cards.forEach(card => {
+            const cardTipo = card.getAttribute('data-tipo-card') || '';
+            const cardNorm = cardTipo.toLowerCase();
+            const isMatch = (cardTipo === tipoVal) ||
+                (norm.includes('remodela') && cardNorm.includes('remodela')) ||
+                (norm.includes('quincho') && cardNorm.includes('quincho')) ||
+                (norm.includes('amplia') && cardNorm.includes('amplia')) ||
+                ((norm.includes('casa') || norm.includes('nueva')) && cardNorm.includes('casa'));
+
+            if (isMatch) {
+                card.classList.add('border-secondary', 'bg-orange-50/70', 'shadow-xs', 'ring-1', 'ring-secondary');
+                card.classList.remove('border-gray-200', 'bg-white');
+                card.setAttribute('aria-checked', 'true');
+            } else {
+                card.classList.remove('border-secondary', 'bg-orange-50/70', 'shadow-xs', 'ring-1', 'ring-secondary');
+                card.classList.add('border-gray-200', 'bg-white');
+                card.setAttribute('aria-checked', 'false');
+            }
+        });
+    }
+
+    /**
      * Sincroniza dinámicamente el Paso 1 según la tipología del proyecto
      */
     function syncPolymorphicStep1(tipoVal) {
+        syncTipoCards(tipoVal);
         const tipoConfig = getTipoConfig(tipoVal);
         const container = document.getElementById('qSistemaContainer');
         const label = document.getElementById('qSistemaLabel');
@@ -538,6 +620,20 @@
                 permisosContainer.style.display = 'none';
                 permisosSelect.removeAttribute('required');
                 permisosSelect.value = tipoConfig.defaultPermisos || 'Idea';
+            }
+        }
+
+        // 4. Texto explicativo calmante para Quinchos en permisos DOM (Spec 024)
+        const permisosHelpText = document.getElementById('qPermisosHelpText');
+        if (permisosHelpText) {
+            if (tipoVal && tipoVal.toLowerCase().includes('quincho')) {
+                permisosHelpText.innerText = "Tranquilo: si aún no tienes permisos municipales para tu quincho, selecciona 'Solo tengo la idea' y evaluamos la exigencia de tu comuna en terreno.";
+                permisosHelpText.classList.remove('hidden');
+                permisosHelpText.style.display = '';
+            } else {
+                permisosHelpText.innerText = "";
+                permisosHelpText.classList.add('hidden');
+                permisosHelpText.style.display = 'none';
             }
         }
     }
@@ -929,8 +1025,65 @@
             }
 
             prefillFromURL();
+            checkHashForTipo();
         }
     }
+
+    /**
+     * Preselección mediante hash en URL (#contacto?tipo=Quincho o #cotizador?tipo=Ampliacion)
+     */
+    function checkHashForTipo() {
+        if (!window.location || !window.location.hash) return;
+        const hash = window.location.hash;
+        const match = hash.match(/tipo=([^&]+)/i);
+        if (match && match[1]) {
+            const decoded = decodeURIComponent(match[1]);
+            calcularCon(decoded);
+        }
+    }
+
+    // Delegación global para botones de tarjetas, chips y botones con data-quote-tipo (Spec 024)
+    document.addEventListener('click', function(e) {
+        // 1. Clic en tarjeta de tipología
+        const card = e.target.closest('.tipo-card[data-tipo-card]');
+        if (card) {
+            e.preventDefault();
+            const targetTipo = card.getAttribute('data-tipo-card');
+            const select = document.getElementById('qTipo');
+            if (select) {
+                select.value = targetTipo;
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+            return;
+        }
+
+        // 2. Clic en chip de remodelación
+        const chip = e.target.closest('[data-remodela-chip]');
+        if (chip) {
+            e.preventDefault();
+            const val = chip.getAttribute('data-remodela-chip');
+            const espaciosInput = document.getElementById('espacios-remodelar');
+            if (espaciosInput) {
+                espaciosInput.value = val;
+                espaciosInput.dispatchEvent(new Event('input', { bubbles: true }));
+                espaciosInput.focus();
+            }
+            return;
+        }
+
+        // 3. Clic en botones externos con data-quote-tipo
+        const quoteBtn = e.target.closest('[data-quote-tipo]');
+        if (quoteBtn) {
+            const tipo = quoteBtn.getAttribute('data-quote-tipo');
+            const sistema = quoteBtn.getAttribute('data-quote-sistema');
+            if (tipo) {
+                calcularCon(tipo, sistema);
+            }
+        }
+    });
+
+    // Escuchar cambios de hash para deep-linking
+    window.addEventListener('hashchange', checkHashForTipo);
 
     // Exportar globales en window para mantener retrocompatibilidad total
     window.nextStep = nextStep;

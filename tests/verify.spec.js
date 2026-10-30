@@ -18,7 +18,7 @@ const blogPostsToTest = [
     { page: 'blog/index.html', expectedImages: ['pasos-construir-sitio-propio-subsidio-ds1-santiago.webp', 'blog_precios_construccion.jpg'] },
     { page: 'blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago.html', expectedImage: 'pasos-construir-sitio-propio-subsidio-ds1-santiago.webp' },
     { page: 'blog/posts/permisos-edificacion-dom-santiago-guia.html', expectedImage: 'blog_permisos_dom_santiago.jpg' },
-    { page: 'blog/posts/aislacion-termica-zona-3-rm-oguc.html', expectedImage: 'blog_aislacion_termica_oguc.jpg' },
+    { page: 'blog/posts/aislacion-termica-zona-3-rm-oguc.html', expectedImage: 'aislacion-termica-zona-3-rm-oguc' },
     { page: 'blog/posts/como-regularizar-ampliacion-segundo-piso-chile.html', expectedImage: 'blog_regularizar_ampliacion.jpg' },
     { page: 'blog/posts/en-que-fijarse-antes-de-construir.html', expectedImage: 'blog_consejos_construir.jpg' },
     { page: 'blog/posts/guia-precios-construccion-chile.html', expectedImage: 'blog_precios_construccion.jpg' },

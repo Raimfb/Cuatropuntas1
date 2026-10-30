@@ -470,9 +470,10 @@
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Viviendas cálidas en invierno y frescas en verano, con bajo consumo energético</li>
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Construcción formal con carpeta técnica lista para recepción municipal (DOM)</li>
                         </ul>
-                        <a href="/servicios/casas-nuevas/" class="inline-flex items-center text-secondary font-bold hover:underline">
-                            Ver Casas Nuevas Llave en Mano &rarr;
-                        </a>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <a href="#contacto" data-quote-tipo="Casa Nueva" class="inline-flex items-center justify-center px-5 py-2.5 bg-secondary text-white font-bold rounded-md hover:bg-orange-700 transition shadow-sm text-sm">Cotizar Casa Nueva &rarr;</a>
+                            <a href="/servicios/casas-nuevas/" class="inline-flex items-center text-secondary font-bold hover:underline">Ver Casas Nuevas Llave en Mano &rarr;</a>
+                        </div>
                     </div>
                 </div>
 
@@ -489,9 +490,10 @@
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Losas y techos con aislación acústica y térmica para máximo confort interior</li>
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Expediente técnico completo de arquitectura y cálculo listo para tramitación y recepción municipal en la DOM</li>
                         </ul>
-                        <a href="/servicios/segundos-pisos/" class="inline-flex items-center text-secondary font-bold hover:underline">
-                            Ver Segundos Pisos y Ampliaciones &rarr;
-                        </a>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <a href="#contacto" data-quote-tipo="Ampliacion" class="inline-flex items-center justify-center px-5 py-2.5 bg-secondary text-white font-bold rounded-md hover:bg-orange-700 transition shadow-sm text-sm">Cotizar Ampliación &rarr;</a>
+                            <a href="/servicios/segundos-pisos/" class="inline-flex items-center text-secondary font-bold hover:underline">Ver Segundos Pisos y Ampliaciones &rarr;</a>
+                        </div>
                     </div>
                     <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
                         <picture class="w-full h-full">
@@ -522,9 +524,10 @@
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Mobiliario a medida, cuarzo y griferías de alta gama</li>
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Presupuesto itemizado por partidas sin costos ocultos</li>
                         </ul>
-                        <a href="/servicios/remodelaciones/" class="inline-flex items-center text-secondary font-bold hover:underline">
-                            Ver Remodelaciones Integrales &rarr;
-                        </a>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <a href="#contacto" data-quote-tipo="Remodelacion" class="inline-flex items-center justify-center px-5 py-2.5 bg-secondary text-white font-bold rounded-md hover:bg-orange-700 transition shadow-sm text-sm">Cotizar Remodelación &rarr;</a>
+                            <a href="/servicios/remodelaciones/" class="inline-flex items-center text-secondary font-bold hover:underline">Ver Remodelaciones Integrales &rarr;</a>
+                        </div>
                     </div>
                 </div>
 
@@ -541,9 +544,10 @@
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Cubiertas en vigas a la vista, pérgolas y termopanel</li>
                             <li class="flex items-center text-gray-700"><span class="text-secondary mr-2">✓</span> Conexiones de agua, gas y circuitos eléctricos dedicados</li>
                         </ul>
-                        <a href="/servicios/quinchos/" class="inline-flex items-center text-secondary font-bold hover:underline">
-                            Ver Quinchos y Terrazas &rarr;
-                        </a>
+                        <div class="flex flex-wrap items-center gap-4">
+                            <a href="#contacto" data-quote-tipo="Quincho" class="inline-flex items-center justify-center px-5 py-2.5 bg-secondary text-white font-bold rounded-md hover:bg-orange-700 transition shadow-sm text-sm">Cotizar Quincho &rarr;</a>
+                            <a href="/servicios/quinchos/" class="inline-flex items-center text-secondary font-bold hover:underline">Ver Quinchos y Terrazas &rarr;</a>
+                        </div>
                     </div>
                     <div class="w-full lg:w-1/2 h-80 lg:h-96 rounded-2xl overflow-hidden shadow-xl">
                         <picture class="w-full h-full">
@@ -581,28 +585,28 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         <!-- Casa Nueva -->
-                        <tr class="hover:bg-orange-50 transition">
+                        <tr class="hover:bg-orange-50 transition cursor-pointer" data-quote-tipo="Casa Nueva" title="Clic para cotizar Casa Nueva">
                             <th scope="row" class="py-5 px-6 font-semibold text-gray-900">Casa Nueva <span class="block text-xs font-normal text-gray-500">(Llave en mano)</span></th>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 19 UF</td>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 21 UF</td>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 25 UF</td>
                         </tr>
                         <!-- Segundo Piso / Ampliación -->
-                        <tr class="hover:bg-orange-50 transition">
+                        <tr class="hover:bg-orange-50 transition cursor-pointer" data-quote-tipo="Ampliacion" title="Clic para cotizar Ampliación">
                             <th scope="row" class="py-5 px-6 font-semibold text-gray-900">Segundo Piso / Ampliación</th>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 22 UF</td>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 24 UF</td>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 27 UF</td>
                         </tr>
                         <!-- Quincho -->
-                        <tr class="hover:bg-orange-50 transition">
+                        <tr class="hover:bg-orange-50 transition cursor-pointer" data-quote-tipo="Quincho" title="Clic para cotizar Quincho">
                             <th scope="row" class="py-5 px-6 font-semibold text-gray-900">Quincho</th>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 12 UF</td>
                             <td class="py-5 px-6 text-center text-gray-400">—</td>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 15 UF</td>
                         </tr>
                         <!-- Remodelaciones -->
-                        <tr class="hover:bg-orange-50 transition">
+                        <tr class="hover:bg-orange-50 transition cursor-pointer" data-quote-tipo="Remodelacion" title="Clic para cotizar Remodelación">
                             <th scope="row" class="py-5 px-6 font-semibold text-gray-900">Remodelaciones Generales <span class="block text-xs font-normal text-gray-500">(Integrales &gt;25 m²; baños y cocinas por partidas)</span></th>
                             <td class="py-5 px-6 text-center font-bold text-lg text-primary">Desde 11 UF</td>
                             <td class="py-5 px-6 text-center text-gray-400">—</td>
