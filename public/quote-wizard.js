@@ -243,62 +243,116 @@
                         <!-- Selector Visual de 4 Tipologías (Spec 024) -->
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">¿Qué tipo de proyecto deseas cotizar?</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 mb-3" id="tipoCardsContainer" role="radiogroup" aria-label="Tipo de Proyecto">
-                                <button type="button" data-tipo-card="Casa Nueva" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Casa Nueva' ? 'true' : 'false'}">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4" id="tipoCardsContainer" role="radiogroup" aria-label="Tipo de Proyecto">
+                                <!-- Card 1: Casa Nueva -->
+                                <button type="button" data-tipo-card="Casa Nueva" class="tipo-card text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-md ${defaultTipo === 'Casa Nueva' ? 'border-2 border-secondary bg-amber-50/70 shadow-sm ring-1 ring-secondary' : 'border-slate-300 bg-white'}" role="radio" aria-checked="${defaultTipo === 'Casa Nueva' ? 'true' : 'false'}">
                                     <div>
-                                        <div class="text-xl mb-1">🏠</div>
-                                        <div class="font-bold text-gray-900 text-sm leading-snug">Casa Nueva</div>
-                                        <div class="text-[11px] text-gray-500 mt-0.5">Vivienda llave en mano en sitio propio</div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center tipo-icon-wrap transition-colors ${defaultTipo === 'Casa Nueva' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                                                </svg>
+                                            </div>
+                                            <div class="tipo-check-indicator w-5 h-5 rounded-full border flex items-center justify-center transition-all ${defaultTipo === 'Casa Nueva' ? 'bg-secondary text-white border-secondary' : 'border-slate-300 bg-white text-transparent'}">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        </div>
+                                        <div class="font-bold text-gray-900 text-sm leading-snug">Construcción Casa Nueva</div>
+                                        <div class="text-[11px] text-gray-500 mt-1 leading-normal">Vivienda llave en mano en sitio propio</div>
                                     </div>
-                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Casa Nueva' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
                                         Desde 19 UF/m² +IVA
                                     </div>
                                 </button>
-                                <button type="button" data-tipo-card="Ampliacion" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Ampliacion' ? 'true' : 'false'}">
+
+                                <!-- Card 2: Ampliacion -->
+                                <button type="button" data-tipo-card="Ampliacion" class="tipo-card text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-md ${defaultTipo === 'Ampliacion' ? 'border-2 border-secondary bg-amber-50/70 shadow-sm ring-1 ring-secondary' : 'border-slate-300 bg-white'}" role="radio" aria-checked="${defaultTipo === 'Ampliacion' ? 'true' : 'false'}">
                                     <div>
-                                        <div class="text-xl mb-1">📐</div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center tipo-icon-wrap transition-colors ${defaultTipo === 'Ampliacion' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                                    <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                                                    <polyline points="2 17 12 22 22 17"></polyline>
+                                                    <polyline points="2 12 12 17 22 12"></polyline>
+                                                </svg>
+                                            </div>
+                                            <div class="tipo-check-indicator w-5 h-5 rounded-full border flex items-center justify-center transition-all ${defaultTipo === 'Ampliacion' ? 'bg-secondary text-white border-secondary' : 'border-slate-300 bg-white text-transparent'}">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        </div>
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Ampliación / 2º Piso</div>
-                                        <div class="text-[11px] text-gray-500 mt-0.5">Extensión habitacional y sobreelevación</div>
+                                        <div class="text-[11px] text-gray-500 mt-1 leading-normal">Extensión habitacional y sobreelevación</div>
                                     </div>
-                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Ampliacion' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
                                         Desde 22 UF/m² +IVA
                                     </div>
                                 </button>
-                                <button type="button" data-tipo-card="Remodelacion" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Remodelacion' ? 'true' : 'false'}">
+
+                                <!-- Card 3: Remodelacion -->
+                                <button type="button" data-tipo-card="Remodelacion" class="tipo-card text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-md ${defaultTipo === 'Remodelacion' ? 'border-2 border-secondary bg-amber-50/70 shadow-sm ring-1 ring-secondary' : 'border-slate-300 bg-white'}" role="radio" aria-checked="${defaultTipo === 'Remodelacion' ? 'true' : 'false'}">
                                     <div>
-                                        <div class="text-xl mb-1">🛠️</div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center tipo-icon-wrap transition-colors ${defaultTipo === 'Remodelacion' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                                                </svg>
+                                            </div>
+                                            <div class="tipo-check-indicator w-5 h-5 rounded-full border flex items-center justify-center transition-all ${defaultTipo === 'Remodelacion' ? 'bg-secondary text-white border-secondary' : 'border-slate-300 bg-white text-transparent'}">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        </div>
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Remodelación Integral</div>
-                                        <div class="text-[11px] text-gray-500 mt-0.5">Cocinas, baños o interiores completos</div>
+                                        <div class="text-[11px] text-gray-500 mt-1 leading-normal">Cocinas, baños o interiores completos</div>
                                     </div>
-                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Remodelacion' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
                                         Desde 11 UF/m² · Fijos
                                     </div>
                                 </button>
-                                <button type="button" data-tipo-card="Quincho" class="tipo-card text-left p-3 rounded-xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-xs bg-white border-gray-200" role="radio" aria-checked="${defaultTipo === 'Quincho' ? 'true' : 'false'}">
+
+                                <!-- Card 4: Quincho -->
+                                <button type="button" data-tipo-card="Quincho" class="tipo-card text-left p-4 rounded-xl border transition-all duration-200 cursor-pointer flex flex-col justify-between hover:border-secondary hover:shadow-md ${defaultTipo === 'Quincho' ? 'border-2 border-secondary bg-amber-50/70 shadow-sm ring-1 ring-secondary' : 'border-slate-300 bg-white'}" role="radio" aria-checked="${defaultTipo === 'Quincho' ? 'true' : 'false'}">
                                     <div>
-                                        <div class="text-xl mb-1">🔥</div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="w-10 h-10 rounded-lg flex items-center justify-center tipo-icon-wrap transition-colors ${defaultTipo === 'Quincho' ? 'bg-amber-100 text-amber-900' : 'bg-slate-100 text-slate-600'}">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path d="M3 4h18"></path>
+                                                    <path d="M4 4v16"></path>
+                                                    <path d="M20 4v16"></path>
+                                                    <path d="M8 4v16"></path>
+                                                    <path d="M12 4v16"></path>
+                                                    <path d="M16 4v16"></path>
+                                                    <path d="M2 9h20"></path>
+                                                </svg>
+                                            </div>
+                                            <div class="tipo-check-indicator w-5 h-5 rounded-full border flex items-center justify-center transition-all ${defaultTipo === 'Quincho' ? 'bg-secondary text-white border-secondary' : 'border-slate-300 bg-white text-transparent'}">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                            </div>
+                                        </div>
                                         <div class="font-bold text-gray-900 text-sm leading-snug">Quinchos y Terrazas</div>
-                                        <div class="text-[11px] text-gray-500 mt-0.5">Cobertizos, terrazas y asadores en obra</div>
+                                        <div class="text-[11px] text-gray-500 mt-1 leading-normal">Cobertizos, terrazas y asadores en obra</div>
                                     </div>
-                                    <div class="mt-2.5 inline-block text-[10px] font-bold text-secondary bg-orange-50 px-2 py-0.5 rounded border border-orange-200 self-start">
+                                    <div class="mt-3.5 inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md border tipo-badge transition-colors self-start ${defaultTipo === 'Quincho' ? 'bg-amber-100 text-amber-900 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-200'}">
                                         Desde 12 UF/m² +IVA
                                     </div>
                                 </button>
                             </div>
-                            <div id="qTipoSelectContainer">
-                                <label for="qTipo" class="block text-xs font-medium text-gray-600 mb-1">Tipo de Proyecto (seleccionado)</label>
-                                <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full px-4 py-2.5 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white text-sm" required>
+                            <div id="qTipoSelectContainer" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
+                                <label for="qTipo">Tipo de Proyecto</label>
+                                <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full" required>
                                     ${tipoOptions}
                                 </select>
                             </div>
                         </div>
                         <div id="espaciosRemodelarContainer" class="${defaultTipo === 'Remodelacion' ? '' : 'hidden '}transition-all duration-300" style="${defaultTipo === 'Remodelacion' ? '' : 'display: none;'}">
                             <label for="espacios-remodelar" class="block text-sm font-medium text-gray-700 mb-1">Espacio o espacios a remodelar</label>
-                            <div class="flex flex-wrap gap-1.5 mb-2.5" id="remodelaChipsContainer">
-                                <button type="button" data-remodela-chip="Baño completo" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🚿 Baño Completo (75 UF)</button>
-                                <button type="button" data-remodela-chip="Cocina integral" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🍳 Cocina (110 UF)</button>
-                                <button type="button" data-remodela-chip="Baño y Cocina" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🚿+🍳 Baño y Cocina (185 UF)</button>
-                                <button type="button" data-remodela-chip="Living y dormitorios" class="remodela-chip text-xs bg-gray-100 hover:bg-orange-100 hover:text-secondary text-gray-700 px-2.5 py-1 rounded-full border border-gray-200 transition font-medium cursor-pointer">🛋️ Living / Dormitorios</button>
+                            <div class="flex flex-wrap gap-2 mb-2.5" id="remodelaChipsContainer">
+                                <button type="button" data-remodela-chip="Baño completo" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño Completo · 75 UF</button>
+                                <button type="button" data-remodela-chip="Cocina integral" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Cocina Integral · 110 UF</button>
+                                <button type="button" data-remodela-chip="Baño y Cocina" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Baño y Cocina · 185 UF</button>
+                                <button type="button" data-remodela-chip="Living y dormitorios" class="remodela-chip text-xs bg-slate-100 hover:bg-orange-50 hover:text-secondary hover:border-orange-300 text-slate-700 px-3 py-1.5 rounded-full border border-slate-200 transition font-medium cursor-pointer shadow-xs">Living / Dormitorios</button>
                             </div>
                             <input type="text" id="espacios-remodelar" name="espacios_remodelar" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition" placeholder="Ej: Cocina y baño, o dormitorio y living, o baño y comedor...">
                             <span class="text-xs text-gray-500 mt-1 block">Indícanos si incluye zonas húmedas (baño, cocina) o recintos secos para ajustar el alcance técnico.</span>
@@ -448,14 +502,42 @@
                 (norm.includes('amplia') && cardNorm.includes('amplia')) ||
                 ((norm.includes('casa') || norm.includes('nueva')) && cardNorm.includes('casa'));
 
+            const iconWrap = card.querySelector('.tipo-icon-wrap');
+            const badge = card.querySelector('.tipo-badge');
+            const check = card.querySelector('.tipo-check-indicator');
+
             if (isMatch) {
-                card.classList.add('border-secondary', 'bg-orange-50/70', 'shadow-xs', 'ring-1', 'ring-secondary');
-                card.classList.remove('border-gray-200', 'bg-white');
+                card.classList.add('border-2', 'border-secondary', 'bg-amber-50/70', 'shadow-sm', 'ring-1', 'ring-secondary');
+                card.classList.remove('border-slate-300', 'bg-white');
                 card.setAttribute('aria-checked', 'true');
+                if (iconWrap) {
+                    iconWrap.classList.add('bg-amber-100', 'text-amber-900');
+                    iconWrap.classList.remove('bg-slate-100', 'text-slate-600');
+                }
+                if (badge) {
+                    badge.classList.add('bg-amber-100', 'text-amber-900', 'border-amber-300');
+                    badge.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                }
+                if (check) {
+                    check.classList.add('bg-secondary', 'text-white', 'border-secondary');
+                    check.classList.remove('border-slate-300', 'bg-white', 'text-transparent');
+                }
             } else {
-                card.classList.remove('border-secondary', 'bg-orange-50/70', 'shadow-xs', 'ring-1', 'ring-secondary');
-                card.classList.add('border-gray-200', 'bg-white');
+                card.classList.remove('border-2', 'border-secondary', 'bg-amber-50/70', 'shadow-sm', 'ring-1', 'ring-secondary');
+                card.classList.add('border-slate-300', 'bg-white');
                 card.setAttribute('aria-checked', 'false');
+                if (iconWrap) {
+                    iconWrap.classList.remove('bg-amber-100', 'text-amber-900');
+                    iconWrap.classList.add('bg-slate-100', 'text-slate-600');
+                }
+                if (badge) {
+                    badge.classList.remove('bg-amber-100', 'text-amber-900', 'border-amber-300');
+                    badge.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                }
+                if (check) {
+                    check.classList.remove('bg-secondary', 'text-white', 'border-secondary');
+                    check.classList.add('border-slate-300', 'bg-white', 'text-transparent');
+                }
             }
         });
     }
