@@ -94,6 +94,19 @@ Esta especificación implementa una solución visual de 4 categorías en la cabe
     - Los chips de remodelación **DEBEN** mostrar etiquetas limpias (`Baño Completo`, `Cocina Integral`, `Baño y Cocina`, `Living / Dormitorios`) sin UF entre paréntesis.
   * El motor matemático del backend (`api/quote.js`) permanece 100% inalterado y entrega el presupuesto detallado por correo y WhatsApp tras completar el formulario.
 
+### 2.6. Ajuste Semántico en Remodelación: "Materialidad Actual de los Muros a Intervenir" (Spec 024.3)
+
+- **[EARS-024-08] Adaptación de Label y Opciones en Remodelación:**  
+  **Mientras** el tipo de proyecto sea `Remodelacion`:
+  * El sistema **DEBE** mantener `#qSistemaContainer` visible y `#qSistema` con el atributo `required` activo para suministrar el parámetro `sistema` requerido por `api/quote.js`.
+  * El sistema **DEBE** mutar el `<label id="qSistemaLabel">` al texto técnico contextualmente adecuado:
+    `"Materialidad Actual de los Muros a Intervenir"`
+  * El sistema **DEBE** poblar las opciones de `<select id="qSistema">` con nombres orientados a obra existente:
+    * `value="Metalcon"` -> `"Tabiquería Liviana (Volcanita / Metalcom / Madera)"`
+    * `value="Albanileria"` -> `"Muros Sólidos (Ladrillo / Hormigón en Casa o Depto.)"`
+    * `value="SIP"` -> `"Estructura Mixta / No estoy seguro (Evaluar en terreno)"`
+  * El sistema **DEBE** asignar por defecto el valor `'Metalcon'`.
+
 ---
 
 ## 3. Criterios de Aceptación y Validación

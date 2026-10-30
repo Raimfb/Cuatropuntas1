@@ -19,12 +19,13 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         await expect(areaHelpText).toBeAttached();
     });
 
-    test('T01.2: Mutación reactiva a "Remodelación" (selector oculto, sin required, espacios visibles y avance a Paso 2)', async ({ page }) => {
+    test('T01.2: Mutación reactiva a "Remodelación" (selector de materialidad actual visible, opciones adaptadas, espacios visibles y avance a Paso 2)', async ({ page }) => {
         await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
 
         const tipoSelect = page.locator('#qTipo');
         const sistemaContainer = page.locator('#qSistemaContainer');
         const sistemaSelect = page.locator('#qSistema');
+        const sistemaLabel = page.locator('#qSistemaLabel');
         const espaciosContainer = page.locator('#espaciosRemodelarContainer');
         const espaciosInput = page.locator('#espacios-remodelar');
         const areaHelpText = page.locator('#qAreaHelpText');
@@ -32,12 +33,25 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         // Cambiar a Remodelación
         await tipoSelect.selectOption('Remodelacion');
 
-        // El contenedor del selector de sistema debe estar oculto
-        await expect(sistemaContainer).toBeHidden();
+        // El contenedor del selector de sistema debe estar visible
+        await expect(sistemaContainer).toBeVisible();
+        expect(await sistemaLabel.innerText()).toBe('Materialidad Actual de los Muros a Intervenir');
 
-        // El select de sistema NO debe tener required para no bloquear formularios
+        // El select de sistema debe ser required
         const isRequired = await sistemaSelect.evaluate(el => el.hasAttribute('required'));
-        expect(isRequired).toBe(false);
+        expect(isRequired).toBe(true);
+
+        // Opciones de Remodelación (Tabiquería liviana, Muros sólidos, Estructura mixta)
+        const options = await sistemaSelect.locator('option').allInnerTexts();
+        expect(options.some(t => /tabiquería liviana/i.test(t))).toBe(true);
+        expect(options.some(t => /muros sólidos/i.test(t))).toBe(true);
+        expect(options.some(t => /estructura mixta/i.test(t))).toBe(true);
+
+        // Opciones contractuales de backend
+        const optionValues = await sistemaSelect.locator('option').evaluateAll(opts => opts.map(o => o.value));
+        expect(optionValues).toContain('Metalcon');
+        expect(optionValues).toContain('Albanileria');
+        expect(optionValues).toContain('SIP');
 
         // El valor asignado debe ser compatible con backend ('Metalcon')
         expect(await sistemaSelect.inputValue()).toBe('Metalcon');
@@ -149,7 +163,8 @@ test.describe('Spec 016: Formulario Dinámico y Polimórfico por Tipología de P
         const remodelaUrl = `file:///${remodelaPath.replace(/\\/g, '/')}`;
         await page.goto(remodelaUrl, { waitUntil: 'domcontentloaded' });
 
-        await expect(page.locator('#qSistemaContainer')).toBeHidden();
+        await expect(page.locator('#qSistemaContainer')).toBeVisible();
+        await expect(page.locator('#qSistemaLabel')).toHaveText('Materialidad Actual de los Muros a Intervenir');
         await expect(page.locator('#espaciosRemodelarContainer')).toBeVisible();
 
         // 2. servicios/quinchos.html

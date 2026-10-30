@@ -86,10 +86,12 @@
             defaultPermisos: "Idea"
         },
         'Remodelacion': {
-            sistemaLabel: 'Sistema Constructivo',
-            showSistema: false,
+            sistemaLabel: 'Materialidad Actual de los Muros a Intervenir',
+            showSistema: true,
             sistemas: [
-                { value: "Metalcon", label: "Remodelación Estándar" }
+                { value: "Metalcon", label: "Tabiquería Liviana (Volcanita / Metalcom / Madera)" },
+                { value: "Albanileria", label: "Muros Sólidos (Ladrillo / Hormigón en Casa o Depto.)" },
+                { value: "SIP", label: "Estructura Mixta / No estoy seguro (Evaluar en terreno)" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 4 (baño), 15 (cocina) o 50 (casa)',

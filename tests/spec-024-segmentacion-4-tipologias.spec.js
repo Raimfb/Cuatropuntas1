@@ -78,6 +78,8 @@ test.describe('Spec 024: Segmentación Visual de 4 Tipologías, Preselección We
         // La tarjeta debe activarse
         await expect(remodelaCard).toHaveAttribute('aria-checked', 'true');
         await expect(page.locator('.tipo-card[data-tipo-card="Casa Nueva"]')).toHaveAttribute('aria-checked', 'false');
+        await expect(page.locator('#qSistemaLabel')).toHaveText('Materialidad Actual de los Muros a Intervenir');
+        await expect(page.locator('#qSistemaContainer')).toBeVisible();
     });
 
     test('T024.4: Chips de selección rápida en Remodelación rellenan el input de espacios a remodelar', async ({ page }) => {
