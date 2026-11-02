@@ -32,9 +32,9 @@ test.describe('Spec 006 & Spec 025: AI Agent Readiness & Discovery Tests', () =>
     expect(protJson.resource).toBe('https://www.cuatropuntas.com');
     expect(protJson.authorization_servers).toContain('https://www.cuatropuntas.com');
 
-    const apiProtHandler = require(path.join(baseDir, 'api', 'oauth-protected-resource.js'));
+    const apiProtHandler = require(path.join(baseDir, 'api', 'markdown.js'));
     let capturedRes = {};
-    apiProtHandler({ method: 'GET', query: { path: 'precios' } }, {
+    apiProtHandler({ method: 'GET', query: { page: 'oauth-protected-resource' } }, {
       setHeader: () => {},
       status: (c) => ({ json: (d) => { capturedRes = d; } })
     });

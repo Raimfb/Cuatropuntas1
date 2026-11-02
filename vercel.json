@@ -59,11 +59,11 @@
     },
     {
       "source": "/.well-known/oauth-protected-resource/:path*",
-      "destination": "/api/oauth-protected-resource"
+      "destination": "/api/markdown?page=oauth-protected-resource"
     },
     {
       "source": "/.well-known/oauth-protected-resource",
-      "destination": "/api/oauth-protected-resource"
+      "destination": "/api/markdown?page=oauth-protected-resource"
     },
     {
       "source": "/:path((?!api/|\\.well-known/|_next/|favicon|.*\\..*).*)",

@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "Permite calcular costos referenciales por metro cuadrado para casas nuevas, ampliaciones y segundos pisos.",
       "url": "/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
-      "digest": "sha256:b6a48763e99bb4d80cc5a4546e5e7f44f85ebabec3134b42365fafb6f413282f"
+      "digest": "sha256:4ca8b6f9094b47656e2fd743131ab82ae1be5dad59bd1fc48f5ca687a631e318"
     },
     {
       "name": "subsidio-minvu",
@@ -20,7 +20,7 @@
       "type": "skill-md",
       "description": "Análisis técnico de aislación térmica, resistencia sísmica y velocidad constructiva entre Metalcom, Panel SIP y Albañilería.",
       "url": "/.well-known/agent-skills/asesoria-materiales/SKILL.md",
-      "digest": "sha256:0ebb7006b1564e33a0e843e6e7bfe3085501e329b13d19b17d1e1383626ecd12"
+      "digest": "sha256:97705dab64962db9b049edb8d6a97714732a6e3fdc5fe6197b2c39e7b95a138a"
     }
   ]
 }

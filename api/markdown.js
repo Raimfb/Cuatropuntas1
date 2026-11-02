@@ -75,6 +75,27 @@ module.exports = (req, res) => {
   const page = (req.query.page || req.query.path || 'index').toLowerCase();
   const postParam = (req.query.post || '').toLowerCase().replace(/\.html$/, '');
 
+    // 0. RFC 9728 OAUTH PROTECTED RESOURCE METADATA
+  if (page.includes('oauth')) {
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=86400');
+    return res.status(200).json({
+      resource: "https://www.cuatropuntas.com",
+      authorization_servers: [
+        "https://www.cuatropuntas.com"
+      ],
+      scopes_supported: [
+        "read",
+        "quote",
+        "public"
+      ],
+      bearer_methods_supported: [
+        "header"
+      ]
+    });
+  }
+
   let markdown = '';
 
   // 1. PÁGINA O ARTÍCULO INDIVIDUAL DEL BLOG
