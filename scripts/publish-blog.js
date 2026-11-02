@@ -422,7 +422,15 @@ function buildSchemaJsonLd(postData) {
             "publisher": {
                 "@type": "Organization",
                 "name": "Constructora Cuatropuntas SpA",
-                "logo": "https://www.cuatropuntas.com/logo_cuatropuntas.webp"
+                "url": "https://www.cuatropuntas.com",
+                "logo": {
+                    "@type": "ImageObject",
+                    "url": "https://www.cuatropuntas.com/og-image.jpg"
+                }
+            },
+            "speakable": {
+                "@type": "SpeakableSpecification",
+                "cssSelector": ["h1", "article p:first-of-type", ".faq-answer"]
             },
             "datePublished": postData.date,
             "inLanguage": "es-CL"
@@ -472,6 +480,10 @@ function generatePostHtml(postData, bodyHtml) {
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="${postData.author || 'Equipo Técnico Cuatropuntas'}">
     <link rel="canonical" href="https://www.cuatropuntas.com/blog/posts/${postData.slug}.html">
+    <meta name="geo.region" content="CL-RM">
+    <meta name="geo.placename" content="Santiago">
+    <meta name="geo.position" content="-33.448890;-70.669265">
+    <meta name="ICBM" content="-33.448890, -70.669265">
 
     <!-- Open Graph -->
     <meta property="og:type" content="article">

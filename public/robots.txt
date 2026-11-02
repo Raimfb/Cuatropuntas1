@@ -32,6 +32,6 @@ Allow: /
 User-agent: Bytespider
 Allow: /
 
-Agentmap: https://cuatropuntas.com/.well-known/ai-catalog.json
-Sitemap: https://cuatropuntas.com/sitemap.xml
+Agentmap: https://www.cuatropuntas.com/.well-known/ai-catalog.json
+Sitemap: https://www.cuatropuntas.com/sitemap.xml
 

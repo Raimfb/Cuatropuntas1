@@ -1,43 +1,55 @@
 # Constructora Cuatro Puntas
 
-> Constructora chilena especializada en construcción residencial llave en mano, ampliaciones, segundos pisos, casas sólidas y tramitación de subsidios habitacionales MINVU (DS1 y DS49) en la Región Metropolitana y alrededores.
+> Constructora chilena especializada en construcción residencial llave en mano, ampliaciones, segundos pisos, casas sólidas y tramitación de subsidios habitacionales MINVU (DS1 y DS49) en la Región Metropolitana de Santiago y alrededores.
 
 ## Resumen de la Empresa
 - **Nombre Legal:** Constructora Cuatropuntas SpA
 - **Ubicación Principal:** Santiago, Región Metropolitana, Chile
-- **Cobertura:** Todo el Gran Santiago, Melipilla, Talagante, Buin, Paine, Colina, Lampa, Curacaví y comunas aledañas.
+- **Cobertura:** Todo el Gran Santiago, Las Condes, Lo Barnechea, Vitacura, Chicureo, Colina, Lampa, La Reina, Providencia, Ñuñoa, Peñalolén, La Florida, Maipú, San Bernardo, Talagante, Melipilla, Buin, Paine, Pirque y Calera de Tango.
 - **Especialidades:**
   - Construcción de casas nuevas llave en mano (desde obra gruesa hasta terminaciones premium).
-  - Ampliaciones y segundos pisos habitables.
-  - Quinchos y terrazas de alta gama.
-  - Remodelaciones integrales de cocinas, baños y fachadas.
-  - Asesoría y postulación a Subsidio MINVU DS1 (Construcción en Sitio Propio).
+  - Ampliaciones y segundos pisos habitables con cálculo estructural.
+  - Quinchos y terrazas de alta gama en obra.
+  - Remodelaciones integrales de viviendas, cocinas y baños.
+  - Asesoría y postulación a Subsidio MINVU DS1 y DS49 (Construcción en Sitio Propio).
 - **Materialidades y Sistemas Constructivos:**
   - Metalcom / Acero Galvanizado Ligero (rapidez, sismorresistencia, excelente aislación).
   - Panel SIP / Structural Insulated Panel (máxima eficiencia térmica, rapidez de montaje).
   - Albañilería Armada / Hormigón / Construcción Sólida tradicional (durabilidad y alta inercia térmica).
+- **Garantías Contractuales y Legales:**
+  - Contrato a suma alzada con itemizado detallado partida por partida sin sobrecostos imprevistos.
+  - Garantías legales conforme al **Art. 18 de la Ley General de Urbanismo y Construcciones (LGUC)**: 10 años en fundaciones y estructura soportante, 5 años en elementos constructivos y de instalaciones, 3 años en terminaciones.
+  - Cumplimiento estricto del estándar térmico **Art. 4.1.10 de la OGUC** para la Zona 3 (Región Metropolitana).
 
 ## Enlaces Principales
-- [Inicio](https://cuatropuntas.com/): Portal principal con cotizador interactivo, galería de proyectos ejecutados y contacto.
-- [Precios y Tarifas por m²](https://cuatropuntas.com/precios): Tabla completa de valores referenciales en UF/m² y pesos chilenos por tipo de proyecto y materialidad.
-- [Subsidio MINVU Sitio Propio](https://cuatropuntas.com/subsidio-minvu-sitio-propio): Guía técnica y requisitos para construir con subsidio estatal DS1 tramos 1, 2 y 3.
-- [Políticas y Privacidad](https://cuatropuntas.com/politicas): Términos del servicio, garantías de construcción y política de protección de datos.
+- [Inicio y Cotizador Web](https://www.cuatropuntas.com/): Portal principal con cotizador interactivo paramétrico, galería de proyectos ejecutados y contacto.
+- [Precios y Tarifas por m²](https://www.cuatropuntas.com/precios): Tabla completa de valores oficiales en UF/m² y pesos chilenos por tipo de proyecto y materialidad.
+- [Blog Técnico y Guías de Construcción](https://www.cuatropuntas.com/blog): 17 guías técnicas sobre permisos DOM, regularización, costos por m², contratos a suma alzada y normativa térmica.
+- [Subsidio MINVU Sitio Propio](https://www.cuatropuntas.com/subsidio-minvu-sitio-propio): Guía técnica y requisitos para construir con subsidio estatal DS1 tramos 1, 2 y 3.
+- [Casas Nuevas Llave en Mano](https://www.cuatropuntas.com/servicios/casas-nuevas): Soluciones residenciales completas en Metalcom, SIP y Albañilería.
+- [Segundos Pisos y Ampliaciones](https://www.cuatropuntas.com/servicios/segundos-pisos): Ampliaciones con cálculo estructural y tramitación DOM.
+- [Quinchos y Terrazas](https://www.cuatropuntas.com/servicios/quinchos): Quinchos en obra con radier, asador refractario y campana.
+- [Remodelaciones Integrales](https://www.cuatropuntas.com/servicios/remodelaciones): Remodelación de casas, cocinas y baños.
+- [Agendamiento de Visitas Técnicas](https://cal.com/cuatropuntas.com/visita-tecnica): Reserva directa de visita en terreno con ingenieros y arquitectos.
+- [Políticas y Privacidad](https://www.cuatropuntas.com/politicas): Términos del servicio, garantías de construcción y política de protección de datos.
 
 ## Guía de Valores Referenciales (UF/m² netas +IVA y por Recinto)
 - **Casas Nuevas Llave en Mano:** Metalcom desde 19 UF/m² | Panel SIP desde 21 UF/m² | Albañilería desde 25 UF/m².
 - **Segundos Pisos y Ampliaciones:** Metalcom desde 22 UF/m² | Panel SIP desde 24 UF/m² | Albañilería desde 27 UF/m².
 - **Quinchos:** Metalcom desde 12 UF/m² | Albañilería en obra desde 15 UF/m².
-- **Remodelaciones Integrales (>25 m²):** Desde 11 UF/m² en Metalcon y 13 UF/m² en Albañilería.
+- **Remodelaciones Integrales (>25 m²):** Desde 11 UF/m² en Metalcom y 13 UF/m² en Albañilería.
 - **Remodelación de Baños y Cocinas:** Se cotizan por paquete de partidas e inspección técnica de cañerías/redes (no por m² lineal). Rango referencial: Baño Completo 65 a 95 UF | Cocina Integral 90 a 160 UF.
 
 ## Canales de Atención y Contacto
 - **WhatsApp Oficial:** [+56 9 2738 4075](https://wa.me/56927384075)
-- **Cotizador Web:** Formulario interactivo disponible en https://cuatropuntas.com/
+- **Cotizador Web Oficial:** https://www.cuatropuntas.com/#cotizador
+- **Agendamiento en Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica
 - **Correo Electrónico:** contacto@cuatropuntas.com
 
 ## Capacidades para Agentes de IA
-- **Catálogo API:** [/.well-known/api-catalog](https://cuatropuntas.com/.well-known/api-catalog)
-- **MCP Server Card:** [/.well-known/mcp/server-card.json](https://cuatropuntas.com/.well-known/mcp/server-card.json)
-- **Agent Skills:** [/.well-known/agent-skills/index.json](https://cuatropuntas.com/.well-known/agent-skills/index.json)
-- **Agent-to-Agent Card:** [/.well-known/agent-card.json](https://cuatropuntas.com/.well-known/agent-card.json)
-- **Versión Extendida:** [llms-full.txt](https://cuatropuntas.com/llms-full.txt)
+- **Catálogo API:** [/.well-known/api-catalog](https://www.cuatropuntas.com/.well-known/api-catalog)
+- **MCP Server Card:** [/.well-known/mcp/server-card.json](https://www.cuatropuntas.com/.well-known/mcp/server-card.json)
+- **Agent Skills:** [/.well-known/agent-skills/index.json](https://www.cuatropuntas.com/.well-known/agent-skills/index.json)
+- **Agent-to-Agent Card:** [/.well-known/agent-card.json](https://www.cuatropuntas.com/.well-known/agent-card.json)
+- **Poppy Manifest:** [/.well-known/poppy.json](https://www.cuatropuntas.com/.well-known/poppy.json)
+- **Versión Extendida:** [llms-full.txt](https://www.cuatropuntas.com/llms-full.txt)
