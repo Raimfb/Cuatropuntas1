@@ -80,10 +80,27 @@ module.exports = (req, res) => {
     res.setHeader('Content-Type', 'application/json; charset=utf-8');
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Cache-Control', 'public, max-age=86400');
+
+    // RFC 9728: Resource identifier MUST match the target resource requested
+    let subPath = '';
+    if (req.query.resource_path) {
+      subPath = '/' + req.query.resource_path.replace(/^\/+/, '');
+    } else if (req.url && req.url.includes('oauth-protected-resource/')) {
+      const parts = req.url.split('oauth-protected-resource/')[1];
+      if (parts) subPath = '/' + parts.split('?')[0].replace(/^\/+/, '');
+    }
+
+    const hostHeader = (req.headers && req.headers['host']) || 'www.cuatropuntas.com';
+    const proto = (req.headers && req.headers['x-forwarded-proto']) || 'https';
+    const origin = `${proto}://${hostHeader}`;
+    const resourceUrl = `${origin}${subPath}`;
+
     return res.status(200).json({
-      resource: "https://www.cuatropuntas.com",
+      resource: resourceUrl,
       authorization_servers: [
-        "https://www.cuatropuntas.com"
+        origin,
+        "https://www.cuatropuntas.com",
+        "https://cuatropuntas.com"
       ],
       scopes_supported: [
         "read",

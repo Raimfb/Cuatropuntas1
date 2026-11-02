@@ -59,7 +59,7 @@
     },
     {
       "source": "/.well-known/oauth-protected-resource/:path*",
-      "destination": "/api/markdown?page=oauth-protected-resource"
+      "destination": "/api/markdown?page=oauth-protected-resource&resource_path=:path*"
     },
     {
       "source": "/.well-known/oauth-protected-resource",
