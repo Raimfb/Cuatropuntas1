@@ -14,6 +14,7 @@
     <link rel="canonical" href="https://www.cuatropuntas.com/">
     <link rel="ai-catalog" href="/.well-known/ai-catalog.json">
     <link rel="alternate" type="text/markdown" href="/llms.txt" title="LLM Overview">
+    <link rel="oauth-protected-resource" href="/.well-known/oauth-protected-resource">
 
     <!-- ===== Geo-referenciación (Local SEO Chile) ===== -->
     <meta name="geo.region" content="CL-RM" />
@@ -1204,12 +1205,28 @@
         </span>
     </a>
 
+    <!-- Declarative WebMCP Tool Definition for AI Agents -->
+    <div class="sr-only" aria-hidden="true">
+        <form toolname="cotizar_construccion" tooldescription="Obtiene precios referenciales y cotizaciones por m² en Santiago de Chile para Metalcom, SIP y Albañilería" action="/precios" method="get">
+            <input type="number" name="metros_cuadrados" value="100" min="15" max="1000">
+            <select name="materialidad">
+                <option value="metalcom" selected>Metalcom (desde 19 UF/m²)</option>
+                <option value="sip">Panel SIP (desde 21 UF/m²)</option>
+                <option value="albanileria">Albañilería (desde 25 UF/m²)</option>
+            </select>
+            <button type="submit">Cotizar</button>
+        </form>
+    </div>
+
     <!-- WebMCP: Expose tools for AI Agents and Autonomous Browsers -->
     <script>
       (function() {
-        if (typeof navigator !== 'undefined' && 'modelContext' in navigator && navigator.modelContext && typeof navigator.modelContext.registerTool === 'function') {
+        const mc = (typeof document !== 'undefined' && document.modelContext) ||
+                   (typeof navigator !== 'undefined' && navigator.modelContext) ||
+                   (typeof window !== 'undefined' && window.modelContext);
+        if (mc && typeof mc.registerTool === 'function') {
           try {
-            navigator.modelContext.registerTool({
+            mc.registerTool({
               name: "cotizar_construccion",
               description: "Obtiene precios referenciales y cotizaciones por m² en Santiago de Chile para Metalcom, SIP y Albañilería.",
               inputSchema: {

@@ -11,7 +11,9 @@
     <meta name="robots" content="index, follow, max-image-preview:large">
     <meta name="author" content="Constructora Cuatropuntas SpA">
     <meta name="theme-color" content="#1a202c">
-    <link rel="canonical" href="https://www.cuatropuntas.com/blog/">
+        <link rel="canonical" href="https://www.cuatropuntas.com/blog/">
+    <link rel="alternate" type="text/markdown" title="Índice Técnico de Artículos en Markdown" href="/blog">
+    <link rel="oauth-protected-resource" href="/.well-known/oauth-protected-resource">
 
     <!-- ===== Geo-referenciación (Local SEO Chile) ===== -->
     <meta name="geo.region" content="CL-RM" />
@@ -692,6 +694,101 @@
         }
 
         document.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
+
+    
+    <!-- Declarative WebMCP Tool Definition for AI Agents -->
+    <div class="sr-only" aria-hidden="true">
+        <form toolname="buscar_articulos_blog" tooldescription="Busca artículos técnicos, normativas OGUC y guías de construcción del blog oficial de Constructora Cuatropuntas" action="/blog" method="get">
+            <input type="text" name="q" placeholder="Buscar por palabra clave, aislación térmica o metalcom">
+            <button type="submit">Buscar Artículos</button>
+        </form>
+        <form toolname="cotizar_construccion" tooldescription="Calcula presupuesto referencial de construcción residencial según m² y materialidad" action="/precios" method="get">
+            <input type="number" name="metros_cuadrados" value="100" min="15" max="1000">
+            <select name="materialidad">
+                <option value="metalcom" selected>Metalcom (desde 19 UF/m²)</option>
+                <option value="sip">Panel SIP (desde 21 UF/m²)</option>
+                <option value="albanileria">Albañilería (desde 25 UF/m²)</option>
+            </select>
+            <button type="submit">Cotizar</button>
+        </form>
+    </div>
+
+    <!-- WebMCP: Expose tools for AI Agents and Autonomous Browsers -->
+    <script>
+      (function() {
+        const mc = (typeof document !== 'undefined' && document.modelContext) ||
+                   (typeof navigator !== 'undefined' && navigator.modelContext) ||
+                   (typeof window !== 'undefined' && window.modelContext);
+        if (mc && typeof mc.registerTool === 'function') {
+          try {
+            mc.registerTool({
+              name: "buscar_articulos_blog",
+              description: "Busca artículos técnicos, normativas OGUC y guías de construcción del blog de Cuatropuntas.",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  termino_busqueda: { type: "string", description: "Término o tema técnico (ej. metalcom, aislacion, dom, subsidio)" }
+                },
+                required: ["termino_busqueda"]
+              },
+              execute: async function(params) {
+                const q = (params.termino_busqueda || '').toLowerCase();
+                try {
+                  const res = await fetch('/blog/posts.json');
+                  const posts = await res.json();
+                  const filtered = posts.filter(p => 
+                    p.title.toLowerCase().includes(q) || 
+                    p.excerpt.toLowerCase().includes(q) ||
+                    (p.tags && p.tags.some(t => t.toLowerCase().includes(q)))
+                  );
+                  return {
+                    total: filtered.length,
+                    articulos: filtered.slice(0, 5).map(p => ({
+                      titulo: p.title,
+                      url: 'https://www.cuatropuntas.com/blog/posts/' + p.slug + '.html',
+                      categoria: p.category,
+                      fecha: p.date,
+                      resumen: p.excerpt
+                    }))
+                  };
+                } catch(e) {
+                  return { error: e.message };
+                }
+              }
+            });
+
+            mc.registerTool({
+              name: "cotizar_construccion",
+              description: "Calcula presupuesto referencial de construcción residencial según m² y sistema constructivo (Valores netos +IVA).",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  metros_cuadrados: { type: "number", description: "Superficie en m²" },
+                  materialidad: { type: "string", enum: ["metalcom", "sip", "albanileria"] }
+                },
+                required: ["metros_cuadrados", "materialidad"]
+              },
+              execute: async function(params) {
+                const m2 = Number(params.metros_cuadrados) || 50;
+                const mat = params.materialidad || 'metalcom';
+                const precios = { metalcom: 19, sip: 21, albanileria: 25 };
+                const ufM2 = precios[mat] || 19;
+                return {
+                  materialidad: mat,
+                  metros_cuadrados: m2,
+                  uf_m2_neto: ufM2,
+                  total_neto_uf: m2 * ufM2,
+                  agendamiento_visita_terreno: "https://cal.com/cuatropuntas.com/visita-tecnica",
+                  contacto_whatsapp_oficial: "https://wa.me/56927384075"
+                };
+              }
+            });
+          } catch(e) {
+            console.debug('WebMCP registerTool note:', e);
+          }
+        }
+      })();
     </script>
 
     <script src="/navigation.js"></script>

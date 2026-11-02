@@ -1,0 +1,13 @@
+{
+  "protocol_version": "0.1",
+  "organization": {
+    "name": "Constructora Cuatro Puntas SpA",
+    "domain": "cuatropuntas.com"
+  },
+  "web": {},
+  "agent": {
+    "name": "Cuatro Puntas Assistant",
+    "description": "Asistente inteligente y cotizador oficial de casas llave en mano, ampliaciones y segundos pisos en Santiago de Chile.",
+    "url": "https://www.cuatropuntas.com/api/chat"
+  }
+}

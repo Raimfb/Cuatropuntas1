@@ -36,6 +36,36 @@
       "destination": "/api/markdown?page=subsidio"
     },
     {
+      "source": "/blog",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": ".*text/markdown.*"
+        }
+      ],
+      "destination": "/api/markdown?page=blog"
+    },
+    {
+      "source": "/blog/posts/:post*",
+      "has": [
+        {
+          "type": "header",
+          "key": "accept",
+          "value": ".*text/markdown.*"
+        }
+      ],
+      "destination": "/api/markdown?page=blog&post=:post*"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource/:path*",
+      "destination": "/api/oauth-protected-resource"
+    },
+    {
+      "source": "/.well-known/oauth-protected-resource",
+      "destination": "/api/oauth-protected-resource"
+    },
+    {
       "source": "/:path((?!api/|\\.well-known/|_next/|favicon|.*\\..*).*)",
       "has": [
         {
@@ -70,7 +100,7 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</llms.txt>; rel=\"describedby\"; type=\"text/markdown\", </.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/mcp/server-card.json>; rel=\"service-desc\", </.well-known/agent-card.json>; rel=\"describedby\""
+          "value": "</llms.txt>; rel=\"describedby\"; type=\"text/markdown\", </.well-known/api-catalog>; rel=\"api-catalog\", </.well-known/mcp/server-card.json>; rel=\"service-desc\", </.well-known/agent-card.json>; rel=\"describedby\", </.well-known/oauth-protected-resource>; rel=\"oauth-protected-resource\""
         },
         {
           "key": "Vary",

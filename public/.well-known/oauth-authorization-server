@@ -2,7 +2,11 @@
   "issuer": "https://www.cuatropuntas.com",
   "authorization_endpoint": "https://www.cuatropuntas.com/api/auth/authorize",
   "token_endpoint": "https://www.cuatropuntas.com/api/auth/token",
+  "revocation_endpoint": "https://www.cuatropuntas.com/api/auth/revoke",
   "jwks_uri": "https://www.cuatropuntas.com/.well-known/jwks.json",
+  "poppy_domains": [
+    "cuatropuntas.com"
+  ],
   "response_types_supported": [
     "token",
     "id_token"

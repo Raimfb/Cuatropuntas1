@@ -6,21 +6,21 @@
       "type": "skill-md",
       "description": "Permite calcular costos referenciales por metro cuadrado para casas nuevas, ampliaciones y segundos pisos.",
       "url": "/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
-      "digest": "sha256:cc86d26f184dd4e393b2a20f21fe6e87caa756cc4d5b4a5a9a3e8de56d8f7ce2"
+      "digest": "sha256:b6a48763e99bb4d80cc5a4546e5e7f44f85ebabec3134b42365fafb6f413282f"
     },
     {
       "name": "subsidio-minvu",
       "type": "skill-md",
       "description": "Guía paso a paso para construir con subsidio estatal DS1 en terreno con título de dominio inscrito.",
       "url": "/.well-known/agent-skills/subsidio-minvu/SKILL.md",
-      "digest": "sha256:5ede32b3a8b7d947fb85a403400adc24e303211d6c37cfce0f25c2a911fc06d0"
+      "digest": "sha256:76e4109d1db0cc7b768c14bc98f5b2c354d6534f15204f8075847e03ff44b017"
     },
     {
       "name": "asesoria-materiales",
       "type": "skill-md",
       "description": "Análisis técnico de aislación térmica, resistencia sísmica y velocidad constructiva entre Metalcom, Panel SIP y Albañilería.",
       "url": "/.well-known/agent-skills/asesoria-materiales/SKILL.md",
-      "digest": "sha256:5129db7a39e91a22b02b833f677eea18b690c125bb1182b5f1122d5eb0bc6cec"
+      "digest": "sha256:0ebb7006b1564e33a0e843e6e7bfe3085501e329b13d19b17d1e1383626ecd12"
     }
   ]
 }

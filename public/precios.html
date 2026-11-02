@@ -12,6 +12,8 @@
     <meta name="author" content="Constructora Cuatropuntas SpA">
     <meta name="theme-color" content="#1a202c">
     <link rel="canonical" href="https://www.cuatropuntas.com/precios">
+    <link rel="alternate" type="text/markdown" title="Precios de Construcción en Markdown" href="/precios">
+    <link rel="oauth-protected-resource" href="/.well-known/oauth-protected-resource">
 
     <!-- ===== Geo-referenciación (Local SEO Chile) ===== -->
     <meta name="geo.region" content="CL-RM" />
@@ -686,6 +688,93 @@
             Cotizar por WhatsApp
         </span>
     </a>
+
+    
+    <!-- Declarative WebMCP Tool Definition for AI Agents -->
+    <div class="sr-only" aria-hidden="true">
+        <form toolname="cotizar_construccion" tooldescription="Calcula presupuesto referencial de construcción residencial llave en mano, ampliaciones y quinchos en Santiago de Chile según m² y materialidad" action="/precios" method="get">
+            <input type="number" name="metros_cuadrados" value="100" min="15" max="1000" placeholder="Metros cuadrados a construir">
+            <select name="tipo_proyecto">
+                <option value="casa_nueva" selected>Casa Nueva Llave en Mano</option>
+                <option value="segundo_piso">Segundo Piso o Ampliación</option>
+                <option value="quincho">Quincho o Terraza</option>
+                <option value="remodelacion">Remodelación Integral</option>
+            </select>
+            <select name="materialidad">
+                <option value="metalcom" selected>Metalcom Estructural (desde 19 UF/m²)</option>
+                <option value="sip">Panel SIP (desde 21 UF/m²)</option>
+                <option value="albanileria">Albañilería Armada (desde 25 UF/m²)</option>
+            </select>
+            <button type="submit">Calcular Cotización</button>
+        </form>
+    </div>
+
+    <!-- WebMCP: Imperative tool registration for AI Agents & Autonomous Browsers -->
+    <script>
+      (function() {
+        const mc = (typeof document !== 'undefined' && document.modelContext) ||
+                   (typeof navigator !== 'undefined' && navigator.modelContext) ||
+                   (typeof window !== 'undefined' && window.modelContext);
+        if (mc && typeof mc.registerTool === 'function') {
+          try {
+            mc.registerTool({
+              name: "cotizar_construccion",
+              description: "Calcula presupuesto estimado de construcción llave en mano, ampliaciones y quinchos en Santiago de Chile según la matriz oficial de Constructora Cuatropuntas SpA (Valores netos +IVA).",
+              inputSchema: {
+                type: "object",
+                properties: {
+                  metros_cuadrados: { type: "number", description: "Superficie total a edificar o ampliar en m²" },
+                  tipo_proyecto: { 
+                    type: "string", 
+                    enum: ["casa_nueva", "segundo_piso", "quincho", "remodelacion"], 
+                    description: "Tipo de obra residencial" 
+                  },
+                  materialidad: { 
+                    type: "string", 
+                    enum: ["metalcom", "sip", "albanileria"], 
+                    description: "Sistema constructivo estructural" 
+                  }
+                },
+                required: ["metros_cuadrados", "materialidad"]
+              },
+              execute: async function(params) {
+                const m2 = Number(params.metros_cuadrados) || 50;
+                const mat = params.materialidad || 'metalcom';
+                const tipo = params.tipo_proyecto || 'casa_nueva';
+                
+                const matrices = {
+                  casa_nueva: { metalcom: 19, sip: 21, albanileria: 25 },
+                  segundo_piso: { metalcom: 22, sip: 24, albanileria: 27 },
+                  quincho: { metalcom: 12, albanileria: 15, sip: 15 },
+                  remodelacion: { metalcom: 11, albanileria: 13, sip: 12 }
+                };
+                
+                const tabla = matrices[tipo] || matrices.casa_nueva;
+                const ufM2 = tabla[mat] || 19;
+                const subtotalUF = m2 * ufM2;
+                const ivaUF = Math.round(subtotalUF * 0.19 * 10) / 10;
+                const totalUF = subtotalUF + ivaUF;
+
+                return {
+                  tipo_proyecto: tipo,
+                  materialidad: mat,
+                  metros_cuadrados: m2,
+                  uf_m2_neto: ufM2,
+                  subtotal_neto_uf: subtotalUF,
+                  iva_uf: ivaUF,
+                  total_estimado_con_iva_uf: totalUF,
+                  garantia_legal: "Art. 18 LGUC (10 años en estructura)",
+                  agendamiento_visita_terreno: "https://cal.com/cuatropuntas.com/visita-tecnica",
+                  contacto_whatsapp_oficial: "https://wa.me/56927384075"
+                };
+              }
+            });
+          } catch(e) {
+            console.debug('WebMCP registerTool note:', e);
+          }
+        }
+      })();
+    </script>
 
     <script src="/navigation.js"></script>
 </body>
