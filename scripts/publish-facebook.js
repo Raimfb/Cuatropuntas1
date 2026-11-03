@@ -55,7 +55,7 @@ function recordHistory(record) {
  * Genera el copy de texto con formato minimalista de expectativa (Estilo Radio Bío Bío)
  */
 function buildSocialCopy(post) {
-    const canonicalUrl = `https://www.cuatropuntas.com/blog/posts/${post.slug}.html`;
+    const canonicalUrl = `https://www.cuatropuntas.com/blog/posts/${post.slug}`;
     
     // Titular limpio
     let headline = post.title.trim();

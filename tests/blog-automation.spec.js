@@ -47,9 +47,9 @@ function cleanupTestPost() {
     if (fs.existsSync(sitemapPath)) {
         try {
             let sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
-            const locStr = `https://www.cuatropuntas.com/blog/posts/${testSlug}.html`;
+            const locStr = `https://www.cuatropuntas.com/blog/posts/${testSlug}`;
             if (sitemapXml.includes(locStr)) {
-                const urlNodeRegex = new RegExp(`\\s*<url>\\s*<loc>${locStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<\\/loc>[\\s\\S]*?<\\/url>`, 'g');
+                const urlNodeRegex = new RegExp(`\\s*<url>\\s*<loc>${locStr.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?:\\.html)?<\\/loc>[\\s\\S]*?<\\/url>`, 'g');
                 sitemapXml = sitemapXml.replace(urlNodeRegex, '');
                 fs.writeFileSync(sitemapPath, sitemapXml, 'utf8');
             }
@@ -106,7 +106,7 @@ test.describe('Spec 003: Pipeline y Motor Automatizado de Publicación del Blog'
         expect(title).toContain('Cuatropuntas');
 
         const canonical = await page.locator('link[rel="canonical"]').getAttribute('href');
-        expect(canonical).toBe(`https://www.cuatropuntas.com/blog/posts/${testSlug}.html`);
+        expect(canonical).toBe(`https://www.cuatropuntas.com/blog/posts/${testSlug}`);
 
         // 2. OpenGraph
         const ogTitle = await page.locator('meta[property="og:title"]').getAttribute('content');
@@ -162,11 +162,11 @@ test.describe('Spec 003: Pipeline y Motor Automatizado de Publicación del Blog'
         // 2. blog/index.html (SSR Fallback Card)
         const indexHtml = fs.readFileSync(blogIndexPath, 'utf8');
         expect(indexHtml).toContain(testSlug);
-        expect(indexHtml).toContain(`href="/blog/posts/${testSlug}.html"`);
+        expect(indexHtml).toContain(`href="/blog/posts/${testSlug}"`);
 
         // 3. sitemap.xml
         const sitemapXml = fs.readFileSync(sitemapPath, 'utf8');
-        expect(sitemapXml).toContain(`https://www.cuatropuntas.com/blog/posts/${testSlug}.html`);
+        expect(sitemapXml).toContain(`https://www.cuatropuntas.com/blog/posts/${testSlug}`);
         // Idempotencia: Verificar que no esté duplicado
         const occurrences = (sitemapXml.match(new RegExp(testSlug, 'g')) || []).length;
         expect(occurrences).toBe(1);
@@ -254,7 +254,7 @@ test.describe('Spec 003: Pipeline y Motor Automatizado de Publicación del Blog'
         expect(statusCode).toBe(200);
         expect(responseBody.success).toBe(true);
         expect(responseBody.slug).toBe(testSlug);
-        expect(responseBody.url).toBe(`https://www.cuatropuntas.com/blog/posts/${testSlug}.html`);
+        expect(responseBody.url).toBe(`https://www.cuatropuntas.com/blog/posts/${testSlug}`);
     });
 
     test('T01.8: Agente Centinela auto-repara borrador corrupto (sin frontmatter YAML, sin fecha y sin imagen) y completa la publicación', async () => {

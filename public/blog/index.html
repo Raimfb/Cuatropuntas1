@@ -8,7 +8,7 @@
     <!-- ===== SEO / TITLE / DESCRIPTION ===== -->
     <title>Blog de Arquitectura y Construcción en Chile | Cuatropuntas</title>
     <meta name="description" content="Guías prácticas sobre precios por m² (UF), normativa OGUC, subsidios MINVU y decisiones de arquitectura para construir o ampliar tu casa en Santiago.">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="Constructora Cuatropuntas SpA">
     <meta name="theme-color" content="#1a202c">
         <link rel="canonical" href="https://www.cuatropuntas.com/blog">
@@ -25,7 +25,7 @@
     <meta property="og:type" content="blog">
     <meta property="og:site_name" content="Cuatropuntas">
     <meta property="og:locale" content="es_CL">
-    <meta property="og:url" content="https://www.cuatropuntas.com/blog/">
+    <meta property="og:url" content="https://www.cuatropuntas.com/blog">
     <meta property="og:title" content="Blog de Arquitectura y Construcción en Chile | Cuatropuntas">
     <meta property="og:description" content="Guías prácticas de construcción, comparación de materiales (Metalcon, SIP, Albañilería), precios UF/m² y normativas en Chile.">
     <meta property="og:image" content="https://www.cuatropuntas.com/casa_solida_moderna_1770071499659.webp">
@@ -53,24 +53,41 @@
 
     <!-- ===== GEO Structured Data (JSON-LD) ===== -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
+{
+    "@context": "https://schema.org",
+    "@graph": [
         {
-          "@type": "Blog",
-          "@id": "https://www.cuatropuntas.com/blog/#blog",
-          "name": "Blog de Arquitectura y Construcción Cuatropuntas",
-          "description": "Artículos técnicos, precios UF/m², guías de permisos DOM y análisis de sistemas constructivos en Chile.",
-          "url": "https://www.cuatropuntas.com/blog/",
-          "publisher": {
-            "@type": "Organization",
-            "name": "Constructora Cuatropuntas SpA",
-            "url": "https://www.cuatropuntas.com",
-            "logo": "https://www.cuatropuntas.com/logo_cuatropuntas.webp"
-          }
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://www.cuatropuntas.com/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog",
+                    "item": "https://www.cuatropuntas.com/blog"
+                }
+            ]
+        },
+        {
+            "@type": "Blog",
+            "@id": "https://www.cuatropuntas.com/blog#blog",
+            "name": "Blog de Arquitectura y Construcción Cuatropuntas",
+            "description": "Artículos técnicos, precios UF/m², guías de permisos DOM y análisis de sistemas constructivos en Chile.",
+            "url": "https://www.cuatropuntas.com/blog",
+            "publisher": {
+                "@type": "Organization",
+                "name": "Constructora Cuatropuntas SpA",
+                "url": "https://www.cuatropuntas.com",
+                "logo": "https://www.cuatropuntas.com/logo_cuatropuntas.webp"
+            }
         }
-      ]
-    }
+    ]
+}
     </script>
 <style>
         nav picture img, nav a img, footer picture img, footer a img {
@@ -218,7 +235,7 @@
         <div id="postsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <!-- Post Card: contrato-construccion-suma-alzada-proteger-patrimonio -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="contrato-construccion-suma-alzada-proteger-patrimonio">
-                <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio" class="block overflow-hidden h-52">
                     <img src="/blog/images/contrato-construccion-suma-alzada-proteger-patrimonio.webp" alt="Contrato de construcción a suma alzada: Cómo proteger el patrimonio de tu familia y evitar cobros sorpresa" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -227,7 +244,7 @@
                         <span class="text-gray-400">30 Oct 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio.html">
+                        <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio">
                             Contrato de construcción a suma alzada: Cómo proteger el patrimonio de tu familia y evitar cobros sorpresa
                         </a>
                     </h2>
@@ -236,7 +253,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -245,7 +262,7 @@
             <!-- End Post Card: contrato-construccion-suma-alzada-proteger-patrimonio -->
             <!-- Post Card: seguimos-construyendo-casas-como-hace-30-anos -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="seguimos-construyendo-casas-como-hace-30-anos">
-                <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos" class="block overflow-hidden h-52">
                     <img src="/blog/images/seguimos-construyendo-casas-como-hace-30-anos.webp" alt="¿Seguimos Construyendo Casas Como Hace 30 Años? La Evolución Técnica que Tu Hogar en Santiago Necesita" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -254,7 +271,7 @@
                         <span class="text-gray-400">23 Oct 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos.html">
+                        <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos">
                             ¿Seguimos Construyendo Casas Como Hace 30 Años? La Evolución Técnica que Tu Hogar en Santiago Necesita
                         </a>
                     </h2>
@@ -263,7 +280,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/seguimos-construyendo-casas-como-hace-30-anos" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -272,7 +289,7 @@
             <!-- End Post Card: seguimos-construyendo-casas-como-hace-30-anos -->
             <!-- Post Card: el-error-que-calienta-tu-casa-en-verano -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="el-error-que-calienta-tu-casa-en-verano">
-                <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano" class="block overflow-hidden h-52">
                     <img src="/blog/images/el-error-que-calienta-tu-casa-en-verano.webp" alt="El Error Que Calienta Tu Casa en Verano: Descubre Por Qué Tu Vivienda en Santiago Parece Un Horno" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -281,7 +298,7 @@
                         <span class="text-gray-400">16 Oct 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano.html">
+                        <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano">
                             El Error Que Calienta Tu Casa en Verano: Descubre Por Qué Tu Vivienda en Santiago Parece Un Horno
                         </a>
                     </h2>
@@ -290,7 +307,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/el-error-que-calienta-tu-casa-en-verano" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -299,7 +316,7 @@
             <!-- End Post Card: el-error-que-calienta-tu-casa-en-verano -->
             <!-- Post Card: verdad-kits-prefabricados-madera-santiago -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="verdad-kits-prefabricados-madera-santiago">
-                <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago" class="block overflow-hidden h-52">
                     <img src="/blog/images/verdad-kits-prefabricados-madera-santiago.webp" alt="La VERDAD Sobre Los Kits Prefabricados de Madera: Lo Que Nadie Te Dice en Santiago" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -308,7 +325,7 @@
                         <span class="text-gray-400">9 Oct 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago.html">
+                        <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago">
                             La VERDAD Sobre Los Kits Prefabricados de Madera: Lo Que Nadie Te Dice en Santiago
                         </a>
                     </h2>
@@ -317,7 +334,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/verdad-kits-prefabricados-madera-santiago" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -326,7 +343,7 @@
             <!-- End Post Card: verdad-kits-prefabricados-madera-santiago -->
             <!-- Post Card: la-verdad-sobre-las-casas-chinas-mitos-y-realidades -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="la-verdad-sobre-las-casas-chinas-mitos-y-realidades">
-                <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades" class="block overflow-hidden h-52">
                     <img src="/blog/images/la-verdad-sobre-las-casas-chinas-mitos-y-realidades.webp" alt="La VERDAD Sobre Las Casas Chinas: Mitos, Realidades y el Estándar Real en Santiago" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -335,7 +352,7 @@
                         <span class="text-gray-400">2 Oct 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades.html">
+                        <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades">
                             La VERDAD Sobre Las Casas Chinas: Mitos, Realidades y el Estándar Real en Santiago
                         </a>
                     </h2>
@@ -344,7 +361,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/la-verdad-sobre-las-casas-chinas-mitos-y-realidades" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -353,7 +370,7 @@
             <!-- End Post Card: la-verdad-sobre-las-casas-chinas-mitos-y-realidades -->
             <!-- Post Card: pesa-menos-aisla-mas-no-se-quema-hormigon-celular -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="pesa-menos-aisla-mas-no-se-quema-hormigon-celular">
-                <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular" class="block overflow-hidden h-52">
                     <img src="/blog/images/pesa-menos-aisla-mas-no-se-quema-hormigon-celular.webp" alt="PESA MENOS, AISLA MÁS Y NO SE QUEMA | La Verdad del Hormigón Celular" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -362,7 +379,7 @@
                         <span class="text-gray-400">25 Sep 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular.html">
+                        <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular">
                             PESA MENOS, AISLA MÁS Y NO SE QUEMA | La Verdad del Hormigón Celular
                         </a>
                     </h2>
@@ -371,7 +388,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/pesa-menos-aisla-mas-no-se-quema-hormigon-celular" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -380,7 +397,7 @@
             <!-- End Post Card: pesa-menos-aisla-mas-no-se-quema-hormigon-celular -->
             <!-- Post Card: vale-la-pena-construir-con-acero-galvanizado-metalcom -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="vale-la-pena-construir-con-acero-galvanizado-metalcom">
-                <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom" class="block overflow-hidden h-52">
                     <img src="/blog/images/vale-la-pena-construir-con-acero-galvanizado-metalcom.webp" alt="Vale la Pena Construir con Acero Galvanizado: La Verdad sobre el Steel Frame y Metalcom en Santiago" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -389,7 +406,7 @@
                         <span class="text-gray-400">18 Sep 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom.html">
+                        <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom">
                             Vale la Pena Construir con Acero Galvanizado: La Verdad sobre el Steel Frame y Metalcom en Santiago
                         </a>
                     </h2>
@@ -398,7 +415,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/vale-la-pena-construir-con-acero-galvanizado-metalcom" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -407,7 +424,7 @@
             <!-- End Post Card: vale-la-pena-construir-con-acero-galvanizado-metalcom -->
             <!-- Post Card: ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm">
-                <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm" class="block overflow-hidden h-52">
                     <img src="/blog/images/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm.webp" alt="Ventanas Termopanel y Doble Vidriado Hermético: Por qué el marco de PVC o aluminio RPT es decisivo en la Zona 3 RM" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -416,7 +433,7 @@
                         <span class="text-gray-400">11 Sep 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm.html">
+                        <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm">
                             Ventanas Termopanel y Doble Vidriado Hermético: Por qué el marco de PVC o aluminio RPT es decisivo en la Zona 3 RM
                         </a>
                     </h2>
@@ -425,7 +442,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -434,7 +451,7 @@
             <!-- End Post Card: ventanas-termopanel-pvc-aluminio-rpt-zona-3-rm -->
             <!-- Post Card: normativa-aislacion-termica-oguc-santiago-precios -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="normativa-aislacion-termica-oguc-santiago-precios">
-                <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios" class="block overflow-hidden h-52">
                     <img src="/blog_aislacion_termica_oguc.jpg" alt="Nueva Reglamentación Térmica OGUC en Santiago: Qué exige la DOM para aprobar tu casa o ampliación" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -443,7 +460,7 @@
                         <span class="text-gray-400">9 Sep 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios.html">
+                        <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios">
                             Nueva Reglamentación Térmica OGUC en Santiago: Qué exige la DOM para aprobar tu casa o ampliación
                         </a>
                     </h2>
@@ -452,7 +469,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/normativa-aislacion-termica-oguc-santiago-precios" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -461,7 +478,7 @@
             <!-- End Post Card: normativa-aislacion-termica-oguc-santiago-precios -->
             <!-- Post Card: pasos-construir-sitio-propio-subsidio-ds1-santiago -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="pasos-construir-sitio-propio-subsidio-ds1-santiago">
-                <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago" class="block overflow-hidden h-52">
                     <img src="/blog/images/pasos-construir-sitio-propio-subsidio-ds1-santiago.webp" alt="Guía 2026: Pasos para Construir en Sitio Propio con Subsidio DS1 en la Región Metropolitana" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -470,7 +487,7 @@
                         <span class="text-gray-400">8 Sep 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago.html">
+                        <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago">
                             Guía 2026: Pasos para Construir en Sitio Propio con Subsidio DS1 en la Región Metropolitana
                         </a>
                     </h2>
@@ -479,7 +496,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/pasos-construir-sitio-propio-subsidio-ds1-santiago" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -489,7 +506,7 @@
             
             <!-- Fallback Post 1 (SSR SEO) -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
-                <a href="/blog/posts/guia-precios-construccion-chile.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/guia-precios-construccion-chile" class="block overflow-hidden h-52">
                     <img src="/blog_precios_construccion.jpg" alt="Precios de Construcción en Chile UF/m2" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -498,7 +515,7 @@
                         <span class="text-gray-400">7 Ago 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/guia-precios-construccion-chile.html">
+                        <a href="/blog/posts/guia-precios-construccion-chile">
                             ¿Cuánto cuesta construir una casa en Chile en 2026? Guía de precios UF/m²
                         </a>
                     </h2>
@@ -507,7 +524,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Equipo Técnico Cuatropuntas</span>
-                        <a href="/blog/posts/guia-precios-construccion-chile.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/guia-precios-construccion-chile" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -516,7 +533,7 @@
 
             <!-- Fallback Post 2 (SSR SEO) -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
-                <a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/en-que-fijarse-antes-de-construir" class="block overflow-hidden h-52">
                     <img src="/blog_consejos_construir.jpg" alt="En qué fijarse antes de construir casa en Chile" class="w-full h-full object-cover hover:scale-105 transition duration-500" style="object-position: center top;">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -525,14 +542,14 @@
                         <span class="text-gray-400">6 Ago 2026</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/en-que-fijarse-antes-de-construir.html">
+                        <a href="/blog/posts/en-que-fijarse-antes-de-construir">
                             ¿En qué debes fijarte antes de construir o ampliar tu casa en Santiago?
                         </a>
                     </h2>
                     <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
                         Lista de comprobación con 7 puntos para revisar antes de contratar una constructora: terreno, permisos DOM y contrato.
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html">
+                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip">
                             Metalcon vs Albañilería vs Panel SIP: Comparativa técnica de costos y velocidad en Chile
                         </a>
                     </h2>
@@ -541,7 +558,7 @@
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>Ingeniería Cuatropuntas</span>
-                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/metalcon-vs-albanileria-vs-sip" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -598,10 +615,10 @@
             <div>
                 <h4 class="text-white font-bold mb-4">Blog & Recursos</h4>
                 <ul class="space-y-2 text-sm">
-                    <li><a href="/blog/posts/por-que-remodelar-bano-cocina-no-se-cobra-por-metro-cuadrado.html" class="hover:text-secondary transition">¿Por qué el baño no se cobra por m²?</a></li>
-                    <li><a href="/blog/posts/guia-precios-construccion-chile.html" class="hover:text-secondary transition">Guía de Precios 2026</a></li>
-                    <li><a href="/blog/posts/en-que-fijarse-antes-de-construir.html" class="hover:text-secondary transition">7 Puntos Clave Antes de Construir</a></li>
-                    <li><a href="/blog/posts/metalcon-vs-albanileria-vs-sip.html" class="hover:text-secondary transition">Metalcon vs Albañilería vs SIP</a></li>
+                    <li><a href="/blog/posts/por-que-remodelar-bano-cocina-no-se-cobra-por-metro-cuadrado" class="hover:text-secondary transition">¿Por qué el baño no se cobra por m²?</a></li>
+                    <li><a href="/blog/posts/guia-precios-construccion-chile" class="hover:text-secondary transition">Guía de Precios 2026</a></li>
+                    <li><a href="/blog/posts/en-que-fijarse-antes-de-construir" class="hover:text-secondary transition">7 Puntos Clave Antes de Construir</a></li>
+                    <li><a href="/blog/posts/metalcon-vs-albanileria-vs-sip" class="hover:text-secondary transition">Metalcon vs Albañilería vs SIP</a></li>
                 </ul>
             </div>
             <div>
@@ -668,7 +685,7 @@
 
             grid.innerHTML = filtered.map(p => `
                 <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col">
-                    <a href="/blog/posts/${p.slug}.html" class="block overflow-hidden h-52">
+                    <a href="/blog/posts/${p.slug}" class="block overflow-hidden h-52">
                         <img src="${p.image}" alt="${p.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500" loading="lazy">
                     </a>
                     <div class="p-6 flex flex-col flex-grow">
@@ -677,14 +694,14 @@
                             <span class="text-gray-400">${p.date}</span>
                         </div>
                         <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                            <a href="/blog/posts/${p.slug}.html">${p.title}</a>
+                            <a href="/blog/posts/${p.slug}">${p.title}</a>
                         </h2>
                         <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">
                             ${p.excerpt}
                         </p>
                         <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                             <span>${p.author}</span>
-                            <a href="/blog/posts/${p.slug}.html" class="font-bold text-secondary hover:underline flex items-center">
+                            <a href="/blog/posts/${p.slug}" class="font-bold text-secondary hover:underline flex items-center">
                                 Leer artículo &rarr;
                             </a>
                         </div>
@@ -746,7 +763,7 @@
                     total: filtered.length,
                     articulos: filtered.slice(0, 5).map(p => ({
                       titulo: p.title,
-                      url: 'https://www.cuatropuntas.com/blog/posts/' + p.slug + '.html',
+                      url: 'https://www.cuatropuntas.com/blog/posts/' + p.slug,
                       categoria: p.category,
                       fecha: p.date,
                       resumen: p.excerpt

@@ -140,7 +140,7 @@ ${foundPost.excerpt}
 
 ${fullBody ? fullBody : `## Contenido Técnico
 Para consultar el artículo con sus diagramas técnicos y tablas comparativas completas, visita:
-https://www.cuatropuntas.com/blog/posts/${foundPost.slug}.html`}
+https://www.cuatropuntas.com/blog/posts/${foundPost.slug}`}
 
 ---
 
@@ -168,10 +168,10 @@ Publicaciones especializadas sobre sistemas constructivos modernos (Metalcom, Pa
 
 ## Artículos Técnicos Publicados (${posts.length} artículos)
 
-${posts.map((p, idx) => `### ${idx + 1}. [${p.title}](https://www.cuatropuntas.com/blog/posts/${p.slug}.html)
+${posts.map((p, idx) => `### ${idx + 1}. [${p.title}](https://www.cuatropuntas.com/blog/posts/${p.slug})
 - **Fecha:** ${p.date} | **Categoría:** ${p.category} | **Lectura:** ${p.readTime}
 - **Resumen:** ${p.excerpt}
-- **Versión Markdown para Agentes:** \`https://www.cuatropuntas.com/blog/posts/${p.slug}.html\` (con cabecera \`Accept: text/markdown\`)
+- **Versión Markdown para Agentes:** \`https://www.cuatropuntas.com/blog/posts/${p.slug}\` (con cabecera \`Accept: text/markdown\`)
 `).join('\n')}
 
 ---

@@ -45,8 +45,9 @@ test.describe('Spec 027: Facebook Auto-Publisher (Estilo Radio Bío Bío) Tests'
     expect(copy).toContain('¿Cuánto cuesta construir una casa en Chile en 2026? Precios UF/m²');
     expect(copy).not.toContain('— Cuatropuntas');
 
-    // Must contain canonical blog link
-    expect(copy).toContain('https://www.cuatropuntas.com/blog/posts/guia-precios-construccion-chile.html');
+    // Must contain canonical blog link (clean URL without .html)
+    expect(copy).toContain('https://www.cuatropuntas.com/blog/posts/guia-precios-construccion-chile');
+    expect(copy).not.toContain('.html');
 
     // Must contain official SSOT WhatsApp phone and NEVER the purged number
     expect(copy).toContain('+56 9 2738 4075');

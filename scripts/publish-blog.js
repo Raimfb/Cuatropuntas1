@@ -410,8 +410,31 @@ function renderFaqSection(faqs) {
 function buildSchemaJsonLd(postData) {
     const graph = [
         {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+                {
+                    "@type": "ListItem",
+                    "position": 1,
+                    "name": "Inicio",
+                    "item": "https://www.cuatropuntas.com/"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 2,
+                    "name": "Blog",
+                    "item": "https://www.cuatropuntas.com/blog"
+                },
+                {
+                    "@type": "ListItem",
+                    "position": 3,
+                    "name": postData.title,
+                    "item": `https://www.cuatropuntas.com/blog/posts/${postData.slug}`
+                }
+            ]
+        },
+        {
             "@type": "TechArticle",
-            "@id": `https://www.cuatropuntas.com/blog/posts/${postData.slug}.html#article`,
+            "@id": `https://www.cuatropuntas.com/blog/posts/${postData.slug}#article`,
             "headline": postData.title,
             "description": postData.excerpt,
             "author": {
@@ -477,9 +500,9 @@ function generatePostHtml(postData, bodyHtml) {
     <title>${postData.title} | Cuatropuntas</title>
     <meta name="description" content="${postData.excerpt}">
     <meta name="keywords" content="${keywordsStr}">
-    <meta name="robots" content="index, follow, max-image-preview:large">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
     <meta name="author" content="${postData.author || 'Equipo Técnico Cuatropuntas'}">
-    <link rel="canonical" href="https://www.cuatropuntas.com/blog/posts/${postData.slug}.html">
+    <link rel="canonical" href="https://www.cuatropuntas.com/blog/posts/${postData.slug}">
     <meta name="geo.region" content="CL-RM">
     <meta name="geo.placename" content="Santiago">
     <meta name="geo.position" content="-33.448890;-70.669265">
@@ -489,7 +512,7 @@ function generatePostHtml(postData, bodyHtml) {
     <meta property="og:type" content="article">
     <meta property="og:site_name" content="Cuatropuntas">
     <meta property="og:locale" content="es_CL">
-    <meta property="og:url" content="https://www.cuatropuntas.com/blog/posts/${postData.slug}.html">
+    <meta property="og:url" content="https://www.cuatropuntas.com/blog/posts/${postData.slug}">
     <meta property="og:title" content="${postData.title}">
     <meta property="og:description" content="${postData.excerpt}">
     <meta property="og:image" content="https://www.cuatropuntas.com${postData.image.startsWith('/') ? postData.image : '/' + postData.image}">
@@ -560,16 +583,16 @@ ${schemaJson}
                         </button>
                         <div class="absolute left-0 top-full pt-3 w-64 hidden group-hover:block group-focus-within:block z-50" role="menu">
                             <div class="bg-white border border-gray-100 rounded-md shadow-xl p-2">
-                                <a href="/servicios/casas-nuevas/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Casas Nuevas</a>
-                                <a href="/servicios/segundos-pisos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Segundos Pisos y Ampliaciones</a>
-                                <a href="/servicios/quinchos/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Quinchos</a>
-                                <a href="/servicios/remodelaciones/" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Remodelaciones</a>
+                                <a href="/servicios/casas-nuevas" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Casas Nuevas</a>
+                                <a href="/servicios/segundos-pisos" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Segundos Pisos y Ampliaciones</a>
+                                <a href="/servicios/quinchos" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Quinchos</a>
+                                <a href="/servicios/remodelaciones" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Remodelaciones</a>
                                 <a href="/subsidio-minvu-sitio-propio" role="menuitem" class="block px-3 py-2 text-gray-600 hover:bg-gray-50 hover:text-primary rounded transition-colors">Subsidio MINVU</a>
                             </div>
                         </div>
                     </div>
                     <a href="/precios" class="text-gray-600 hover:text-primary transition-colors font-medium">Precios</a>
-                    <a href="/blog/" class="text-secondary font-bold border-b-2 border-secondary pb-1">Blog</a>
+                    <a href="/blog" class="text-secondary font-bold border-b-2 border-secondary pb-1">Blog</a>
                     <a href="/#contacto" class="bg-secondary text-white px-5 py-2.5 rounded-md font-bold hover:bg-orange-700 transition shadow-lg transform hover:-translate-y-0.5">Cotizar Gratis</a>
                 </div>
 
@@ -595,15 +618,15 @@ ${schemaJson}
                     <svg class="w-4 h-4" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                 </button>
                 <div id="mobileServicesMenu" class="hidden pl-4 pb-2 space-y-1">
-                    <a href="/servicios/casas-nuevas/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Casas Nuevas</a>
-                    <a href="/servicios/segundos-pisos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Segundos Pisos y Ampliaciones</a>
-                    <a href="/servicios/quinchos/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Quinchos</a>
-                    <a href="/servicios/remodelaciones/" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Remodelaciones</a>
+                    <a href="/servicios/casas-nuevas" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Casas Nuevas</a>
+                    <a href="/servicios/segundos-pisos" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Segundos Pisos y Ampliaciones</a>
+                    <a href="/servicios/quinchos" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Quinchos</a>
+                    <a href="/servicios/remodelaciones" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Remodelaciones</a>
                     <a href="/subsidio-minvu-sitio-propio" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2">Subsidio MINVU</a>
                 </div>
             </div>
             <a href="/precios" onclick="toggleMobileMenu()" class="block text-gray-700 hover:text-secondary font-medium py-2 border-b border-gray-100">Precios</a>
-            <a href="/blog/" onclick="toggleMobileMenu()" class="block text-secondary font-bold py-2 border-b border-gray-100">Blog</a>
+            <a href="/blog" onclick="toggleMobileMenu()" class="block text-secondary font-bold py-2 border-b border-gray-100">Blog</a>
             <a href="/#contacto" onclick="toggleMobileMenu()" class="block bg-secondary text-white text-center font-bold py-3 rounded-md shadow-md mt-4">Cotizar Gratis</a>
         </div>
     </nav>
@@ -656,7 +679,7 @@ ${faqHtml}
     <!-- Footer -->
     <footer class="bg-primary text-gray-400 py-12 border-t border-gray-800">
         <div class="max-w-7xl mx-auto px-4 text-center text-xs text-gray-500">
-            &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. | <a href="/blog/" class="text-secondary hover:underline">Volver al Blog</a> | <a href="/privacidad" class="text-gray-400 hover:text-white transition">Privacidad</a>
+            &copy; 2026 Constructora Cuatropuntas SpA. Todos los derechos reservados. | <a href="/blog" class="text-secondary hover:underline">Volver al Blog</a> | <a href="/privacidad" class="text-gray-400 hover:text-white transition">Privacidad</a>
         </div>
     </footer>
 
@@ -710,7 +733,7 @@ function generateIndexCardHtml(postData) {
     const dateFormatted = formatDateSpanish(postData.date);
     return `            <!-- Post Card: ${postData.slug} -->
             <article class="post-card bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-xl transition duration-300 flex flex-col" data-slug="${postData.slug}">
-                <a href="/blog/posts/${postData.slug}.html" class="block overflow-hidden h-52">
+                <a href="/blog/posts/${postData.slug}" class="block overflow-hidden h-52">
                     <img src="${postData.image}" alt="${postData.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500">
                 </a>
                 <div class="p-6 flex flex-col flex-grow">
@@ -719,7 +742,7 @@ function generateIndexCardHtml(postData) {
                         <span class="text-gray-400">${dateFormatted}</span>
                     </div>
                     <h2 class="text-xl font-bold text-gray-900 mb-3 hover:text-secondary transition leading-snug">
-                        <a href="/blog/posts/${postData.slug}.html">
+                        <a href="/blog/posts/${postData.slug}">
                             ${postData.title}
                         </a>
                     </h2>
@@ -728,7 +751,7 @@ function generateIndexCardHtml(postData) {
                     </p>
                     <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
                         <span>${postData.author || 'Equipo Técnico Cuatropuntas'}</span>
-                        <a href="/blog/posts/${postData.slug}.html" class="font-bold text-secondary hover:underline flex items-center">
+                        <a href="/blog/posts/${postData.slug}" class="font-bold text-secondary hover:underline flex items-center">
                             Leer artículo &rarr;
                         </a>
                     </div>
@@ -805,7 +828,7 @@ function updateSitemapXml(postData) {
     if (!fs.existsSync(SITEMAP_PATH)) return;
 
     let sitemap = fs.readFileSync(SITEMAP_PATH, 'utf8');
-    const canonicalLoc = `https://www.cuatropuntas.com/blog/posts/${postData.slug}.html`;
+    const canonicalLoc = `https://www.cuatropuntas.com/blog/posts/${postData.slug}`;
 
     if (sitemap.includes(canonicalLoc)) {
         // Actualizar lastmod
@@ -889,7 +912,7 @@ function compileAndPublishPost(inputData, options = {}) {
     return {
         success: true,
         slug: postData.slug,
-        url: `https://www.cuatropuntas.com/blog/posts/${postData.slug}.html`,
+        url: `https://www.cuatropuntas.com/blog/posts/${postData.slug}`,
         filePath: postFilePath,
         postData
     };

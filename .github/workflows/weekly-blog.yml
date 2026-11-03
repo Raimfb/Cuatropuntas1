@@ -89,6 +89,10 @@ jobs:
             echo "✅ Artículo publicado y empujado a la rama main con éxito."
           fi
 
+      - name: Notificar Indexación Instantánea (IndexNow)
+        if: success()
+        run: node scripts/indexnow-notify.js
+
       - name: Agente Centinela de Auto-Reparación (Self-Healing)
         if: failure()
         env:

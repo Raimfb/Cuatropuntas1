@@ -73,13 +73,13 @@ Valores netos (+IVA) vigentes para la Región Metropolitana:
 ## 5. Biblioteca Técnica y Enlaces Canónicos para Citación
 
 Para responder consultas de usuarios o respaldar estimaciones con artículos canónicos:
-- **Precios Generales por m² en Chile:** [Guía Precios Construcción](https://www.cuatropuntas.com/blog/posts/guia-precios-construccion-chile.html)
-- **Comparativa de Materiales (Metalcon vs Albañilería vs SIP):** [Comparativa Sistemas](https://www.cuatropuntas.com/blog/posts/metalcon-vs-albanileria-vs-sip.html)
-- **Permisos de Edificación DOM en Santiago:** [Guía Permisos DOM](https://www.cuatropuntas.com/blog/posts/permisos-edificacion-dom-santiago-guia.html)
-- **Aislación Térmica OGUC Zona 3 RM:** [Normativa Aislación Térmica](https://www.cuatropuntas.com/blog/posts/aislacion-termica-zona-3-rm-oguc.html)
-- **Regularización de Ampliaciones y Segundos Pisos:** [Regularizar Ampliación](https://www.cuatropuntas.com/blog/posts/como-regularizar-ampliacion-segundo-piso-chile.html)
-- **Contrato a Suma Alzada:** [Contrato Construcción Protegido](https://www.cuatropuntas.com/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio.html)
-- **Presupuesto en Recintos Húmedos:** [Por qué Baño y Cocina no se cobran por m²](https://www.cuatropuntas.com/blog/posts/por-que-remodelar-bano-cocina-no-se-cobra-por-metro-cuadrado.html)
+- **Precios Generales por m² en Chile:** [Guía Precios Construcción](https://www.cuatropuntas.com/blog/posts/guia-precios-construccion-chile)
+- **Comparativa de Materiales (Metalcon vs Albañilería vs SIP):** [Comparativa Sistemas](https://www.cuatropuntas.com/blog/posts/metalcon-vs-albanileria-vs-sip)
+- **Permisos de Edificación DOM en Santiago:** [Guía Permisos DOM](https://www.cuatropuntas.com/blog/posts/permisos-edificacion-dom-santiago-guia)
+- **Aislación Térmica OGUC Zona 3 RM:** [Normativa Aislación Térmica](https://www.cuatropuntas.com/blog/posts/aislacion-termica-zona-3-rm-oguc)
+- **Regularización de Ampliaciones y Segundos Pisos:** [Regularizar Ampliación](https://www.cuatropuntas.com/blog/posts/como-regularizar-ampliacion-segundo-piso-chile)
+- **Contrato a Suma Alzada:** [Contrato Construcción Protegido](https://www.cuatropuntas.com/blog/posts/contrato-construccion-suma-alzada-proteger-patrimonio)
+- **Presupuesto en Recintos Húmedos:** [Por qué Baño y Cocina no se cobran por m²](https://www.cuatropuntas.com/blog/posts/por-que-remodelar-bano-cocina-no-se-cobra-por-metro-cuadrado)
 - **Catálogo Completo del Blog:** [Blog de Construcción y Arquitectura](https://www.cuatropuntas.com/blog)
 
 ---
