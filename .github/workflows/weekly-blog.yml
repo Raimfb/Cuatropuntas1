@@ -61,6 +61,20 @@ jobs:
       - name: Ejecutar Pruebas Automatizadas de Calidad
         run: npx playwright test tests/blog-automation.spec.js tests/blog-image-generation.spec.js
 
+      - name: Publicar Artículo Nuevo en Facebook (Meta Graph API)
+        if: success()
+        env:
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID || '386393411716633' }}
+          FB_PAGE_ACCESS_TOKEN: ${{ secrets.FB_PAGE_ACCESS_TOKEN }}
+        run: |
+          if [ -n "$FB_PAGE_ACCESS_TOKEN" ]; then
+            echo "🚀 Publicando nuevo artículo semanal en Facebook..."
+            node scripts/publish-facebook.js --mode=friday-new
+          else
+            echo "⚠️ FB_PAGE_ACCESS_TOKEN no configurado en Secrets. Generando tarjeta en modo simulación..."
+            node scripts/publish-facebook.js --mode=friday-new --dry-run
+          fi
+
       - name: Commit y Push de los Cambios Compilados a Main
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"

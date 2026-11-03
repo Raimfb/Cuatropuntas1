@@ -7,6 +7,8 @@ node_modules/
 .env*.local
 
 # Archivos de sistema y temporales
+__pycache__/
+*.pyc
 .DS_Store
 Thumbs.db
 desktop.ini
