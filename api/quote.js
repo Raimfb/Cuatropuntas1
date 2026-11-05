@@ -101,7 +101,7 @@ function resolveCommercialLabels({
     } else if (isRemodelacion) {
         tipoComercial = 'Remodelación';
     } else if (isAmpliacion) {
-        tipoComercial = 'Ampliación / Segundo Piso';
+        tipoComercial = 'Ampliación';
     } else if (isCasaNueva) {
         tipoComercial = 'Casa Nueva';
     }
@@ -127,7 +127,12 @@ function resolveCommercialLabels({
 
     // 3. Supresión de Pisos y Proyecto Resumen
     const noPisos = isQuincho || isRemodelacion;
-    const pisosComercial = noPisos ? null : `${pisosNum} piso${pisosNum > 1 ? 's' : ''}`;
+    let pisosComercial = null;
+    if (isAmpliacion) {
+        pisosComercial = (pisosNum === 2) ? '2º Piso (Sobreelevación)' : '1º Piso (Extensión)';
+    } else if (!noPisos) {
+        pisosComercial = `${pisosNum} ${pisosNum > 1 ? 'pisos' : 'piso'}`;
+    }
 
     let proyectoResumen = '';
     if (isQuincho) {
@@ -138,8 +143,14 @@ function resolveCommercialLabels({
         } else {
             proyectoResumen = `Remodelación (${areaNum} m² · ${sistemaComercial})`;
         }
+    } else if (isAmpliacion) {
+        if (pisosNum === 2) {
+            proyectoResumen = `Ampliación en 2º Piso / Sobreelevación (${areaNum} m² · ${sistemaComercial})`;
+        } else {
+            proyectoResumen = `Ampliación en 1º Piso (${areaNum} m² · ${sistemaComercial})`;
+        }
     } else {
-        proyectoResumen = `${tipoComercial} (${areaNum} m², ${pisosComercial} · ${sistemaComercial})`;
+        proyectoResumen = `Casa Nueva (${areaNum} m², ${pisosComercial}, ${sistemaComercial})`;
     }
 
     // 4. Permisos contextualizados por tipo
@@ -515,6 +526,8 @@ async function generatePdfBuffer(data) {
         doc.text(`• Sistema Constructivo: ${commercial.sistemaComercial}`, 55, cardTop + 20, { width: 240 });
         if (commercial.noPisos) {
             doc.text(`• Superficie: ${areaNum} m²`, 55, cardTop + 32);
+        } else if (commercial.isAmpliacion) {
+            doc.text(`• Superficie: ${areaNum} m² (Ubicación: ${commercial.pisosComercial})`, 55, cardTop + 32, { width: 245 });
         } else {
             doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 55, cardTop + 32);
         }
@@ -726,14 +739,14 @@ function generateEmailData(data) {
         <!-- Saludo cálido y validación de proyecto -->
         <p style="font-size: 16px; margin-bottom: 12px;">Estimado(a) <strong>${firstName}</strong>,</p>
         <p style="font-size: 15px; line-height: 1.6; color: #4a5568; margin-top: 0;">
-            Agradecemos tu interés en cotizar con nosotros. Planificar tu <strong>${tipo} de ${areaNum} m²</strong> en <strong>${comunaHuman}</strong> es una decisión fundamental para tu patrimonio familiar. En Cuatropuntas te acompañamos con respaldo técnico, rigor de ingeniería y absoluta transparencia contractual.
+            Agradecemos tu interés en cotizar con nosotros. Planificar tu <strong>${commercial.isAmpliacion ? (pisosNum === 2 ? `Ampliación en 2º Piso (Sobreelevación) de ${areaNum} m²` : `Ampliación en 1º Piso de ${areaNum} m²`) : `${tipo} de ${areaNum} m²`}</strong> en <strong>${comunaHuman}</strong> es una decisión fundamental para tu patrimonio familiar. En Cuatropuntas te acompañamos con respaldo técnico, rigor de ingeniería y absoluta transparencia contractual.
         </p>
 
         <!-- Tarjeta Resumen Visual Inmediato -->
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #c05621; border-radius: 6px; padding: 18px; margin: 20px 0;">
             <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
-                <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${commercial.noPisos ? `${tipo} (${areaNum} m²)` : `${tipo} (${areaNum} m² - ${commercial.pisosComercial})`}</td></tr>
+                <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${commercial.noPisos ? `${tipo} (${areaNum} m²)` : (commercial.isAmpliacion ? `Ampliación (${areaNum} m² - Ubicación: ${commercial.pisosComercial})` : `${tipo} (${areaNum} m² - ${commercial.pisosComercial})`)}</td></tr>
                 ${espacios_remodelar ? `<tr><td style="padding: 4px 0;"><strong>Recintos a remodelar:</strong></td><td>${espacios_remodelar}</td></tr>` : ''}
                 <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${commercial.sistemaComercial} (${terminaciones})</td></tr>
                 <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>

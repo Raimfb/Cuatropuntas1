@@ -72,8 +72,36 @@ test.describe('Spec 029: Corrección Crítica de Coherencia Comercial y Traducci
         expect(labelsCasa.sistemaComercial).toBe('Metalcom Estructural');
         expect(labelsCasa.noPisos).toBe(false);
         expect(labelsCasa.pisosComercial).toBe('2 pisos');
-        expect(labelsCasa.proyectoResumen).toContain('2 pisos');
+        expect(labelsCasa.proyectoResumen).toBe('Casa Nueva (120 m², 2 pisos, Metalcom Estructural)');
         expect(labelsCasa.permisosData.adminBadge).toBe('PROYECTO COMPLETO (Diseño + DOM + Construcción)');
+
+        // Spec 029.1: Ampliación en 2º Piso / Sobreelevación
+        const labelsAmp2 = resolveCommercialLabels({
+            tipo: 'Ampliacion',
+            sistema: 'Metalcon',
+            area: 45,
+            pisos: 2,
+            permisos: 'Idea'
+        });
+        expect(labelsAmp2.isAmpliacion).toBe(true);
+        expect(labelsAmp2.sistemaComercial).toBe('Metalcom Estructural');
+        expect(labelsAmp2.pisosComercial).toBe('2º Piso (Sobreelevación)');
+        expect(labelsAmp2.proyectoResumen).toBe('Ampliación en 2º Piso / Sobreelevación (45 m² · Metalcom Estructural)');
+        expect(labelsAmp2.proyectoResumen).not.toContain('2 pisos');
+
+        // Spec 029.1: Ampliación en 1º Piso (Extensión)
+        const labelsAmp1 = resolveCommercialLabels({
+            tipo: 'Ampliacion',
+            sistema: 'SIP',
+            area: 30,
+            pisos: 1,
+            permisos: 'Idea'
+        });
+        expect(labelsAmp1.isAmpliacion).toBe(true);
+        expect(labelsAmp1.sistemaComercial).toBe('Panel SIP Termoacústico');
+        expect(labelsAmp1.pisosComercial).toBe('1º Piso (Extensión)');
+        expect(labelsAmp1.proyectoResumen).toBe('Ampliación en 1º Piso (30 m² · Panel SIP Termoacústico)');
+        expect(labelsAmp1.proyectoResumen).not.toContain('1 piso');
     });
 
     test('T029.3: generateEmailData genera HTML coherente sin "1 piso", sin "Metalcon" crudo y con DOM desescalado para Quinchos', () => {
@@ -258,5 +286,65 @@ test.describe('Spec 029: Corrección Crítica de Coherencia Comercial y Traducci
             nodemailer.createTransport = origCreate;
             process.env.ZOHO_PASS = origPass;
         }
+    });
+
+    test('T029.7: Spec 029.1 - Email y PDF para Ampliación reflejan ubicación precisa y nunca "2 pisos"', async () => {
+        const { generateEmailData, generatePdfBuffer } = require(quoteApiPath);
+
+        const emailData = generateEmailData({
+            nombre: 'Carlos Vidal',
+            email: 'cvidal@gmail.com',
+            telefono: '+56 9 8888 7777',
+            tipo: 'Ampliacion',
+            sistema: 'Metalcon',
+            area: 40,
+            pisos: 2,
+            terminaciones: 'Estandar',
+            comuna: 'Ñuñoa',
+            permisos: 'Idea'
+        });
+
+        const html = emailData.html;
+        expect(html).toContain('Ampliación en 2º Piso (Sobreelevación) de 40 m²');
+        expect(html).toContain('Ubicación: 2º Piso (Sobreelevación)');
+        expect(html).not.toMatch(/Ampliación\s*\(40\s*m²\s*-\s*2\s*pisos\)/i);
+        expect(html).not.toMatch(/40\s*m²,\s*2\s*pisos/i);
+
+        const pdfBuffer = await generatePdfBuffer({
+            nombre: 'Carlos Vidal',
+            email: 'cvidal@gmail.com',
+            telefono: '+56 9 8888 7777',
+            tipo: 'Ampliacion',
+            sistema: 'Metalcon',
+            area: 40,
+            pisos: 2,
+            terminaciones: 'Estandar',
+            comuna: 'Ñuñoa',
+            permisos: 'Idea'
+        });
+
+        expect(Buffer.isBuffer(pdfBuffer)).toBe(true);
+        const matches = pdfBuffer.toString('binary').match(/\/Type\s*\/Page(?!\w)/g);
+        expect(matches ? matches.length : 0).toBe(1);
+
+        // Inspeccionar texto decodificado del PDF
+        const zlib = require('zlib');
+        let fullText = '';
+        const streamRegex = /stream\r?\n([\s\S]*?)\r?\nendstream/g;
+        let match;
+        const binaryStr = pdfBuffer.toString('binary');
+        while ((match = streamRegex.exec(binaryStr)) !== null) {
+            let streamData = Buffer.from(match[1], 'binary');
+            try {
+                streamData = zlib.inflateSync(streamData);
+            } catch (e) {}
+            const textMatches = streamData.toString('latin1').matchAll(/<([0-9a-fA-F]+)>/g);
+            for (const tm of textMatches) {
+                fullText += Buffer.from(tm[1], 'hex').toString('latin1') + ' ';
+            }
+        }
+        const cleanFullText = fullText.replace(/\s+/g, '');
+        expect(cleanFullText).toContain('Sobreelevación');
+        expect(fullText).not.toMatch(/40\s*m²\s*\(2\s*pisos\)/i);
     });
 });

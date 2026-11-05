@@ -102,9 +102,34 @@ Implementar una capa de traducción semántica y comercial centralizada (`resolv
 
 ---
 
-## 3. Plan de Verificación y Criterios de Aceptación
+## 4. Spec 029.1: Cierre de Coherencia en Ampliaciones y Selector de Remodelación
+
+### 4.1. Diagnóstico y Necesidad
+En proyectos de **Ampliación**, el parámetro `pisos` en el formulario representa la **ubicación** física de la intervención, no el número total de pisos de la casa:
+- `pisos: 2` = Sobreelevación en segundo piso sobre estructura preexistente.
+- `pisos: 1` = Extensión en primer piso hacia el patio o terreno.
+Expresar `Ampliación (40 m², 2 pisos)` confundía a los clientes, sugiriendo una ampliación de dos plantas completas.
+
+Asimismo, en **Remodelación**, el formulario web (`public/quote-wizard.js`) requería que las etiquetas visibles del selector `#qSistema` se sincronizaran con el vocabulario de intervención y materialidad actual ("Intervención en Tabiquería Liviana", "Intervención en Muros Sólidos", "Intervención en Estructura Mixta / Evaluar en terreno").
+
+### 4.2. Requerimientos Funcionales EARS (Spec 029.1)
+- **[EARS-029.1-01] Ubicación en Ampliaciones:**  
+  * **Cuando** `tipo === 'Ampliacion'`:
+    * Si `pisos == 2`: `pisosComercial` **DEBE** ser `"2º Piso (Sobreelevación)"` y `proyectoResumen` **DEBE** ser `"Ampliación en 2º Piso / Sobreelevación (${areaNum} m² · ${sistemaComercial})"`.
+    * Si `pisos == 1`: `pisosComercial` **DEBE** ser `"1º Piso (Extensión)"` y `proyectoResumen` **DEBE** ser `"Ampliación en 1º Piso (${areaNum} m² · ${sistemaComercial})"`.
+    * En correos y PDF, la ficha técnica debe desplegar `"Ubicación: ${pisosComercial}"` y jamás `"2 pisos"`.
+- **[EARS-029.1-02] Opciones del Selector de Remodelación:**  
+  * En `public/quote-wizard.js`, las opciones de `#qSistema` para Remodelación deben ser:
+    * `Metalcon`: `"Intervención en Tabiquería Liviana (Volcanita / Metalcom / Madera)"`
+    * `Albanileria`: `"Intervención en Muros Sólidos (Ladrillo / Hormigón)"`
+    * `SIP`: `"Intervención en Estructura Mixta / Evaluar en terreno"`
+
+---
+
+## 5. Plan de Verificación y Criterios de Aceptación
 1. **Prueba Unitaria de Traducción Semántica**: Un Quincho con `sistema: "Metalcon"`, `pisos: 1` y `permisos: "Idea"` produce `sistemaComercial: "Estructura en Pino Oregón / Madera Seleccionada"`, sin "1 piso", y con badge DOM desescalado.
 2. **Prueba de Remodelación**: Una remodelación con recintos "Baño y Cocina" genera `"Remodelación: Baño y Cocina (30 m² · Intervención en Tabiquería Liviana)"` sin "1 piso".
-3. **Prueba de Integridad PDF**: Los 4 tipos de proyecto generan PDFs de exactamente 1 página Letter sin romper layout.
-4. **Prueba del Agente Consultor**: El fallback y prompt del agente mencionan "Estructura en Pino Oregón" y no "Metalcon" ante un lead de quincho.
-5. **Regresión Cero**: Los 164 tests de Playwright se mantienen al 100% en verde.
+3. **Prueba de Ampliación (Spec 029.1)**: Una ampliación con `pisos: 2` genera `"Ampliación en 2º Piso / Sobreelevación (40 m² · Metalcom Estructural)"`, ficha técnica con `"Ubicación: 2º Piso (Sobreelevación)"` y nunca `"2 pisos"`.
+4. **Prueba de Integridad PDF**: Los 4 tipos de proyecto generan PDFs de exactamente 1 página Letter sin romper layout.
+5. **Prueba del Agente Consultor**: El fallback y prompt del agente mencionan "Estructura en Pino Oregón" y no "Metalcon" ante un lead de quincho.
+6. **Regresión Cero**: El 100% de la suite Playwright se mantiene en verde.

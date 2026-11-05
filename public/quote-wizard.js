@@ -89,9 +89,9 @@
             sistemaLabel: 'Materialidad Actual de los Muros a Intervenir',
             showSistema: true,
             sistemas: [
-                { value: "Metalcon", label: "Tabiquería Liviana (Volcanita / Metalcom / Madera)" },
-                { value: "Albanileria", label: "Muros Sólidos (Ladrillo / Hormigón en Casa o Depto.)" },
-                { value: "SIP", label: "Estructura Mixta / No estoy seguro (Evaluar en terreno)" }
+                { value: "Metalcon", label: "Intervención en Tabiquería Liviana (Volcanita / Metalcom / Madera)" },
+                { value: "Albanileria", label: "Intervención en Muros Sólidos (Ladrillo / Hormigón)" },
+                { value: "SIP", label: "Intervención en Estructura Mixta / Evaluar en terreno" }
             ],
             defaultSistema: 'Metalcon',
             areaPlaceholder: 'Ej: 4 (baño), 15 (cocina) o 50 (casa)',
