@@ -13,8 +13,12 @@ function getComunaLabel(comunaVal) {
     return `${comunaVal}, RM`;
 }
 
-// Mapeo y factores para Estado de Planos y Permisos DOM
-function getPermisosData(permisosKey) {
+// Mapeo y factores para Estado de Planos y Permisos DOM (Contextualizado según tipología)
+function getPermisosData(permisosKey, tipo = '') {
+    const normTipo = String(tipo || '').toLowerCase();
+    const isQuincho = normTipo.includes('quincho');
+    const isRemodelacion = normTipo.includes('remodela');
+
     switch (permisosKey) {
         case 'PermisoAprobado':
             return {
@@ -45,6 +49,16 @@ function getPermisosData(permisosKey) {
             };
         case 'Idea':
         default:
+            if (isQuincho || isRemodelacion) {
+                return {
+                    label: 'Evaluación de Factibilidad y Diseño en Terreno (Permiso municipal opcional según evaluación)',
+                    factor: 1.00,
+                    adminBadge: 'Evaluación de Factibilidad y Diseño en Terreno (Permiso municipal opcional según evaluación)',
+                    badgeShort: 'Eval. en Terreno',
+                    badgePdf: 'Eval. Terreno (DOM según caso)',
+                    notePdf: 'Evaluación técnica en terreno para determinar factibilidad y pertinencia municipal según características del proyecto.'
+                };
+            }
             return {
                 label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
                 factor: 1.00,
@@ -54,6 +68,98 @@ function getPermisosData(permisosKey) {
                 notePdf: 'Modalidad Llave en Mano Integral: incluye arquitectura, cálculo estructural, gestión DOM y ejecución de obra.'
             };
     }
+}
+
+/**
+ * Traduce parámetros técnicos internos a nombres comerciales y formatos humanos de alta coherencia.
+ * Spec 029 / EARS-029-01
+ */
+function resolveCommercialLabels({
+    tipo = '',
+    sistema = '',
+    area = 0,
+    pisos = 1,
+    terminaciones = 'Estandar',
+    permisos = 'Idea',
+    espacios_remodelar = '',
+    espacios = ''
+} = {}) {
+    const normTipo = String(tipo || '').toLowerCase();
+    const isQuincho = normTipo.includes('quincho');
+    const isRemodelacion = normTipo.includes('remodela');
+    const isAmpliacion = normTipo.includes('segundo') || normTipo.includes('amplia');
+    const isCasaNueva = !isQuincho && !isRemodelacion && !isAmpliacion;
+
+    const areaNum = parseFloat(area) || 0;
+    const pisosNum = parseInt(pisos) || 1;
+    const recintos = (espacios_remodelar || espacios || '').trim();
+
+    // 1. Nombre comercial de la tipología
+    let tipoComercial = tipo || 'Casa Nueva';
+    if (isQuincho) {
+        tipoComercial = 'Quincho';
+    } else if (isRemodelacion) {
+        tipoComercial = 'Remodelación';
+    } else if (isAmpliacion) {
+        tipoComercial = 'Ampliación / Segundo Piso';
+    } else if (isCasaNueva) {
+        tipoComercial = 'Casa Nueva';
+    }
+
+    // 2. Traducción de sistema según tipología
+    let sistemaComercial = sistema || 'Metalcom Estructural';
+    if (isQuincho) {
+        if (sistema === 'Metalcon') sistemaComercial = 'Estructura en Pino Oregón / Madera Seleccionada';
+        else if (sistema === 'SIP') sistemaComercial = 'Estructura Mixta con Cubierta Termoaislada';
+        else if (sistema === 'Albanileria') sistemaComercial = 'Perfilería de Acero y Albañilería a la Vista';
+    } else if (isRemodelacion) {
+        if (sistema === 'Metalcon') sistemaComercial = 'Intervención en Tabiquería Liviana';
+        else if (sistema === 'Albanileria') sistemaComercial = 'Intervención en Muros Sólidos / Albañilería';
+        else if (sistema === 'SIP') sistemaComercial = 'Intervención Mixta';
+    } else {
+        // Casa Nueva o Ampliación
+        if (sistema === 'Metalcon') sistemaComercial = 'Metalcom Estructural';
+        else if (sistema === 'SIP') sistemaComercial = 'Panel SIP Termoacústico';
+        else if (sistema === 'Albanileria') sistemaComercial = 'Albañilería Tradicional / Hormigón';
+        else if (sistema === 'Covintec') sistemaComercial = 'Panel SIP / Covintec Termoacústico';
+        else if (sistema === 'Mixto') sistemaComercial = 'Construcción Mixta';
+    }
+
+    // 3. Supresión de Pisos y Proyecto Resumen
+    const noPisos = isQuincho || isRemodelacion;
+    const pisosComercial = noPisos ? null : `${pisosNum} piso${pisosNum > 1 ? 's' : ''}`;
+
+    let proyectoResumen = '';
+    if (isQuincho) {
+        proyectoResumen = `Quincho (${areaNum} m² · ${sistemaComercial})`;
+    } else if (isRemodelacion) {
+        if (recintos) {
+            proyectoResumen = `Remodelación: ${recintos} (${areaNum} m² · ${sistemaComercial})`;
+        } else {
+            proyectoResumen = `Remodelación (${areaNum} m² · ${sistemaComercial})`;
+        }
+    } else {
+        proyectoResumen = `${tipoComercial} (${areaNum} m², ${pisosComercial} · ${sistemaComercial})`;
+    }
+
+    // 4. Permisos contextualizados por tipo
+    const permisosData = getPermisosData(permisos, tipo);
+
+    return {
+        isQuincho,
+        isRemodelacion,
+        isAmpliacion,
+        isCasaNueva,
+        tipoComercial,
+        sistemaComercial,
+        pisosComercial,
+        noPisos,
+        recintos,
+        proyectoResumen,
+        permisosData,
+        areaNum,
+        pisosNum
+    };
 }
 
 // Factor logístico interno por comuna en RM
@@ -179,7 +285,7 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
     if (terminaciones === 'Premium') multiplicador += 0.10; // Terminaciones Premium
 
     const factorComuna = getFactorComuna(comuna);
-    const permisosData = getPermisosData(permisos);
+    const permisosData = getPermisosData(permisos, tipo);
     const factorPermisos = permisosData.factor;
 
     const costoM2Final = baseUFm2 * multiplicador * factorComuna * factorPermisos;
@@ -223,6 +329,16 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
         ];
     }
 
+    const commercial = resolveCommercialLabels({
+        tipo,
+        sistema,
+        area: areaNum,
+        pisos: pisosNum,
+        terminaciones,
+        permisos,
+        espacios_remodelar: espaciosInput
+    });
+
     return {
         baseUFm2,
         multiplicador,
@@ -244,7 +360,8 @@ function calculateQuote({ tipo = '', sistema = '', area = 0, pisos = 1, terminac
         espacios_remodelar: espaciosInput,
         isHumedoPuro: spacesAnalysis.isHumedoPuro,
         tipoHumedo: spacesAnalysis.tipoHumedo,
-        notasAlcance
+        notasAlcance,
+        commercial
     };
 }
 
@@ -343,6 +460,15 @@ async function generatePdfBuffer(data) {
     const isQuincho = quote.isQuincho;
     const isRemodelacion = tipo.toLowerCase().includes("remodela");
     const calendarUrl = data.calendarUrl || "https://cal.com/cuatropuntas.com/visita-tecnica";
+    const commercial = data.commercial || quote.commercial || resolveCommercialLabels({
+        tipo,
+        sistema,
+        area: areaNum,
+        pisos: pisosNum,
+        terminaciones,
+        permisos,
+        espacios_remodelar
+    });
 
     const doc = new PDFDocument({ margin: 45, size: 'LETTER' });
     const buffers = [];
@@ -383,11 +509,15 @@ async function generatePdfBuffer(data) {
     doc.text(`• Tipo de Obra: ${tipo}`, 55, cardTop + 8);
     if (espacios_remodelar) {
         doc.text(`• Recintos: ${espacios_remodelar}`, 55, cardTop + 20, { width: 235 });
-        doc.text(`• Sistema Constructivo: ${sistema}`, 55, cardTop + 34);
-        doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''}) | Term.: ${terminaciones}`, 55, cardTop + 48);
+        doc.text(`• Sistema Constructivo: ${commercial.sistemaComercial}`, 55, cardTop + 34, { width: 235 });
+        doc.text(`• Superficie: ${areaNum} m² | Term.: ${terminaciones}`, 55, cardTop + 48, { width: 235 });
     } else {
-        doc.text(`• Sistema Constructivo: ${sistema}`, 55, cardTop + 20);
-        doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 55, cardTop + 32);
+        doc.text(`• Sistema Constructivo: ${commercial.sistemaComercial}`, 55, cardTop + 20, { width: 240 });
+        if (commercial.noPisos) {
+            doc.text(`• Superficie: ${areaNum} m²`, 55, cardTop + 32);
+        } else {
+            doc.text(`• Superficie: ${areaNum} m² (${pisosNum} piso${pisosNum > 1 ? 's' : ''})`, 55, cardTop + 32);
+        }
         doc.text(`• Nivel Terminaciones: ${terminaciones}`, 55, cardTop + 44);
     }
 
@@ -555,6 +685,15 @@ function generateEmailData(data) {
     const notasAlcance = data.notasAlcance || quote.notasAlcance || [];
     const isQuincho = quote.isQuincho;
     const isRemodelacion = tipo.toLowerCase().includes("remodela");
+    const commercial = data.commercial || quote.commercial || resolveCommercialLabels({
+        tipo,
+        sistema,
+        area: areaNum,
+        pisos: pisosNum,
+        terminaciones,
+        permisos,
+        espacios_remodelar
+    });
 
     const firstName = (nombre || '').trim().split(' ')[0] || 'Cliente';
     const cleanComuna = comunaHuman.split(',')[0].trim();
@@ -594,9 +733,9 @@ function generateEmailData(data) {
         <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #c05621; border-radius: 6px; padding: 18px; margin: 20px 0;">
             <h3 style="margin: 0 0 10px 0; color: #1a202c; font-size: 16px;">Ficha de Estimación Referencial</h3>
             <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #4a5568;">
-                <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${tipo} (${areaNum} m² - ${pisosNum} piso${pisosNum > 1 ? 's' : ''})</td></tr>
+                <tr><td style="padding: 4px 0; width: 40%;"><strong>Proyecto:</strong></td><td>${commercial.noPisos ? `${tipo} (${areaNum} m²)` : `${tipo} (${areaNum} m² - ${commercial.pisosComercial})`}</td></tr>
                 ${espacios_remodelar ? `<tr><td style="padding: 4px 0;"><strong>Recintos a remodelar:</strong></td><td>${espacios_remodelar}</td></tr>` : ''}
-                <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${sistema} (${terminaciones})</td></tr>
+                <tr><td style="padding: 4px 0;"><strong>Sistema Constructivo:</strong></td><td>${commercial.sistemaComercial} (${terminaciones})</td></tr>
                 <tr><td style="padding: 4px 0;"><strong>Sector de la obra:</strong></td><td>${comunaHuman}</td></tr>
                 <tr><td style="padding: 4px 0;"><strong>Planos / Permiso DOM:</strong></td><td>${permisosData.label}</td></tr>
                 <tr>
@@ -754,15 +893,25 @@ const quoteHandler = async (req, res) => {
             comunaHuman,
             isHumedoPuro,
             tipoHumedo,
-            notasAlcance
+            notasAlcance,
+            commercial: quoteCommercial
         } = quote;
 
+        const commercial = quoteCommercial || resolveCommercialLabels({
+            tipo,
+            sistema,
+            area: areaNum,
+            pisos: pisosNum,
+            terminaciones,
+            permisos,
+            espacios_remodelar
+        });
 
         // Enlace directo a WhatsApp para contacto interno comercial de Cuatropuntas
         const cleanClientPhone = (telefono || '').replace(/\D/g, '');
         const formattedClientPhone = cleanClientPhone.startsWith('56') ? cleanClientPhone : (cleanClientPhone.length === 9 ? `56${cleanClientPhone}` : cleanClientPhone);
 
-        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para tu proyecto de ${tipo} ${espacios_remodelar ? `(${espacios_remodelar}, ${areaNum} m²)` : `(${areaNum} m²)`}. ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
+        const adminWaText = encodeURIComponent(`Hola ${firstName}, te escribo de Constructora Cuatropuntas respecto a tu solicitud de cotización para ${commercial.proyectoResumen}. ¿Te parece si coordinamos una visita técnica a terreno para revisar los detalles de tu propiedad y afinar la propuesta?`);
         const adminReplyWaUrl = `https://wa.me/${formattedClientPhone}?text=${adminWaText}`;
 
         // --- PERSISTENCIA FAIL-SAFE EN GOOGLE SHEETS (Antes de SMTP) ---
@@ -770,10 +919,10 @@ const quoteHandler = async (req, res) => {
             nombre,
             email,
             telefono: formattedClientPhone,
-            tipo,
-            sistema,
+            tipo: commercial.tipoComercial,
+            sistema: commercial.sistemaComercial,
             areaNum,
-            pisosNum,
+            pisosNum: commercial.noPisos ? 1 : pisosNum,
             terminaciones,
             comunaHuman,
             permisosData,
@@ -798,7 +947,8 @@ const quoteHandler = async (req, res) => {
             maxUF,
             espacios_remodelar,
             notasAlcance,
-            calendarUrl
+            calendarUrl,
+            commercial
         });
 
         // --- PREPARACIÓN DE CORREO HIGH-TICKET AL CLIENTE ---
@@ -816,7 +966,8 @@ const quoteHandler = async (req, res) => {
             minUF,
             maxUF,
             espacios_remodelar,
-            notasAlcance
+            notasAlcance,
+            commercial
         });
 
         // --- ENVÍO DE CORREOS TRANSACCIONALES VÍA NODEMAILER ---
@@ -857,7 +1008,7 @@ const quoteHandler = async (req, res) => {
         const mailToAdmin = {
             from: `"Sitio Web Cuatropuntas" <${user}>`,
             to: 'contacto@cuatropuntas.com',
-            subject: `NUEVA COTIZACIÓN WEB: ${nombre} (${tipo} ${areaNum}m² - ${minUF}-${maxUF} UF) [${permisosData.badgeShort}] - ${comunaHuman.split(',')[0].trim()}`,
+            subject: `NUEVA COTIZACIÓN WEB: ${nombre} (${commercial.proyectoResumen} - ${minUF}-${maxUF} UF) [${permisosData.badgeShort}] - ${comunaHuman.split(',')[0].trim()}`,
             html: `
             <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #ffffff; border: 2px solid #c05621; border-radius: 8px; max-width: 600px;">
                 <h2 style="color: #c05621; margin-top: 0;">NUEVO CLIENTE HA COTIZADO EN LA WEB</h2>
@@ -867,7 +1018,7 @@ const quoteHandler = async (req, res) => {
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold; width: 30%;">Nombre:</td><td style="padding: 8px;">${nombre}</td></tr>
                     <tr><td style="padding: 8px; font-weight: bold;">Email:</td><td style="padding: 8px;"><a href="mailto:${email}">${email}</a></td></tr>
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Teléfono:</td><td style="padding: 8px;"><a href="tel:${telefono}">${telefono}</a></td></tr>
-                    <tr><td style="padding: 8px; font-weight: bold;">Proyecto:</td><td style="padding: 8px;"><strong>${tipo}</strong> (${areaNum} m², ${pisosNum} piso${pisosNum > 1 ? 's' : ''}, ${sistema})</td></tr>
+                    <tr><td style="padding: 8px; font-weight: bold;">Proyecto:</td><td style="padding: 8px;"><strong>${commercial.proyectoResumen}</strong></td></tr>
                     ${espacios_remodelar ? `<tr style="background-color: #fef3c7;"><td style="padding: 8px; font-weight: bold; color: #92400e;">Recintos Remodelar:</td><td style="padding: 8px; font-weight: bold; color: #92400e;">${espacios_remodelar}</td></tr>` : ''}
                     <tr style="background-color: #f7fafc;"><td style="padding: 8px; font-weight: bold;">Terminaciones:</td><td style="padding: 8px;">${terminaciones}</td></tr>
                     <tr><td style="padding: 8px; font-weight: bold;">Ubicación:</td><td style="padding: 8px;">${comunaHuman}</td></tr>
@@ -912,6 +1063,8 @@ const quoteHandler = async (req, res) => {
                 areaNum: areaNum,
                 comunaHuman: comunaHuman,
                 sistema: sistema,
+                sistemaComercial: commercial.sistemaComercial,
+                proyectoResumen: commercial.proyectoResumen,
                 minUF: minUF,
                 maxUF: maxUF,
                 permisos: permisosData ? permisosData.adminBadge : ''
@@ -926,7 +1079,7 @@ const quoteHandler = async (req, res) => {
             const phoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || "1221676334362871";
             if (token) {
                 const adminPhone = "56979092027";
-                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${tipo} ${espacios_remodelar ? `(${espacios_remodelar}, ${areaNum} m² - ${sistema})` : `(${areaNum} m² - ${sistema})`}\n*Sector*: ${comunaHuman.split(',')[0].trim()}\n*Estado DOM*: ${permisosData.adminBadge}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
+                const adminMsg = `*NUEVA COTIZACIÓN WEB CUATROPUNTAS*\n\n*Cliente*: ${nombre}\n*Teléfono*: ${telefono}\n*Email*: ${email}\n*Proyecto*: ${commercial.proyectoResumen}\n*Sector*: ${comunaHuman.split(',')[0].trim()}\n*Estado DOM*: ${permisosData.adminBadge}\n*Rango*: ${minUF} a ${maxUF} UF\n\n*Contactar*: https://wa.me/${formattedClientPhone}`;
                 
                 await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
                     method: 'POST',
@@ -968,6 +1121,7 @@ const quoteHandler = async (req, res) => {
 
 module.exports = quoteHandler;
 module.exports.calculateQuote = calculateQuote;
+module.exports.resolveCommercialLabels = resolveCommercialLabels;
 module.exports.analyzeRemodelingSpaces = analyzeRemodelingSpaces;
 module.exports.getComunaLabel = getComunaLabel;
 module.exports.getPermisosData = getPermisosData;
