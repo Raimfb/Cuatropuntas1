@@ -156,8 +156,8 @@
       "permiso edificacion"
     ],
     "intent": "plusvalia_patrimonio",
-    "used": false,
-    "lastUsedDate": null
+    "used": true,
+    "lastUsedDate": "2026-11-06"
   },
   {
     "id": "eg-11",
