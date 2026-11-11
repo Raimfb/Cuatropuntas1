@@ -78,7 +78,8 @@ function generateCard(slug) {
     const cardPath = path.join(CARDS_DIR, `${slug}.jpg`);
 
     console.log(`🎨 Generando tarjeta visual estilo Radio Bío Bío para '${slug}'...`);
-    const cmd = `python "${scriptPath}" --slug="${slug}" --output="${cardPath}"`;
+    const py = process.platform === 'win32' ? 'python' : 'python3';
+    const cmd = `${py} "${scriptPath}" --slug="${slug}" --output="${cardPath}"`;
     execSync(cmd, { stdio: 'inherit', cwd: ROOT_DIR });
 
     if (!fs.existsSync(cardPath)) {
@@ -184,6 +185,10 @@ async function main() {
         selectedPost = posts[0];
         if (!selectedPost) {
             console.log('ℹ️ No hay artículos en el blog.');
+            process.exit(0);
+        }
+        if (publishedSlugs.has(selectedPost.slug)) {
+            console.log(`ℹ️ El artículo más reciente '${selectedPost.slug}' ya está en Facebook. Nada que publicar.`);
             process.exit(0);
         }
         selectedPost.publishMode = 'friday-new';
