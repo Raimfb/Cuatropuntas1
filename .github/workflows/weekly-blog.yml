@@ -71,8 +71,8 @@ jobs:
             echo "🚀 Publicando nuevo artículo semanal en Facebook..."
             node scripts/publish-facebook.js --mode=friday-new
           else
-            echo "⚠️ FB_PAGE_ACCESS_TOKEN no configurado en Secrets. Generando tarjeta en modo simulación..."
-            node scripts/publish-facebook.js --mode=friday-new --dry-run
+            echo "ERROR: FB_PAGE_ACCESS_TOKEN no configurado en Secrets."
+            exit 1
           fi
 
       - name: Commit y Push de los Cambios Compilados a Main
