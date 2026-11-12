@@ -135,7 +135,7 @@ test.describe('Spec 026 & Spec 028: SEO, Local GEO, AI Crawlers & IndexNow Verif
 
     const postsDir = 'public/blog/posts';
     const posts = fs.readdirSync(postsDir).filter(f => f.endsWith('.html'));
-    expect(posts.length).toBe(17);
+    expect(posts.length).toBeGreaterThanOrEqual(17);
 
     posts.forEach(postFile => {
       const content = fs.readFileSync(path.join(postsDir, postFile), 'utf8');

@@ -238,7 +238,7 @@
                 </div>
             </div>
 
-            <form id="quoteForm" class="bg-white p-8 border border-gray-200 shadow-xl rounded-xl relative overflow-hidden">
+            <form id="quoteForm" novalidate class="bg-white p-8 border border-gray-200 shadow-xl rounded-xl relative overflow-hidden">
                 <!-- Step 1: Proyecto -->
                 <div id="step1" class="step-container transition-opacity duration-300">
                     <h3 class="text-lg font-bold mb-4">Detalles del Proyecto</h3>
@@ -332,7 +332,7 @@
                             </div>
                             <div id="qTipoSelectContainer" class="sr-only" style="position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;">
                                 <label for="qTipo">Tipo de Proyecto</label>
-                                <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full" required>
+                                <select id="qTipo" aria-label="Seleccionar tipo de proyecto" title="Seleccionar tipo de proyecto" class="w-full" tabindex="-1">
                                     ${tipoOptions}
                                 </select>
                             </div>
@@ -934,6 +934,26 @@
 
         form.addEventListener('submit', async function(e) {
             e.preventDefault();
+
+            const nombreEl = document.getElementById('qNombre');
+            const emailEl = document.getElementById('qEmail');
+            const telEl = document.getElementById('qTelefono');
+
+            if (nombreEl && !nombreEl.value.trim()) {
+                if (typeof nombreEl.reportValidity === 'function') nombreEl.reportValidity();
+                nombreEl.focus();
+                return;
+            }
+            if (emailEl && (!emailEl.value.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim()))) {
+                if (typeof emailEl.reportValidity === 'function') emailEl.reportValidity();
+                emailEl.focus();
+                return;
+            }
+            if (telEl && !telEl.value.trim()) {
+                if (typeof telEl.reportValidity === 'function') telEl.reportValidity();
+                telEl.focus();
+                return;
+            }
 
             const btn = document.getElementById('quoteSubmitBtn');
             const status = document.getElementById('quoteStatus');

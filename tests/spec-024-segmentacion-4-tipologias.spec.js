@@ -151,4 +151,50 @@ test.describe('Spec 024: Segmentación Visual de 4 Tipologías, Preselección We
         await expect(page.locator('.tipo-card[data-tipo-card="Remodelacion"]')).toHaveAttribute('aria-checked', 'true');
     });
 
+    test('T024.7: Sin bloqueos silenciosos en Mobile (375x667) y Desktop (1280x800) ni fugas de mailto en frontend', async ({ page }) => {
+        for (const vp of [{ width: 375, height: 667 }, { width: 1280, height: 800 }]) {
+            await page.setViewportSize(vp);
+            await page.goto(indexUrl, { waitUntil: 'domcontentloaded' });
+
+            // #qTipo oculto NO debe tener atributo required y #quoteForm debe tener novalidate
+            const qTipoHasRequired = await page.locator('#qTipo').evaluate(el => el.hasAttribute('required'));
+            expect(qTipoHasRequired).toBe(false);
+            const formHasNoValidate = await page.locator('#quoteForm').evaluate(el => el.hasAttribute('novalidate'));
+            expect(formHasNoValidate).toBe(true);
+
+            // Cero enlaces mailto:contacto@cuatropuntas.com en el DOM
+            await expect(page.locator('a[href^="mailto:"]')).toHaveCount(0);
+
+            await page.route('**/api/quote', async route => {
+                await route.fulfill({
+                    status: 200,
+                    contentType: 'application/json',
+                    body: JSON.stringify({
+                        success: true,
+                        message: 'Cotización generada y enviada correctamente',
+                        calendarUrl: 'https://cal.com/cuatropuntas.com/visita-tecnica'
+                    })
+                });
+            });
+
+            // Seleccionar Remodelación en tarjeta visual (que oculta Pisos y Permisos en Paso 2)
+            await page.locator('.tipo-card[data-tipo-card="Remodelacion"]').click();
+            await page.locator('[data-remodela-chip="Baño y Cocina"]').click();
+            await page.locator('#qArea').fill('15');
+            await page.locator('#step1 button:has-text("Siguiente")').click();
+
+            await expect(page.locator('#step2')).toBeVisible();
+            await page.locator('#qComuna').selectOption('Las Condes');
+            await page.locator('#step2 button:has-text("Siguiente")').click();
+
+            await expect(page.locator('#step3')).toBeVisible();
+            await page.locator('#qNombre').fill('Cliente Mobile Test');
+            await page.locator('#qEmail').fill('mobile@cuatropuntas.com');
+            await page.locator('#qTelefono').fill('912345678');
+            await page.locator('#quoteSubmitBtn').click();
+
+            await expect(page.locator('#stepSuccess')).toBeVisible({ timeout: 5000 });
+        }
+    });
+
 });
