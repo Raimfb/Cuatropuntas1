@@ -166,7 +166,7 @@ test.describe('Spec 013: Lógica Condicional y Alcance Específico para Remodela
         expect(emptySmallQuote.isHumedoPuro).toBe(false);
         expect(emptySmallQuote.notasAlcance.length).toBe(0);
 
-        // Casa Nueva no se ve afectada
+        // Casa Nueva no se ve afectada (1900 * 1.08 por permisos Idea = 2052)
         const casaQuote = calculateQuote({
             tipo: 'Casa Nueva',
             sistema: 'Metalcon',
@@ -176,7 +176,7 @@ test.describe('Spec 013: Lógica Condicional y Alcance Específico para Remodela
             permisos: 'Idea',
             espacios_remodelar: 'Cocina y baño' // No debe alterar casa nueva
         });
-        expect(casaQuote.totalEstimado).toBe(1900);
+        expect(casaQuote.totalEstimado).toBeCloseTo(2052, 2);
         expect(casaQuote.notasAlcance.length).toBe(0);
     });
 

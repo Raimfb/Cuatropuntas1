@@ -7,10 +7,10 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
         expect(typeof quoteModule.calculateQuote).toBe('function');
     });
 
-    test('Casas Nuevas 1 Piso: Matriz base oficial (19 UF Metalcom, 21 UF SIP, 25 UF Albañilería)', async () => {
+    test('Casas Nuevas 1 Piso: Matriz base oficial (19 UF Metalcom, 21 UF SIP, 25 UF Albañilería) + Factor Idea (+8%)', async () => {
         const { calculateQuote } = require('../api/quote');
 
-        // Metalcom: 19 UF/m²
+        // Metalcom: 19 UF/m² * 100 m² * 1.08 (Idea: Diseño + Cálculo + DOM) = 2052 UF
         const metalcomQuote = calculateQuote({
             tipo: 'Casa Nueva',
             sistema: 'Metalcon',
@@ -21,11 +21,12 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
             permisos: 'Idea'
         });
         expect(metalcomQuote.baseUFm2).toBe(19);
-        expect(metalcomQuote.totalEstimado).toBe(1900);
-        expect(metalcomQuote.minUF).toBe('1.824'); // 1900 * 0.96 = 1824
-        expect(metalcomQuote.maxUF).toBe('1.995'); // 1900 * 1.05 = 1995
+        expect(metalcomQuote.factorPermisos).toBe(1.08);
+        expect(metalcomQuote.totalEstimado).toBeCloseTo(2052, 2);
+        expect(metalcomQuote.minUF).toBe('1.970'); // Math.round(2052 * 0.96) = 1970
+        expect(metalcomQuote.maxUF).toBe('2.155'); // Math.round(2052 * 1.05) = 2155
 
-        // SIP: 21 UF/m²
+        // SIP: 21 UF/m² * 100 m² * 1.08 = 2268 UF
         const sipQuote = calculateQuote({
             tipo: 'Casa Nueva',
             sistema: 'SIP',
@@ -36,9 +37,9 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
             permisos: 'Idea'
         });
         expect(sipQuote.baseUFm2).toBe(21);
-        expect(sipQuote.totalEstimado).toBe(2100);
+        expect(sipQuote.totalEstimado).toBeCloseTo(2268, 2);
 
-        // Albañilería: 25 UF/m²
+        // Albañilería: 25 UF/m² * 100 m² * 1.08 = 2700 UF
         const albanileriaQuote = calculateQuote({
             tipo: 'Casa Nueva',
             sistema: 'Albañilería',
@@ -49,10 +50,10 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
             permisos: 'Idea'
         });
         expect(albanileriaQuote.baseUFm2).toBe(25);
-        expect(albanileriaQuote.totalEstimado).toBe(2500);
+        expect(albanileriaQuote.totalEstimado).toBeCloseTo(2700, 2);
     });
 
-    test('Segundos Pisos y Ampliaciones: Matriz base (22 UF Metalcom, 24 UF SIP, 27 UF Albañilería)', async () => {
+    test('Segundos Pisos y Ampliaciones: Matriz base (22 UF Metalcom, 24 UF SIP, 27 UF Albañilería) + Factor Idea (+8%)', async () => {
         const { calculateQuote } = require('../api/quote');
 
         const amplQuote = calculateQuote({
@@ -65,7 +66,8 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
             permisos: 'Idea'
         });
         expect(amplQuote.baseUFm2).toBe(22);
-        expect(amplQuote.totalEstimado).toBe(1100);
+        expect(amplQuote.factorPermisos).toBe(1.08);
+        expect(amplQuote.totalEstimado).toBeCloseTo(1188, 2); // 1100 * 1.08 = 1188
     });
 
     test('Quinchos de Alto Estándar: Matriz base (12 UF Metalcom, 15 UF Albañilería)', async () => {
@@ -121,7 +123,7 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
         expect(domQuote.factorPermisos).toBe(0.94);
         expect(domQuote.totalEstimado).toBe(1900 * 0.94);
 
-        // Terminaciones Premium aplica +10%
+        // Terminaciones Premium aplica +10% (y permisos Idea +8% en Casa Nueva)
         const premiumQuote = calculateQuote({
             tipo: 'Casa Nueva',
             sistema: 'Metalcon',
@@ -132,7 +134,50 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
             permisos: 'Idea'
         });
         expect(premiumQuote.multiplicador).toBe(1.10);
-        expect(premiumQuote.totalEstimado).toBe(1900 * 1.10);
+        expect(premiumQuote.factorPermisos).toBe(1.08);
+        expect(premiumQuote.totalEstimado).toBeCloseTo(1900 * 1.10 * 1.08, 2);
+    });
+
+    test('Spec 029.2: Calibración Sector Oriente (1.22) y Gestión Arquitectura/DOM (1.08) en Casa Nueva 100 m² Las Condes (~2.400 a 2.630 UF)', async () => {
+        const { calculateQuote, getFactorComuna, getPermisosData } = require('../api/quote');
+
+        // 1. Validar factor 1.22 en las 5 comunas del Sector Oriente (incluyendo variaciones de mayúsculas/tildes)
+        for (const comuna of ['Las Condes', 'VITACURA', 'Lo Barnechea', 'La Reina', 'Providencia', 'las condes']) {
+            expect(getFactorComuna(comuna)).toBe(1.22);
+        }
+        // Resto de comunas intactas
+        expect(getFactorComuna('Santiago Centro')).toBe(1.00);
+        expect(getFactorComuna('Ñuñoa')).toBe(1.00);
+        expect(getFactorComuna('Colina (Chicureo)')).toBe(0.98);
+        expect(getFactorComuna('Pirque')).toBe(0.98);
+
+        // 2. Validar factorPermisos para 'Idea' según tipología
+        expect(getPermisosData('Idea', 'Casa Nueva').factor).toBe(1.08);
+        expect(getPermisosData('Idea', 'Ampliacion').factor).toBe(1.08);
+        expect(getPermisosData('Idea', 'Quincho').factor).toBe(1.00);
+        expect(getPermisosData('Idea', 'Remodelacion').factor).toBe(1.00);
+
+        // 3. Caso objetivo: Casa Nueva 100 m² en Las Condes (Metalcon, Estándar, Idea)
+        // Subtotal = 19 * 100 * 1.22 * 1.08 = 2503.44 UF -> Rango: 2.403 a 2.629 UF + IVA
+        const lasCondesQuote = calculateQuote({
+            tipo: 'Casa Nueva',
+            sistema: 'Metalcon',
+            area: 100,
+            pisos: 1,
+            terminaciones: 'Estandar',
+            comuna: 'Las Condes',
+            permisos: 'Idea'
+        });
+
+        expect(lasCondesQuote.factorComuna).toBe(1.22);
+        expect(lasCondesQuote.factorPermisos).toBe(1.08);
+        expect(lasCondesQuote.totalEstimado).toBeCloseTo(2503.44, 2);
+        expect(lasCondesQuote.minUF_raw).toBeGreaterThanOrEqual(2400);
+        expect(lasCondesQuote.minUF_raw).toBeLessThanOrEqual(2410);
+        expect(lasCondesQuote.maxUF_raw).toBeGreaterThanOrEqual(2620);
+        expect(lasCondesQuote.maxUF_raw).toBeLessThanOrEqual(2635);
+        expect(lasCondesQuote.minUF).toBe('2.403');
+        expect(lasCondesQuote.maxUF).toBe('2.629');
     });
 
     test('Persistencia Fail-Safe: Resiliencia de persistLeadToGoogleSheets ante URL no configurada o error', async () => {

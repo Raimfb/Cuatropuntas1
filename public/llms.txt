@@ -39,6 +39,7 @@
 - **Quinchos:** Metalcom desde 12 UF/m² | Albañilería en obra desde 15 UF/m².
 - **Remodelaciones Integrales (>25 m²):** Desde 11 UF/m² en Metalcom y 13 UF/m² en Albañilería.
 - **Remodelación de Baños y Cocinas:** Se cotizan por paquete de partidas e inspección técnica de cañerías/redes (no por m² lineal). Rango referencial: Baño Completo 65 a 95 UF | Cocina Integral 90 a 160 UF.
+- **Factores de Ajuste Paramétrico:** Sector Oriente (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia: +22% por exigencias normativas y logísticas), Proyecto desde cero con arquitectura, cálculo y gestión DOM incluidos (+8% en obra nueva y ampliaciones).
 
 ## Canales de Atención y Contacto
 - **WhatsApp Oficial:** [+56 9 2738 4075](https://wa.me/56927384075)

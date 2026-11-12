@@ -29,7 +29,7 @@ Esta especificación define los requisitos funcionales y no funcionales para la 
   - **Remodelaciones de Recintos Pequeños:**
     - Baños (área ≤ 8 m²): Base mínima técnica fija de 60 a 70 UF según sistema y terminaciones.
     - Cocinas / Medianos (8 m² < área < 20 m²): Base mínima técnica fija de 85 a 98 UF según sistema y terminaciones.
-  - **Factores de Ajuste:** Escala pequeña (<40 m²: +8%), Terminaciones Premium (+10%), Comuna (Oriente: 1.05, Periferia: 0.98, General: 1.00), Permisos DOM (Idea: 1.0, Planos: 0.97, PermisoAprobado: 0.94, ArquitectoPropio: 0.94).
+  - **Factores de Ajuste:** Escala pequeña (<40 m²: +8%), Terminaciones Premium (+10%), Comuna (Oriente: 1.22, Periferia: 0.98, General: 1.00), Permisos DOM (Idea en Casa Nueva/Ampliación: 1.08, Idea en Quincho/Remodelación: 1.00, Planos: 0.97, PermisoAprobado: 0.94, ArquitectoPropio: 0.94).
   - **Rango Comercial:** Min UF = Math.round(Total * 0.96), Max UF = Math.round(Total * 1.05).
 * **REQ-EVT-03 [Fail-Safe Persist]:** TRAS calcular la cotización y ANTES de intentar el despacho SMTP, el sistema DEBE registrar de forma permanente los datos del lead en Google Sheets a través de una integración segura (Webhook HTTPS o Google Sheets API).
 * **REQ-EVT-04:** CUANDO la persistencia fail-safe haya sido confirmada o procesada, el sistema DEBE generar el documento PDF referencial en memoria mediante `pdfkit` conteniendo la ficha técnica, desglose y botón interactivo hacia Cal.com.

@@ -56,6 +56,10 @@ Valores netos (+IVA) vigentes para la Región Metropolitana:
 - **Baño Completo:** **65 a 95 UF** (impermeabilización, fontanería, shower door, revestimientos y artefactos).
 - **Cocina Integral:** **90 a 160 UF** (muebles a medida, cubiertas de cuarzo, redes sanitarias y gas TE1).
 
+### F. Factores de Calibración Territorial y Gestión Técnica (DOM)
+- **Sector Oriente (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia):** Factor territorial `1.22` (+22%) por exigencias normativas municipales, logísticas y de terminaciones del sector.
+- **Arquitectura, Cálculo y Tramitación DOM (`permisos: Idea`):** En proyectos estructurales mayores (`Casa Nueva` y `Ampliación`), la modalidad desde cero que incluye diseño de arquitectura, ingeniería de cálculo y gestión municipal DOM aplica un factor de `1.08` (+8%). En `Quincho` y `Remodelación`, el factor se mantiene en `1.00` (evaluación en terreno).
+
 ---
 
 ## 4. Guía de Subsidios Habitacionales MINVU

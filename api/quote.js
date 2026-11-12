@@ -61,7 +61,7 @@ function getPermisosData(permisosKey, tipo = '') {
             }
             return {
                 label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
-                factor: 1.00,
+                factor: 1.08, // +8% por diseño de arquitectura, cálculo estructural y tramitación DOM incluidos
                 adminBadge: 'PROYECTO COMPLETO (Diseño + DOM + Construcción)',
                 badgeShort: 'Desde Cero',
                 badgePdf: 'Diseño + DOM + Obra',
@@ -176,11 +176,11 @@ function resolveCommercialLabels({
 // Factor logístico interno por comuna en RM
 function getFactorComuna(comunaVal) {
     if (!comunaVal) return 1.0;
-    const name = String(comunaVal).toLowerCase();
+    const name = String(comunaVal).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     if (name.includes('vitacura') || name.includes('las condes') || name.includes('lo barnechea') || name.includes('providencia') || name.includes('la reina') || name === 'tier1') {
-        return 1.05;
+        return 1.22;
     }
-    if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacaví') || name.includes('alhué') || name.includes('pirque') || name.includes('san josé de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maría pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
+    if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacavi') || name.includes('alhue') || name.includes('pirque') || name.includes('san jose de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maria pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
         return 0.98;
     }
     return 1.00;

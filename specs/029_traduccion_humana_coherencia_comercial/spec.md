@@ -126,10 +126,26 @@ Asimismo, en **Remodelación**, el formulario web (`public/quote-wizard.js`) req
 
 ---
 
-## 5. Plan de Verificación y Criterios de Aceptación
+## 5. Spec 029.2: Calibración de Márgenes en Sector Oriente y Gestión Arquitectura/DOM
+
+### 5.1. Diagnóstico y Necesidad
+En cotizaciones residenciales mayores (`Casa Nueva`, `Ampliación`) en comunas del Sector Oriente (`Las Condes`, `Vitacura`, `Lo Barnechea`, `La Reina`, `Providencia`) con modalidad `permisos: 'Idea'` (Diseño, cálculo y gestión DOM incluidos), el factor territorial previo (`1.05`) y el factor de arquitectura/DOM (`1.00`) comprimían el margen operativo frente a las exigencias normativas, logísticas y de terminaciones del sector.
+
+### 5.2. Requerimientos Funcionales EARS (Spec 029.2)
+- **[EARS-029.2-01] Multiplicador Territorial Sector Oriente (`1.22`):**
+  * En `getFactorComuna(comunaVal)` (`api/quote.js`), para **Las Condes, Vitacura, Lo Barnechea, La Reina y Providencia** (normalizando mayúsculas y tildes, además de `tier1`), el factor territorial **DEBE** ser `1.22` (+22%).
+  * El resto de comunas de la Región Metropolitana mantiene sus factores intactos (`0.98` periferia/parcelas, `1.00` general RM).
+- **[EARS-029.2-02] Factor de Arquitectura, Cálculo y Tramitación DOM (`permisos === 'Idea'`):**
+  * En proyectos estructurales mayores (`Casa Nueva` o `Ampliación` / `Segundo Piso`), cuando `permisos === 'Idea'` (o por defecto), `getPermisosData` **DEBE** aplicar un factor de `1.08` (+8%) por concepto de arquitectura, cálculo estructural y gestión DOM incluidos.
+  *En `Quincho` y `Remodelacion`, cuando `permisos === 'Idea'`, el factor se mantiene en `1.00` (evaluación en terreno opcional).
+
+---
+
+## 6. Plan de Verificación y Criterios de Aceptación
 1. **Prueba Unitaria de Traducción Semántica**: Un Quincho con `sistema: "Metalcon"`, `pisos: 1` y `permisos: "Idea"` produce `sistemaComercial: "Estructura en Pino Oregón / Madera Seleccionada"`, sin "1 piso", y con badge DOM desescalado.
 2. **Prueba de Remodelación**: Una remodelación con recintos "Baño y Cocina" genera `"Remodelación: Baño y Cocina (30 m² · Intervención en Tabiquería Liviana)"` sin "1 piso".
 3. **Prueba de Ampliación (Spec 029.1)**: Una ampliación con `pisos: 2` genera `"Ampliación en 2º Piso / Sobreelevación (40 m² · Metalcom Estructural)"`, ficha técnica con `"Ubicación: 2º Piso (Sobreelevación)"` y nunca `"2 pisos"`.
-4. **Prueba de Integridad PDF**: Los 4 tipos de proyecto generan PDFs de exactamente 1 página Letter sin romper layout.
-5. **Prueba del Agente Consultor**: El fallback y prompt del agente mencionan "Estructura en Pino Oregón" y no "Metalcon" ante un lead de quincho.
-6. **Regresión Cero**: El 100% de la suite Playwright se mantiene en verde.
+4. **Prueba de Calibración Sector Oriente y DOM (Spec 029.2)**: `Casa Nueva` de 100 m² en `Las Condes` (`Metalcon`, `Estandar`, `Idea`) aplica `factorComuna = 1.22` y `factorPermisos = 1.08`, calculando un rango de `2.400` a `2.630 UF` + IVA (`minUF: "2.400"`, `maxUF: "2.625"`).
+5. **Prueba de Integridad PDF**: Los 4 tipos de proyecto generan PDFs de exactamente 1 página Letter sin romper layout.
+6. **Prueba del Agente Consultor**: El fallback y prompt del agente mencionan "Estructura en Pino Oregón" y no "Metalcon" ante un lead de quincho.
+7. **Regresión Cero**: El 100% de la suite Playwright se mantiene en verde.
