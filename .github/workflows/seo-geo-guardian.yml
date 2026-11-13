@@ -1,0 +1,50 @@
+name: Daily SEO & GEO Guardian Audit
+
+on:
+  schedule:
+    # Ejecución diaria a las 11:00 UTC (08:00 AM hora de Chile Continental)
+    - cron: '0 11 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Ejecutar en modo dry-run (sin despachar correos de alerta)'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: read
+
+jobs:
+  seo-geo-guardian:
+    name: Auditoría Diaria SEO / GEO (3 Capas)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del Repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Instalar Dependencias
+        run: npm ci
+
+      - name: Ejecutar Agente Guardián SEO / GEO Diario
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST || 'smtp.zoho.com' }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT || '465' }}
+          SMTP_USER: ${{ secrets.SMTP_USER || secrets.ZOHO_USER || 'contacto@cuatropuntas.com' }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS || secrets.ZOHO_PASS }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GOOGLE_GENERATIVE_AI_API_KEY }}
+          GOOGLE_GENERATIVE_AI_API_KEY: ${{ secrets.GOOGLE_GENERATIVE_AI_API_KEY || secrets.GEMINI_API_KEY }}
+          WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+          WHATSAPP_PHONE_NUMBER_ID: ${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+        run: |
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            node scripts/seo-geo-guardian.js --dry-run
+          else
+            node scripts/seo-geo-guardian.js
+          fi
