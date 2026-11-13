@@ -17,6 +17,7 @@ const nodemailer = require('nodemailer');
 try { require('dotenv').config(); } catch (e) {}
 
 const DEFAULT_BASE_URL = 'https://www.cuatropuntas.com';
+const DEFAULT_WHATSAPP_PHONE_NUMBER_ID = '1243578125508024';
 
 // Lista oficial de Crawlers clásicos y generativos a simular (Capa 1)
 const AI_AND_SEARCH_CRAWLERS = [
@@ -532,7 +533,7 @@ async function dispatchCriticalAlerts(criticalFindings, summaryMarkdown, options
 
     // Alerta opcional por WhatsApp Cloud API al contacto comercial oficial (56979092027)
     const waToken = process.env.WHATSAPP_TOKEN;
-    const waPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || '1221676334362871';
+    const waPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || process.env.WHATSAPP_PHONE_ID || DEFAULT_WHATSAPP_PHONE_NUMBER_ID;
     if (waToken) {
         try {
             const adminPhone = '56979092027';
@@ -556,7 +557,17 @@ async function dispatchCriticalAlerts(criticalFindings, summaryMarkdown, options
                     text: { body: alertText }
                 })
             });
+            let waData = {};
+            if (typeof res.json === 'function') {
+                waData = await res.json().catch(() => ({}));
+            }
             whatsappSent = res.ok;
+            if (!res.ok) {
+                console.warn(`⚠️ Aviso WhatsApp rechazado por Meta API (HTTP ${res.status}, Phone ID: ${waPhoneId}):`, JSON.stringify(waData));
+            } else {
+                const messageId = waData?.messages?.[0]?.id || 'sin-id';
+                console.log(`✅ Alerta WhatsApp aceptada por Meta API para ${adminPhone} (Phone ID: ${waPhoneId}, wamid: ${messageId}).`);
+            }
         } catch (waErr) {
             console.warn('⚠️ Aviso WhatsApp opcional no despachado:', waErr.message);
         }
@@ -764,6 +775,9 @@ if (require.main === module) {
             console.log(result.markdownReport);
             console.log(`\n📊 Resumen Final: ${result.okCount} OK | ${result.warningCount} ADVERTENCIAS | ${result.criticalCount} CRÍTICOS`);
             if (result.criticalCount > 0) {
+                if (result.alertStatus) {
+                    console.log(`📣 Estado de alertas: email=${result.alertStatus.emailed}, whatsapp=${result.alertStatus.whatsappSent}`);
+                }
                 console.error(`❌ Se detectaron ${result.criticalCount} errores CRÍTICOS en producción.`);
                 process.exit(1);
             }
@@ -780,6 +794,7 @@ module.exports = {
     AI_AND_SEARCH_CRAWLERS,
     CRAWLER_TARGET_PATHS,
     SSOT_SCHEMA_PRICE_RULES,
+    DEFAULT_WHATSAPP_PHONE_NUMBER_ID,
     validateRobotsTxt,
     validateCleanUrlsInArtifact,
     validatePageSchemas,

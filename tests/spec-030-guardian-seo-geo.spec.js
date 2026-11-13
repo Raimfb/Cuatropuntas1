@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const {
+    DEFAULT_WHATSAPP_PHONE_NUMBER_ID,
     validateRobotsTxt,
     validateCleanUrlsInArtifact,
     validatePageSchemas
@@ -93,6 +94,11 @@ test.describe('Spec 030: Agente Guardián SEO / GEO Diario (Autonomous Monitor)'
         expect(yamlContent).toContain('SMTP_USER');
         expect(yamlContent).toContain('SMTP_PASS');
         expect(yamlContent).toContain('GEMINI_API_KEY');
+        expect(yamlContent).toContain('WHATSAPP_TOKEN');
+        expect(yamlContent).toContain('WHATSAPP_PHONE_NUMBER_ID');
+        expect(yamlContent).toContain('WHATSAPP_PHONE_ID');
+        expect(yamlContent).toContain('1243578125508024');
+        expect(DEFAULT_WHATSAPP_PHONE_NUMBER_ID).toBe('1243578125508024');
         expect(yamlContent).toContain('node scripts/seo-geo-guardian.js');
     });
 
