@@ -5,6 +5,10 @@ const path = require('path');
 const { execFileSync } = require('child_process');
 const {
     DEFAULT_WHATSAPP_PHONE_NUMBER_ID,
+    DEFAULT_WHATSAPP_ALERT_TEMPLATE,
+    DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG,
+    buildWhatsAppTemplatePayload,
+    dispatchCriticalAlerts,
     validateRobotsTxt,
     validateCleanUrlsInArtifact,
     validatePageSchemas
@@ -98,8 +102,85 @@ test.describe('Spec 030: Agente Guardián SEO / GEO Diario (Autonomous Monitor)'
         expect(yamlContent).toContain('WHATSAPP_PHONE_NUMBER_ID');
         expect(yamlContent).toContain('WHATSAPP_PHONE_ID');
         expect(yamlContent).toContain('1243578125508024');
+        expect(yamlContent).toContain('WHATSAPP_ALERT_TEMPLATE');
         expect(DEFAULT_WHATSAPP_PHONE_NUMBER_ID).toBe('1243578125508024');
+        expect(DEFAULT_WHATSAPP_ALERT_TEMPLATE).toBe('alerta_guardian_cuatropuntas');
+        expect(DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG).toBe('es');
         expect(yamlContent).toContain('node scripts/seo-geo-guardian.js');
+    });
+
+    test('T030.4: dispatchCriticalAlerts prioriza type:"template" y solo usa fallback type:"text" si falla la plantilla', async () => {
+        const sampleFindings = [
+            { layer: 'HTTP', target: 'https://www.cuatropuntas.com/', message: 'Timeout\n\tcrítico    detectado' }
+        ];
+
+        const payload = buildWhatsAppTemplatePayload('56979092027', sampleFindings);
+        expect(payload.type).toBe('template');
+        expect(payload.template.name).toBe('alerta_guardian_cuatropuntas');
+        expect(payload.template.language.code).toBe('es');
+        const bodyParams = payload.template.components[0].parameters;
+        expect(bodyParams[0].text).toBe('1');
+        expect(bodyParams[1].text).not.toMatch(/[\r\n\t]/);
+        expect(bodyParams[1].text).not.toMatch(/\s{2,}/);
+
+        const prevToken = process.env.WHATSAPP_TOKEN;
+        const prevZoho = process.env.ZOHO_PASS;
+        const prevSmtp = process.env.SMTP_PASS;
+        process.env.WHATSAPP_TOKEN = 'test-guardian-token';
+        delete process.env.ZOHO_PASS;
+        delete process.env.SMTP_PASS;
+
+        try {
+            // Caso 1: Plantilla aprobada responde OK -> NO debe llamar fallback type:"text"
+            const callsOk = [];
+            const resOk = await dispatchCriticalAlerts(sampleFindings, '', {
+                fetchImpl: async (url, init) => {
+                    callsOk.push({ url, body: JSON.parse(init.body) });
+                    return {
+                        ok: true,
+                        status: 200,
+                        json: async () => ({ messages: [{ id: 'wamid.test.template.ok' }] })
+                    };
+                }
+            });
+            expect(callsOk).toHaveLength(1);
+            expect(callsOk[0].body.type).toBe('template');
+            expect(callsOk[0].body.to).toBe('56979092027');
+            expect(resOk.whatsappSent).toBe(true);
+            expect(resOk.whatsappMode).toBe('template');
+            expect(resOk.whatsappMessageId).toBe('wamid.test.template.ok');
+
+            // Caso 2: Plantilla falla HTTP 400 -> activa fallback type:"text"
+            const callsFallback = [];
+            const resFallback = await dispatchCriticalAlerts(sampleFindings, '', {
+                fetchImpl: async (url, init) => {
+                    const body = JSON.parse(init.body);
+                    callsFallback.push({ url, body });
+                    if (body.type === 'template') {
+                        return {
+                            ok: false,
+                            status: 400,
+                            json: async () => ({ error: { message: 'Template not ready' } })
+                        };
+                    }
+                    return {
+                        ok: true,
+                        status: 200,
+                        json: async () => ({ messages: [{ id: 'wamid.test.text.fallback' }] })
+                    };
+                }
+            });
+            expect(callsFallback).toHaveLength(2);
+            expect(callsFallback[0].body.type).toBe('template');
+            expect(callsFallback[1].body.type).toBe('text');
+            expect(resFallback.whatsappSent).toBe(true);
+            expect(resFallback.whatsappMode).toBe('text-fallback');
+            expect(resFallback.whatsappMessageId).toBe('wamid.test.text.fallback');
+        } finally {
+            if (prevToken === undefined) delete process.env.WHATSAPP_TOKEN; else process.env.WHATSAPP_TOKEN = prevToken;
+            if (prevZoho !== undefined) process.env.ZOHO_PASS = prevZoho;
+            if (prevSmtp !== undefined) process.env.SMTP_PASS = prevSmtp;
+        }
     });
 
 });

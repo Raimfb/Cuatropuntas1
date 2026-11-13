@@ -98,3 +98,19 @@ Toda API, cotizador, prompt de IA, catálogo Markdown (`/api/markdown`), servido
 * **Definición de Éxito:** Traducir los requisitos en criterios de aceptación técnicos y ejecutables (ej. `node -c api/quote.js` sale con código 0; test unitario valida cálculo de 100 m² = 1900 UF).
 * **Planificación por Pasos Atómicos:** Dividir tareas complejas en pasos secuenciales con comando o prueba de verificación inmediata.
 * **Bucle Autónomo de Verificación:** Ejecutar linters, sintaxis y tests localmente para corregir cualquier anomalía antes de declarar una tarea completada.
+
+---
+
+## 5. Identidad de Despliegue Oficial (SSOT)
+
+* **Hosting / Plataforma:** Vercel
+* **Cuenta CLI Autenticada:** `vyxacore`
+* **Team / Org ID:** `raimundos-projects-38804fa5` (`team_pmn9ShRKvcKBYeho2wp2DFhC`)
+* **Proyecto Vercel:** `cuatropuntas1` (`prj_6N8A2Djz74DVZ9pVtCkE5YKD3zIo`)
+* **URL Oficial de Producción:** `https://www.cuatropuntas.com`
+* **Repositorio Git (`origin`):** `https://github.com/Raimfb/Cuatropuntas1.git` (rama `main`)
+* **Meta WhatsApp Cloud API (Producción):**
+  - **Business ID:** `1885604828125767`
+  - **WABA ID:** `910870268041946` (`Cuatropuntas SPA`)
+  - **Phone Number ID Activo (`+56 9 2738 4075`):** `1243578125508024`
+

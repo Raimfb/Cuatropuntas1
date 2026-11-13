@@ -18,6 +18,8 @@ try { require('dotenv').config(); } catch (e) {}
 
 const DEFAULT_BASE_URL = 'https://www.cuatropuntas.com';
 const DEFAULT_WHATSAPP_PHONE_NUMBER_ID = '1243578125508024';
+const DEFAULT_WHATSAPP_ALERT_TEMPLATE = 'alerta_guardian_cuatropuntas';
+const DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG = 'es';
 
 // Lista oficial de Crawlers clásicos y generativos a simular (Capa 1)
 const AI_AND_SEARCH_CRAWLERS = [
@@ -462,6 +464,71 @@ async function runGeoGeminiProbing(llmsTxtExcerpt = '') {
 }
 
 /**
+ * Construye el payload type:"template" para alertas críticas fuera de la ventana de 24h.
+ * Sanitiza saltos de línea y espacios consecutivos (regla Meta Cloud API #132018).
+ */
+function buildWhatsAppTemplatePayload(to, criticalFindings, templateName = DEFAULT_WHATSAPP_ALERT_TEMPLATE, templateLang = DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG) {
+    const rawSummary = criticalFindings
+        .slice(0, 4)
+        .map(f => `[${f.target}] ${f.message}`)
+        .join(' | ');
+    const sanitizedSummary = rawSummary
+        .replace(/[\r\n\t]+/g, ' ')
+        .replace(/\s{2,}/g, ' ')
+        .trim()
+        .slice(0, 800) || 'Revisar detalle en consola de monitoreo';
+
+    const template = {
+        name: templateName,
+        language: { code: templateLang }
+    };
+
+    if (templateName !== 'hello_world') {
+        template.components = [
+            {
+                type: 'body',
+                parameters: [
+                    { type: 'text', text: String(criticalFindings.length) },
+                    { type: 'text', text: sanitizedSummary }
+                ]
+            }
+        ];
+    }
+
+    return {
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to,
+        type: 'template',
+        template
+    };
+}
+
+/**
+ * Envía un mensaje a Meta WhatsApp Cloud API y normaliza respuesta/wamid.
+ */
+async function postWhatsAppMessage(fetchImpl, waPhoneId, waToken, payload) {
+    const res = await fetchImpl(`https://graph.facebook.com/v20.0/${waPhoneId}/messages`, {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${waToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+    let waData = {};
+    if (typeof res.json === 'function') {
+        waData = await res.json().catch(() => ({}));
+    }
+    return {
+        ok: Boolean(res.ok),
+        status: res.status,
+        data: waData,
+        messageId: waData?.messages?.[0]?.id || 'sin-id'
+    };
+}
+
+/**
  * Envía alertas ejecutivas a contacto@cuatropuntas.com (y WhatsApp opcional) solo cuando hay fallos CRÍTICOS y no es --dry-run
  */
 async function dispatchCriticalAlerts(criticalFindings, summaryMarkdown, options = {}) {
@@ -471,6 +538,9 @@ async function dispatchCriticalAlerts(criticalFindings, summaryMarkdown, options
 
     let emailed = false;
     let whatsappSent = false;
+    let whatsappMode = null;
+    let whatsappTemplate = null;
+    let whatsappMessageId = null;
 
     const smtpHost = process.env.SMTP_HOST || 'smtp.zoho.com';
     const smtpPort = Number(process.env.SMTP_PORT || 465);
@@ -532,48 +602,65 @@ async function dispatchCriticalAlerts(criticalFindings, summaryMarkdown, options
     }
 
     // Alerta opcional por WhatsApp Cloud API al contacto comercial oficial (56979092027)
+    // Prioriza envío 24/7 con plantilla aprobada (type: "template") y usa fallback type: "text" solo si falla
     const waToken = process.env.WHATSAPP_TOKEN;
     const waPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID || process.env.WHATSAPP_PHONE_ID || DEFAULT_WHATSAPP_PHONE_NUMBER_ID;
-    if (waToken) {
-        try {
-            const adminPhone = '56979092027';
-            const alertText = [
-                '🚨 *ALERTA CRÍTICA GUARDIÁN SEO/GEO CUATROPUNTAS*',
-                `Se detectaron ${criticalFindings.length} error(es) crítico(s) en producción:`,
-                ...criticalFindings.slice(0, 4).map(f => `• [${f.target}] ${f.message}`)
-            ].join('\n');
+    const templateName = options.templateName || process.env.WHATSAPP_ALERT_TEMPLATE || DEFAULT_WHATSAPP_ALERT_TEMPLATE;
+    const templateLang = options.templateLang || process.env.WHATSAPP_ALERT_TEMPLATE_LANG || DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG;
+    const fetchImpl = options.fetchImpl || fetch;
 
-            const res = await fetch(`https://graph.facebook.com/v20.0/${waPhoneId}/messages`, {
-                method: 'POST',
-                headers: {
-                    Authorization: `Bearer ${waToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
+    if (waToken) {
+        const adminPhone = '56979092027';
+        let templateAttemptError = null;
+
+        try {
+            const templatePayload = buildWhatsAppTemplatePayload(adminPhone, criticalFindings, templateName, templateLang);
+            const tplRes = await postWhatsAppMessage(fetchImpl, waPhoneId, waToken, templatePayload);
+            if (tplRes.ok) {
+                whatsappSent = true;
+                whatsappMode = 'template';
+                whatsappTemplate = templateName;
+                whatsappMessageId = tplRes.messageId;
+                console.log(`✅ Alerta WhatsApp (template: ${templateName}) aceptada por Meta API para ${adminPhone} (Phone ID: ${waPhoneId}, wamid: ${tplRes.messageId}).`);
+            } else {
+                templateAttemptError = `HTTP ${tplRes.status}: ${JSON.stringify(tplRes.data)}`;
+                console.warn(`⚠️ Plantilla WhatsApp (${templateName}) rechazada (Phone ID: ${waPhoneId}, ${templateAttemptError}). Activando fallback type: "text"...`);
+            }
+        } catch (tplErr) {
+            templateAttemptError = tplErr.message;
+            console.warn(`⚠️ Error enviando plantilla WhatsApp (${templateName}): ${tplErr.message}. Activando fallback type: "text"...`);
+        }
+
+        if (!whatsappSent && templateAttemptError !== null) {
+            try {
+                const alertText = [
+                    '🚨 *ALERTA CRÍTICA GUARDIÁN SEO/GEO CUATROPUNTAS*',
+                    `Se detectaron ${criticalFindings.length} error(es) crítico(s) en producción:`,
+                    ...criticalFindings.slice(0, 4).map(f => `• [${f.target}] ${f.message}`)
+                ].join('\n');
+
+                const txtRes = await postWhatsAppMessage(fetchImpl, waPhoneId, waToken, {
                     messaging_product: 'whatsapp',
                     recipient_type: 'individual',
                     to: adminPhone,
                     type: 'text',
                     text: { body: alertText }
-                })
-            });
-            let waData = {};
-            if (typeof res.json === 'function') {
-                waData = await res.json().catch(() => ({}));
+                });
+                whatsappSent = txtRes.ok;
+                if (txtRes.ok) {
+                    whatsappMode = 'text-fallback';
+                    whatsappMessageId = txtRes.messageId;
+                    console.log(`✅ Alerta WhatsApp (fallback text) aceptada por Meta API para ${adminPhone} (Phone ID: ${waPhoneId}, wamid: ${txtRes.messageId}).`);
+                } else {
+                    console.warn(`⚠️ Aviso WhatsApp fallback text rechazado por Meta API (HTTP ${txtRes.status}, Phone ID: ${waPhoneId}):`, JSON.stringify(txtRes.data));
+                }
+            } catch (waErr) {
+                console.warn('⚠️ Aviso WhatsApp fallback text no despachado:', waErr.message);
             }
-            whatsappSent = res.ok;
-            if (!res.ok) {
-                console.warn(`⚠️ Aviso WhatsApp rechazado por Meta API (HTTP ${res.status}, Phone ID: ${waPhoneId}):`, JSON.stringify(waData));
-            } else {
-                const messageId = waData?.messages?.[0]?.id || 'sin-id';
-                console.log(`✅ Alerta WhatsApp aceptada por Meta API para ${adminPhone} (Phone ID: ${waPhoneId}, wamid: ${messageId}).`);
-            }
-        } catch (waErr) {
-            console.warn('⚠️ Aviso WhatsApp opcional no despachado:', waErr.message);
         }
     }
 
-    return { emailed, whatsappSent };
+    return { emailed, whatsappSent, whatsappMode, whatsappTemplate, whatsappMessageId };
 }
 
 /**
@@ -795,6 +882,9 @@ module.exports = {
     CRAWLER_TARGET_PATHS,
     SSOT_SCHEMA_PRICE_RULES,
     DEFAULT_WHATSAPP_PHONE_NUMBER_ID,
+    DEFAULT_WHATSAPP_ALERT_TEMPLATE,
+    DEFAULT_WHATSAPP_ALERT_TEMPLATE_LANG,
+    buildWhatsAppTemplatePayload,
     validateRobotsTxt,
     validateCleanUrlsInArtifact,
     validatePageSchemas,

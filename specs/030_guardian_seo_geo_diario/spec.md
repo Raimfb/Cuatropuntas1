@@ -69,7 +69,7 @@ Implementar un **Agente Guardián SEO / GEO Diario** autónomo (`scripts/seo-geo
   * **Si** la API Key no está configurada o la API externa experimenta un error transitorio de red/cuota, el sistema **DEBE** registrarlo como `ADVERTENCIA` informativa sin provocar un fallo `CRÍTICO` falso positivo.
 
 - **[EARS-030-06] Despacho de Alertas Ejecutivas y Modo `--dry-run`:**  
-  * **Cuando** se detecte al menos 1 fallo `CRÍTICO` y el script **NO** se ejecute con `--dry-run`, el sistema **DEBE** enviar un correo electrónico de alerta estructurado a `contacto@cuatropuntas.com` mediante la configuración SMTP existente (`SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` o `ZOHO_USER`/`ZOHO_PASS`) y, si `WHATSAPP_TOKEN` está disponible, notificar al número comercial oficial `56979092027`.
+  * **Cuando** se detecte al menos 1 fallo `CRÍTICO` y el script **NO** se ejecute con `--dry-run`, el sistema **DEBE** enviar un correo electrónico de alerta estructurado a `contacto@cuatropuntas.com` mediante la configuración SMTP existente (`SMTP_HOST`/`SMTP_USER`/`SMTP_PASS` o `ZOHO_USER`/`ZOHO_PASS`) y, si `WHATSAPP_TOKEN` está disponible, notificar al número comercial oficial `56979092027` desde el Phone Number ID operativo `1243578125508024` usando prioridad `type: "template"` con una plantilla aprobada (`WHATSAPP_ALERT_TEMPLATE` / `alerta_guardian_cuatropuntas` en WABA `910870268041946`) para garantizar entrega 24/7 fuera de la ventana de 24 horas de Meta, con fallback a `type: "text"` únicamente si el envío con plantilla falla.
   * **Cuando** se ejecute con `--dry-run` o haya `0` errores críticos, el sistema **NO DEBE** despachar correos ni mensajes externos.
 
 ### 3.4. Automatización en GitHub Actions
