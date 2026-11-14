@@ -57,7 +57,11 @@ Valores netos (+IVA) vigentes para la Región Metropolitana:
 - **Cocina Integral:** **90 a 160 UF** (muebles a medida, cubiertas de cuarzo, redes sanitarias y gas TE1).
 
 ### F. Factores de Calibración Territorial y Gestión Técnica (DOM)
-- **Sector Oriente (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia):** Factor territorial `1.22` (+22%) por exigencias normativas municipales, logísticas y de terminaciones del sector.
+- **Anillo 5 — Sector Oriente (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia):** Factor territorial `1.22` (+22%) por exigencias normativas municipales, logísticas y de terminaciones del sector.
+- **Anillo 4 — Chicureo / Colina (Colina, Chicureo, Piedra Roja, Chamisero):** Factor territorial `1.18` (+18%) por logística de condominios cerrados y estándar constructivo del sector.
+- **Anillo 3 — Cordón Lejano RM (Buin, Paine, Calera de Tango, Talagante, Peñaflor, Isla de Maipo, El Monte, Padre Hurtado, Melipilla, Curacaví, Lampa, Tiltil):** Factor territorial `1.08` (+8%) por traslados de cuadrillas, fletes y supervisión en zonas periféricas distantes.
+- **Anillo 2 — Colindante Base Puente Alto (Pirque):** Factor territorial `1.02` (+2%) por cercanía operativa con ajuste menor de traslado rural.
+- **Anillo 1 — Base Local y Santiago Urbano (Puente Alto, La Florida y resto de comunas urbanas RM):** Factor base `1.00` (0% de recargo territorial).
 - **Arquitectura, Cálculo y Tramitación DOM (`permisos: Idea`):** En proyectos estructurales mayores (`Casa Nueva` y `Ampliación`), la modalidad desde cero que incluye diseño de arquitectura, ingeniería de cálculo y gestión municipal DOM aplica un factor de `1.08` (+8%). En `Quincho` y `Remodelación`, el factor se mantiene en `1.00` (evaluación en terreno).
 
 ---

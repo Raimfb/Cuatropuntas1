@@ -173,17 +173,20 @@ function resolveCommercialLabels({
     };
 }
 
-// Factor logístico interno por comuna en RM
+// Factor logístico y de mercado por Anillos Territoriales RM (Spec 029.3)
+const ANILLOS_RM = [
+    { factor: 1.22, comunas: ['las condes', 'vitacura', 'lo barnechea', 'la reina', 'providencia'] }, // Anillo 5 — Sector Oriente (+22%)
+    { factor: 1.18, comunas: ['colina', 'chicureo', 'piedra roja', 'chamisero'] },                   // Anillo 4 — Chicureo / Colina (+18%)
+    { factor: 1.08, comunas: ['buin', 'paine', 'calera de tango', 'talagante', 'penaflor', 'isla de maipo', 'el monte', 'padre hurtado', 'melipilla', 'curacavi', 'lampa', 'tiltil'] }, // Anillo 3 — Cordón Lejano RM (+8%)
+    { factor: 1.02, comunas: ['pirque'] }                                                             // Anillo 2 — Colindante Base Puente Alto (+2%)
+];
+
 function getFactorComuna(comunaVal) {
-    if (!comunaVal) return 1.0;
+    if (!comunaVal) return 1.00;
     const name = String(comunaVal).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    if (name.includes('vitacura') || name.includes('las condes') || name.includes('lo barnechea') || name.includes('providencia') || name.includes('la reina') || name === 'tier1') {
-        return 1.22;
-    }
-    if (name.includes('colina') || name.includes('lampa') || name.includes('buin') || name.includes('paine') || name.includes('talagante') || name.includes('melipilla') || name.includes('curacavi') || name.includes('alhue') || name.includes('pirque') || name.includes('san jose de maipo') || name.includes('tiltil') || name.includes('isla de maipo') || name.includes('el monte') || name.includes('maria pinto') || name.includes('san pedro') || name === 'tier5' || name === 'tier4') {
-        return 0.98;
-    }
-    return 1.00;
+    if (name === 'tier1') return 1.22;
+    const anillo = ANILLOS_RM.find(({ comunas }) => comunas.some(c => name.includes(c)));
+    return anillo ? anillo.factor : 1.00; // Anillo 1 — Base Local (Puente Alto, La Florida) y Santiago Urbano (0%)
 }
 
 // --- ANÁLISIS SEMÁNTICO DE RECINTOS PARA REMODELACIÓN (SPEC 013) ---

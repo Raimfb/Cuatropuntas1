@@ -145,11 +145,11 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
         for (const comuna of ['Las Condes', 'VITACURA', 'Lo Barnechea', 'La Reina', 'Providencia', 'las condes']) {
             expect(getFactorComuna(comuna)).toBe(1.22);
         }
-        // Resto de comunas intactas
+        // Resto de comunas con Anillos Territoriales RM (Spec 029.3)
         expect(getFactorComuna('Santiago Centro')).toBe(1.00);
         expect(getFactorComuna('Ñuñoa')).toBe(1.00);
-        expect(getFactorComuna('Colina (Chicureo)')).toBe(0.98);
-        expect(getFactorComuna('Pirque')).toBe(0.98);
+        expect(getFactorComuna('Colina (Chicureo)')).toBe(1.18);
+        expect(getFactorComuna('Pirque')).toBe(1.02);
 
         // 2. Validar factorPermisos para 'Idea' según tipología
         expect(getPermisosData('Idea', 'Casa Nueva').factor).toBe(1.08);
@@ -178,6 +178,75 @@ test.describe('Spec 001 - Quote Engine Core Unit Tests', () => {
         expect(lasCondesQuote.maxUF_raw).toBeLessThanOrEqual(2635);
         expect(lasCondesQuote.minUF).toBe('2.403');
         expect(lasCondesQuote.maxUF).toBe('2.629');
+    });
+
+    test('T029.3: Spec 029.3 - Calibración de 5 Anillos Logísticos y Mercado RM (1.22, 1.18, 1.08, 1.02, 1.00)', async () => {
+        const { calculateQuote, getFactorComuna } = require('../api/quote');
+
+        const ringExpectations = [
+            {
+                factor: 1.22,
+                comunas: ['Las Condes', 'VITACURA', 'Lo Barnechea', 'La Reina', 'Providencia', 'Tier1']
+            },
+            {
+                factor: 1.18,
+                comunas: ['Colina', 'Colina (Chicureo)', 'Chicureo', 'Piedra Roja', 'Chamisero']
+            },
+            {
+                factor: 1.08,
+                comunas: [
+                    'Buin', 'Paine', 'Calera de Tango', 'Talagante', 'Peñaflor', 'Penaflor',
+                    'Isla de Maipo', 'El Monte', 'Padre Hurtado', 'Melipilla',
+                    'Curacaví', 'Curacavi', 'Lampa', 'Lampa (Batuco)', 'Tiltil'
+                ]
+            },
+            {
+                factor: 1.02,
+                comunas: ['Pirque', 'pirque']
+            },
+            {
+                factor: 1.00,
+                comunas: ['Puente Alto', 'La Florida', 'Santiago Centro', 'Ñuñoa', 'Maipú', '', null, undefined]
+            }
+        ];
+
+        for (const { factor, comunas } of ringExpectations) {
+            for (const comuna of comunas) {
+                const actual = getFactorComuna(comuna);
+                expect(actual, `Factor incorrecto para comuna "${comuna}"`).toBe(factor);
+                expect(actual).not.toBe(0.98);
+            }
+        }
+
+        // Cálculo integral Casa Nueva 100 m², Metalcon (19 UF/m²), Estándar, Idea (+8%) por cada anillo
+        const quoteCases = [
+            { comuna: 'Las Condes', expectedFactor: 1.22, total: 2503.44, minUF: '2.403', maxUF: '2.629' },
+            { comuna: 'Colina (Chicureo)', expectedFactor: 1.18, total: 2421.36, minUF: '2.325', maxUF: '2.542' },
+            { comuna: 'Buin', expectedFactor: 1.08, total: 2216.16, minUF: '2.128', maxUF: '2.327' },
+            { comuna: 'Talagante', expectedFactor: 1.08, total: 2216.16, minUF: '2.128', maxUF: '2.327' },
+            { comuna: 'Pirque', expectedFactor: 1.02, total: 2093.04, minUF: '2.009', maxUF: '2.198' },
+            { comuna: 'Puente Alto', expectedFactor: 1.00, total: 2052.00, minUF: '1.970', maxUF: '2.155' },
+            { comuna: 'La Florida', expectedFactor: 1.00, total: 2052.00, minUF: '1.970', maxUF: '2.155' }
+        ];
+
+        for (const tc of quoteCases) {
+            const q = calculateQuote({
+                tipo: 'Casa Nueva',
+                sistema: 'Metalcon',
+                area: 100,
+                pisos: 1,
+                terminaciones: 'Estandar',
+                comuna: tc.comuna,
+                permisos: 'Idea'
+            });
+
+            expect(q.baseUFm2).toBe(19);
+            expect(q.factorPermisos).toBe(1.08);
+            expect(q.factorComuna).toBe(tc.expectedFactor);
+            expect(q.totalEstimado).toBeCloseTo(tc.total, 2);
+            expect(q.minUF).toBe(tc.minUF);
+            expect(q.maxUF).toBe(tc.maxUF);
+        }
     });
 
     test('Persistencia Fail-Safe: Resiliencia de persistLeadToGoogleSheets ante URL no configurada o error', async () => {
