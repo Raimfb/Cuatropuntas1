@@ -6,7 +6,7 @@
       "type": "skill-md",
       "description": "Permite calcular costos referenciales por metro cuadrado para casas nuevas, ampliaciones y segundos pisos.",
       "url": "/.well-known/agent-skills/cotizar-proyecto/SKILL.md",
-      "digest": "sha256:4ca8b6f9094b47656e2fd743131ab82ae1be5dad59bd1fc48f5ca687a631e318"
+      "digest": "sha256:52890b122d2917bb678860ac7d424da77d505aaa71d3dd4794e22b3931fcd871"
     },
     {
       "name": "subsidio-minvu",
