@@ -3,6 +3,10 @@
   "trailingSlash": false,
   "rewrites": [
     {
+      "source": "/api/lead-magnet",
+      "destination": "/api/contact?action=lead-magnet"
+    },
+    {
       "source": "/",
       "has": [
         {

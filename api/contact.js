@@ -1,6 +1,15 @@
 const nodemailer = require('nodemailer');
 
 module.exports = async (req, res) => {
+    const isLeadMagnet =
+        (req.query && req.query.action === 'lead-magnet') ||
+        String(req.url || '').includes('lead-magnet') ||
+        Boolean(req.body && typeof req.body === 'object' && req.body.guia);
+    if (isLeadMagnet) {
+        const leadMagnetHandler = require('./_leadMagnet');
+        return leadMagnetHandler(req, res);
+    }
+
     // Enable CORS
     res.setHeader('Access-Control-Allow-Credentials', true);
     res.setHeader('Access-Control-Allow-Origin', '*');

@@ -172,10 +172,11 @@ test.describe('Spec 033: Lead Magnets PDF DOM & Flujo Email-Gate', () => {
         expect(text).not.toMatch(/sin interrumpir la habitabilidad/i);
     });
 
-    test('T033.4: Endpoint api/lead-magnet.js valida payload, persiste LEAD_GUIA_DOM y acumula guías en lib/leads-state.js', async () => {
+    test('T033.4: Handler api/_leadMagnet.js y delegación vía api/contact.js (/api/lead-magnet) validan payload y persisten LEAD_GUIA_DOM', async () => {
         process.env.SKIP_LEAD_MAGNET_EMAIL = '1';
         const leadsState = require('../lib/leads-state');
-        const handler = require('../api/lead-magnet');
+        const handler = require('../api/_leadMagnet');
+        const contactRouter = require('../api/contact');
         leadsState.resetStateStore();
 
         // 1. Método GET no permitido
@@ -236,10 +237,12 @@ test.describe('Spec 033: Lead Magnets PDF DOM & Flujo Email-Gate', () => {
         expect(stored1.sourcePage).toBe('/precios');
         expect(stored1.guiasDescargadas).toEqual(['permiso-edificacion']);
 
-        // 6. Segunda descarga del mismo email acumula sin duplicados
+        // 6. Segunda descarga del mismo email delegada vía api/contact.js?action=lead-magnet (límite 12 funciones Vercel Hobby)
         const resOk2 = createMockRes();
-        await handler({
+        await contactRouter({
             method: 'POST',
+            url: '/api/contact?action=lead-magnet',
+            query: { action: 'lead-magnet' },
             body: {
                 nombre: 'Carolina Soto',
                 email: 'carolina.soto@ejemplo.cl',
