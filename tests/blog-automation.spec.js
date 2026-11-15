@@ -356,4 +356,51 @@ En este artículo explicamos por qué el radier de hormigón armado H-20 es la s
         }
     });
 
+    test('T032.1: Portada del blog (public/blog/index.html) muestra cintillo de vigencia con asterisco y enlace a /#contacto', async ({ page }) => {
+        const fileUrl = `file:///${blogIndexPath.replace(/\\/g, '/')}`;
+        await page.goto(fileUrl, { waitUntil: 'domcontentloaded' });
+
+        const disclaimer = page.locator('#blog-pricing-disclaimer');
+        await expect(disclaimer).toBeVisible();
+
+        const disclaimerText = await disclaimer.innerText();
+        expect(disclaimerText).toContain('*Nota sobre valores referenciales:');
+        expect(disclaimerText).toContain('corresponden exclusivamente a las condiciones de mercado vigentes en la fecha de publicación indicada en cada entrada, por lo que pueden haber variado a la fecha actual.');
+
+        const ctaLink = disclaimer.locator('a[href="/#contacto"]');
+        await expect(ctaLink).toBeVisible();
+        await expect(ctaLink).toHaveText('Cotizador Paramétrico Oficial');
+    });
+
+    test('T032.2: Plantilla de nuevos artículos (publish-blog.js) incluye nota de vigencia ligada a la fecha y preserva article p:first-of-type', async ({ page }) => {
+        const scriptPath = path.join(rootDir, 'scripts', 'publish-blog.js');
+        const compiler = require(scriptPath);
+        const { metadata, content } = compiler.parseMarkdownWithFrontmatter(fs.readFileSync(fixturePath, 'utf8'));
+
+        const compiled = compiler.compileAndPublishPost({ ...metadata, content }, { dryRun: true });
+        expect(compiled.success).toBe(true);
+        expect(compiled.html).toBeTruthy();
+
+        await page.setContent(compiled.html, { waitUntil: 'domcontentloaded' });
+
+        const postDisclaimer = page.locator('article header .blog-post-pricing-disclaimer');
+        await expect(postDisclaimer).toBeVisible();
+
+        const postDisclaimerText = await postDisclaimer.innerText();
+        const expectedDateText = compiler.formatDateFullSpanish(metadata.date);
+        expect(postDisclaimerText).toContain('*Nota sobre valores referenciales:');
+        expect(postDisclaimerText).toContain(expectedDateText);
+
+        const postCtaLink = postDisclaimer.locator('a[href="/#contacto"]');
+        await expect(postCtaLink).toBeVisible();
+        await expect(postCtaLink).toHaveText('Cotizador Paramétrico Oficial');
+
+        // Verificar que SpeakableSpecification (article p:first-of-type) sigue apuntando al extracto y no al disclaimer
+        await expect(postDisclaimer.locator('p')).toHaveCount(0);
+        const firstParagraph = page.locator('article p:first-of-type').first();
+        await expect(firstParagraph).toContainText(metadata.excerpt);
+        const firstParagraphText = await firstParagraph.innerText();
+        expect(firstParagraphText).not.toContain('*Nota sobre valores referenciales:');
+    });
+
 });

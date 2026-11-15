@@ -645,6 +645,9 @@ ${schemaJson}
             <p class="text-xl text-gray-600 leading-relaxed font-normal">
                 ${postData.excerpt}
             </p>
+            <div class="blog-post-pricing-disclaimer mt-5 pt-4 border-t border-gray-200 text-xs text-gray-500 leading-relaxed" role="note">
+                <strong class="text-gray-700 font-semibold">*Nota sobre valores referenciales:</strong> Los precios en UF/m² y estimaciones presupuestarias de este artículo reflejan las condiciones vigentes al <span class="font-medium text-gray-700">${dateFormattedFull}</span> y pueden haber variado a la fecha actual. Obtenga un presupuesto vigente para su comuna en nuestro <a href="/#contacto" class="text-secondary font-semibold underline hover:text-orange-700 transition">Cotizador Paramétrico Oficial</a>.
+            </div>
         </header>
 
         <!-- Featured Image -->
