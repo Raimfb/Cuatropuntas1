@@ -4,6 +4,7 @@
   "scripts": {
     "build": "echo 'Static build'",
     "build:css": "tailwindcss -i ./src/input.css -o ./public/tailwind.min.css --minify",
+    "build:guias": "node scripts/build-lead-magnets.js",
     "calcom:sync": "node scripts/configure-calcom-event.js"
   },
   "dependencies": {

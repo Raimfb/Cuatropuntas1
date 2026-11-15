@@ -355,6 +355,10 @@ Constructora líder en la Región Metropolitana especializada en proyectos resid
 - **OAuth Protected Resource:** https://www.cuatropuntas.com/.well-known/oauth-protected-resource
 - **Poppy Protocol:** https://www.cuatropuntas.com/.well-known/poppy.json
 
+## Guías Técnicas Descargables (DOM RM en PDF)
+- **Guía Práctica del Permiso de Edificación en la RM (PDF):** https://www.cuatropuntas.com/guias/guia-permiso-edificacion-rm.pdf
+- **Checklist Oficial de Recepción Final Municipal DOM (PDF):** https://www.cuatropuntas.com/guias/checklist-recepcion-final-dom.pdf
+
 ## Canales Oficiales
 - **Cotizador Preliminar:** https://www.cuatropuntas.com/#cotizador
 - **Visita Técnica a Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica

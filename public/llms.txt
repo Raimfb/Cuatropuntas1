@@ -30,6 +30,8 @@
 - [Segundos Pisos y Ampliaciones](https://www.cuatropuntas.com/servicios/segundos-pisos): Ampliaciones con cálculo estructural y tramitación DOM.
 - [Quinchos y Terrazas](https://www.cuatropuntas.com/servicios/quinchos): Quinchos en obra con radier, asador refractario y campana.
 - [Remodelaciones Integrales](https://www.cuatropuntas.com/servicios/remodelaciones): Remodelación de casas, cocinas y baños.
+- [Guía Práctica del Permiso de Edificación en la RM (PDF)](https://www.cuatropuntas.com/guias/guia-permiso-edificacion-rm.pdf): Hitos DOM, pre-factibilidades rurales y alcance constructivo OGUC.
+- [Checklist Oficial de Recepción Final Municipal DOM (PDF)](https://www.cuatropuntas.com/guias/checklist-recepcion-final-dom.pdf): Ruta en 6 pasos, certificados SEC TE1/TC6 y carpeta técnica de término de obra.
 - [Agendamiento de Visitas Técnicas](https://cal.com/cuatropuntas.com/visita-tecnica): Reserva directa de visita en terreno con ingenieros y arquitectos.
 - [Políticas y Privacidad](https://www.cuatropuntas.com/politicas): Términos del servicio, garantías de construcción y política de protección de datos.
 
