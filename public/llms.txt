@@ -47,7 +47,7 @@
 - **WhatsApp Oficial:** [+56 9 2738 4075](https://wa.me/56927384075)
 - **Cotizador Web Oficial:** https://www.cuatropuntas.com/#cotizador
 - **Agendamiento en Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica
-- **Correo Electrónico:** contacto@cuatropuntas.com
+- **Sitio Web Oficial:** https://www.cuatropuntas.com/ · [Guías DOM](https://www.cuatropuntas.com/#guias-dom) · [Cotizador](https://www.cuatropuntas.com/#contacto)
 
 ## Capacidades para Agentes de IA
 - **Catálogo API:** [/.well-known/api-catalog](https://www.cuatropuntas.com/.well-known/api-catalog)

@@ -45,4 +45,4 @@ This document specifies the authorization, registration, and interaction protoco
 In accordance with official corporate governance (AGENTS.md):
 - **Automated Capture & WhatsApp Bot:** +56 9 2738 4075 (https://wa.me/56927384075)
 - **Technical On-Site Visit Scheduling:** https://cal.com/cuatropuntas.com/visita-tecnica
-- **Support Email:** contacto@cuatropuntas.com
+- **Support:** https://www.cuatropuntas.com/#contacto · WhatsApp +56 9 2738 4075

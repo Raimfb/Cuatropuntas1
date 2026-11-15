@@ -148,7 +148,7 @@ https://www.cuatropuntas.com/blog/posts/${foundPost.slug}`}
 - **Cotizador Oficial Preliminar:** https://www.cuatropuntas.com/#cotizador
 - **Agendamiento Visita a Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica
 - **WhatsApp Captura:** +56 9 2738 4075 (https://wa.me/56927384075)
-- **Email:** contacto@cuatropuntas.com
+- **Sitio Web Oficial:** https://www.cuatropuntas.com/ (Guías DOM: https://www.cuatropuntas.com/#guias-dom · Cotizador: https://www.cuatropuntas.com/#contacto)
 `;
     }
   }
@@ -286,7 +286,7 @@ Valores referenciales actualizados para construcción residencial llave en mano 
 - **Agendamiento Oficial Visita a Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica
 - **WhatsApp Captura & SDR:** +56 9 2738 4075 (https://wa.me/56927384075)
 - **Contacto Comercial / Cierre Humano:** +56 9 7909 2027
-- **Email:** contacto@cuatropuntas.com
+- **Sitio Web Oficial:** https://www.cuatropuntas.com/ (Guías DOM: https://www.cuatropuntas.com/#guias-dom · Cotizador: https://www.cuatropuntas.com/#contacto)
 `;
   }
 
@@ -314,7 +314,7 @@ Guía técnica integral y postulación para construir vivienda con subsidio del 
 - Ejecución completa de obras con contrato formal a suma alzada.
 - Tramitación de Recepción Final Municipal.
 
-Contacto: contacto@cuatropuntas.com / WhatsApp: +56 9 2738 4075
+Contacto: https://www.cuatropuntas.com/#contacto / WhatsApp: +56 9 2738 4075
 Agendamiento de Visita: https://cal.com/cuatropuntas.com/visita-tecnica
 `;
   }
@@ -363,7 +363,7 @@ Constructora líder en la Región Metropolitana especializada en proyectos resid
 - **Cotizador Preliminar:** https://www.cuatropuntas.com/#cotizador
 - **Visita Técnica a Terreno:** https://cal.com/cuatropuntas.com/visita-tecnica
 - **WhatsApp Captura:** +56 9 2738 4075 (https://wa.me/56927384075)
-- **Email:** contacto@cuatropuntas.com
+- **Sitio Web Oficial:** https://www.cuatropuntas.com/ (Guías DOM: https://www.cuatropuntas.com/#guias-dom · Cotizador: https://www.cuatropuntas.com/#contacto)
 `;
   }
 
