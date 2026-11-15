@@ -332,21 +332,21 @@ async function buildPermisoEdificacionPdf(outputPath) {
         {
             title: 'Etapa Idea (Desde Cero)',
             badge: '+8% sobre base',
-            text: 'Asumimos diseño de arquitectura, ingeniería de cálculo y confección del expediente técnico completo listo para tramitación DOM (Casas Nuevas y Ampliaciones).'
+            text: 'Diseño, cálculo y gestión DOM completa: desde Permiso de Edificación hasta Certificado de Recepción Final Definitiva (Casas Nuevas y Ampliaciones).'
         },
         {
             title: 'Con Planos Listos',
             badge: '-3% descuento técnico',
-            text: 'Si ya cuentas con planos de arquitectura definidos, nuestro equipo desarrolla el cálculo estructural y coordina la tramitación municipal ante la DOM.'
+            text: 'Con planos definidos, asumimos cálculo estructural y ciclo DOM completo desde Permiso hasta Certificado de Recepción Final Definitiva.'
         },
         {
             title: 'Permiso Listo / Arq. Propio',
             badge: '-6% descuento técnico',
-            text: 'Con Permiso DOM aprobado o arquitecto patrocinante externo, aplicamos descuento técnico para enfocarnos 100% en la ejecución limpia a Suma Alzada.'
+            text: 'Modalidad solo ejecución a Suma Alzada con entrega de carpeta técnica del constructor; la gestión DOM sigue bajo tu patrocinante externo.'
         }
     ];
 
-    const eH = 88;
+    const eH = 92;
     etapas.forEach((et, idx) => {
         const ex = 45 + idx * (colW + colGap);
         doc.roundedRect(ex, y2, colW, eH, 5).fillAndStroke(COLORS.slateLight, COLORS.border);
@@ -354,14 +354,14 @@ async function buildPermisoEdificacionPdf(outputPath) {
             .text(et.title, ex + 8, y2 + 8, { width: colW - 16 });
         doc.fontSize(7.5).font('Helvetica-Bold').fillColor(COLORS.terra)
             .text(et.badge, ex + 8, y2 + 20, { width: colW - 16 });
-        doc.fontSize(7.2).font('Helvetica').fillColor(COLORS.muted)
-            .text(et.text, ex + 8, y2 + 33, { width: colW - 16, lineGap: 1.3 });
+        doc.fontSize(7.1).font('Helvetica').fillColor(COLORS.muted)
+            .text(et.text, ex + 8, y2 + 33, { width: colW - 16, lineGap: 1.25 });
     });
 
-    y2 += eH + 10;
+    y2 += eH + 8;
 
-    // Caja Matriz SSOT + 5 Anillos RM + Suma Alzada
-    const ssotH = 122;
+    // Caja Matriz SSOT + 5 Anillos RM + Suma Alzada + Cláusula de Exclusión DOM
+    const ssotH = 148;
     doc.roundedRect(45, y2, 522, ssotH, 6).fillAndStroke(COLORS.white, COLORS.navy);
     doc.rect(45, y2, 522, 22).fill(COLORS.navy);
     doc.fontSize(8.5).font('Helvetica-Bold').fillColor(COLORS.white)
@@ -374,17 +374,18 @@ async function buildPermisoEdificacionPdf(outputPath) {
         '   - Anillo 1 (Puente Alto, La Florida y Santiago Urbano): 0% (Base)   |   Anillo 2 (Pirque): +2%',
         '   - Anillo 3 (Buin, Paine, Calera de Tango, Talagante, Peñaflor, Isla de Maipo, El Monte, Padre Hurtado, Melipilla, Curacaví, Lampa, Tiltil): +8%',
         '   - Anillo 4 (Chicureo, Colina, Piedra Roja, Chamisero): +18%   |   Anillo 5 (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia): +22%',
-        '• Nota de Alcance: Derechos municipales (1,5% tabla MINVU) y empalmes se transparentan por separado al costo real del servicio.'
+        '• Nota de Alcance: Derechos municipales (1,5% tabla MINVU) y empalmes se transparentan por separado al costo real del servicio.',
+        '• Cláusula de Exclusión DOM: La Recepción Final Definitiva cubre solo obras ejecutadas por Cuatropuntas según planos aprobados; si el mandante/terceros ejecutan obras anexas no contratadas (quinchos, piscinas, ampliaciones o paisajismo/exteriores) o existen preexistencias sin regularizar, Cuatropuntas no tramitará la Recepción Final.'
     ];
 
-    let my = y2 + 28;
-    doc.fontSize(7.4).font('Helvetica').fillColor(COLORS.text);
+    let my = y2 + 27;
+    doc.fontSize(7.1).font('Helvetica').fillColor(COLORS.text);
     for (const line of matrixLines) {
         doc.text(line, 55, my, { width: 502 });
-        my += doc.heightOfString(line, { width: 502 }) + 2.5;
+        my += doc.heightOfString(line, { width: 502 }) + 2;
     }
 
-    y2 += ssotH + 12;
+    y2 += ssotH + 8;
 
     // Bloque QR y CTA final
     drawQrConversionBox(
@@ -562,21 +563,22 @@ async function buildChecklistRecepcionPdf(outputPath) {
 
     y2 += impH + 10;
 
-    // Caja Respaldo Cuatropuntas + Art. 18 LGUC
-    const resH = 74;
+    // Caja Respaldo Cuatropuntas + Alcance DOM Definitivo + Art. 18 LGUC
+    const resH = 108;
     doc.roundedRect(45, y2, 522, resH, 6).fillAndStroke(COLORS.terraLight, COLORS.terraBorder);
-    doc.fontSize(9).font('Helvetica-Bold').fillColor(COLORS.navy)
-        .text('4. Respaldo Contractual Cuatropuntas: Carpeta Lista para DOM + Art. 18 LGUC', 56, y2 + 9, { width: 500 });
-    doc.fontSize(7.6).font('Helvetica').fillColor(COLORS.text)
+    doc.fontSize(8.8).font('Helvetica-Bold').fillColor(COLORS.navy)
+        .text('4. Respaldo Contractual Cuatropuntas: Ciclo DOM Completo, Exclusiones + Art. 18 LGUC', 56, y2 + 8, { width: 500 });
+    doc.fontSize(7.1).font('Helvetica').fillColor(COLORS.text)
         .text(
-            '• Expediente técnico integral de término de obra: entregamos Libro de Obras (Art. 1.2.9), Informe del Arquitecto (Art. 5.2.6), Informe de Calidad del Constructor (Art. 5.8.3) y certificaciones SEC TE1/TC6 para tramitación de Recepción Final en la DOM.\n' +
+            '• Ciclo Completo (Idea +8% / Planos -3%) vs Solo Ejecución (-6%): Entregamos Libro de Obras (Art. 1.2.9), Informe del Arquitecto (Art. 5.2.6), Informe de Calidad del Constructor (Art. 5.8.3) y certificaciones SEC TE1/TC6. En etapas integrales gestionamos desde el Permiso hasta el Certificado de Recepción Final Definitiva (en -6% queda bajo patrocinante externo).\n' +
+            '• Cláusula de Exclusión DOM: Cubre solo obras ejecutadas por Cuatropuntas según planos aprobados; si el mandante/terceros ejecutan obras anexas no contratadas (quinchos, piscinas, ampliaciones o paisajismo/obras exteriores) o existen preexistencias sin regularizar, Cuatropuntas no tramitará la Recepción Final.\n' +
             '• Contrato a Suma Alzada con Garantía Legal Art. 18 LGUC: 10 años en estructura soportante, 5 años en instalaciones y 3 años en terminaciones.',
             56,
-            y2 + 23,
-            { width: 500, lineGap: 1.8 }
+            y2 + 22,
+            { width: 500, lineGap: 1.35 }
         );
 
-    y2 += resH + 10;
+    y2 += resH + 8;
 
     // Bloque QR y CTA final
     drawQrConversionBox(

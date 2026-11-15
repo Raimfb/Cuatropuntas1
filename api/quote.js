@@ -22,12 +22,14 @@ function getPermisosData(permisosKey, tipo = '') {
     switch (permisosKey) {
         case 'PermisoAprobado':
             return {
-                label: 'Permiso de Edificación DOM Aprobado (Listo para construir)',
+                label: 'Permiso de Edificación DOM Aprobado (Solo ejecución de obra)',
                 factor: 0.94, // ~6% de descuento técnico por expediente aprobado
                 adminBadge: 'PERMISO DOM APROBADO (Listo para inicio inmediato)',
                 badgeShort: 'Permiso DOM Listo',
                 badgePdf: 'Permiso DOM Aprobado',
-                notePdf: 'Descuento técnico aplicado por proyecto municipal aprobado. Inicio de faenas programable en plazos reducidos.'
+                gestionPdf: 'Solo Obra (Patrocinio Externo)',
+                step4Pdf: 'Entrega de carpeta técnica del constructor (Libro de Obras, calidad y SEC).',
+                notePdf: 'Modalidad solo ejecución de obra con Permiso DOM aprobado. Cuatropuntas entrega carpeta técnica del constructor; la Recepción Final queda bajo el patrocinante externo.'
             };
         case 'ArquitectoPropio':
             return {
@@ -36,16 +38,20 @@ function getPermisosData(permisosKey, tipo = '') {
                 adminBadge: 'ARQUITECTO PROPIO (Solo requiere Construcción)',
                 badgeShort: 'Arq. Propio',
                 badgePdf: 'Arq. Propio (Solo Obra)',
-                notePdf: 'Cotización orientada a la ejecución material de obra bajo dirección de tu arquitecto patrocinante.'
+                gestionPdf: 'Solo Obra (Arq. Externo)',
+                step4Pdf: 'Entrega de carpeta técnica del constructor bajo dirección del arquitecto propio.',
+                notePdf: 'Modalidad solo ejecución material de obra bajo tu arquitecto patrocinante externo, con entrega de carpeta técnica del constructor para Recepción Final.'
             };
         case 'Planos':
             return {
-                label: 'Planos de arquitectura listos (Falta cálculo y permiso DOM)',
+                label: 'Planos de arquitectura listos (Cálculo y gestión DOM hasta Recepción Final Definitiva)',
                 factor: 0.97, // ~3% de descuento técnico por diseño inicial
                 adminBadge: 'PLANOS LISTOS (Falta cálculo y trámite DOM)',
                 badgeShort: 'Con Planos',
-                badgePdf: 'Planos Listos (Falta DOM)',
-                notePdf: 'Descuento aplicado por planos existentes. Cuatropuntas asume ingeniería de cálculo y tramitación municipal.'
+                badgePdf: 'Planos Listos (DOM Comp.)',
+                gestionPdf: 'DOM a Recepción Final*',
+                step4Pdf: 'Gestión hasta Recepción Final Definitiva en obra contratada.',
+                notePdf: 'Incluye ingeniería de cálculo y gestión DOM completa desde Permiso de Edificación hasta Certificado de Recepción Final Definitiva exclusivamente sobre la obra ejecutada por Cuatropuntas (derechos 1,5% MINVU y empalmes aparte; excluye obras anexas de terceros o preexistencias sin regularizar).'
             };
         case 'Idea':
         default:
@@ -56,16 +62,20 @@ function getPermisosData(permisosKey, tipo = '') {
                     adminBadge: 'Evaluación de Factibilidad y Diseño en Terreno (Permiso municipal opcional según evaluación)',
                     badgeShort: 'Eval. en Terreno',
                     badgePdf: 'Eval. Terreno (DOM según caso)',
+                    gestionPdf: 'Eval. DOM en Terreno',
+                    step4Pdf: 'Entrega llave en mano de carpeta técnica y obra conforme.',
                     notePdf: 'Evaluación técnica en terreno para determinar factibilidad y pertinencia municipal según características del proyecto.'
                 };
             }
             return {
-                label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM incluidos)',
+                label: 'Proyecto desde cero (Diseño, cálculo y gestión DOM hasta Recepción Final Definitiva)',
                 factor: 1.08, // +8% por diseño de arquitectura, cálculo estructural y tramitación DOM incluidos
                 adminBadge: 'PROYECTO COMPLETO (Diseño + DOM + Construcción)',
                 badgeShort: 'Desde Cero',
                 badgePdf: 'Diseño + DOM + Obra',
-                notePdf: 'Modalidad Llave en Mano Integral: incluye arquitectura, cálculo estructural, gestión DOM y ejecución de obra.'
+                gestionPdf: 'DOM a Recepción Final*',
+                step4Pdf: 'Gestión hasta Recepción Final Definitiva en obra contratada.',
+                notePdf: 'Modalidad Llave en Mano Integral: incluye diseño, cálculo, obra y gestión DOM completa desde Permiso de Edificación hasta Certificado de Recepción Final Definitiva exclusivamente sobre lo ejecutado por Cuatropuntas (derechos 1,5% MINVU y empalmes aparte; excluye obras anexas no contratadas o preexistencias sin regularizar).'
             };
     }
 }
@@ -540,7 +550,7 @@ async function generatePdfBuffer(data) {
     doc.text(`• Sector / Ubicación: ${comunaHuman}`, 305, cardTop + 8, { width: 250 });
     doc.text(`• Estado Planos / DOM: ${permisosData.badgePdf}`, 305, cardTop + 20, { width: 250 });
     doc.text('• Modalidad: Llave en Mano Integral a Suma Alzada', 305, cardTop + 32);
-    doc.text('• Gestión Municipal: Asesoría Técnica y DOM', 305, cardTop + (espacios_remodelar ? 48 : 44));
+    doc.text(`• Alcance DOM: ${permisosData.gestionPdf || 'Asesoría Técnica y DOM'}`, 305, cardTop + (espacios_remodelar ? 48 : 44), { width: 250 });
 
     // 4. Inversión Estimada Referencial
     const sec2Top = cardTop + cardHeight + 8;
@@ -588,7 +598,7 @@ async function generatePdfBuffer(data) {
         { title: '1. Diagnóstico', desc: 'Levantamiento en terreno: cotas, deslindes, suelo y factibilidad DOM.' },
         { title: '2. Presupuesto', desc: 'Itemizado detallado a suma alzada con cubicaciones exactas y cerradas.' },
         { title: '3. Contrato', desc: 'Firma con plazos garantizados y respaldo legal Art. 18 LGUC.' },
-        { title: '4. Recepción', desc: 'Entrega llave en mano de carpeta municipal DOM y obra conforme.' }
+        { title: '4. Recepción', desc: permisosData.step4Pdf || 'Entrega llave en mano de carpeta municipal DOM y obra conforme.' }
     ];
 
     for (let i = 0; i < 4; i++) {
@@ -760,6 +770,7 @@ function generateEmailData(data) {
                 </tr>
             </table>
             <p style="margin: 10px 0 0 0; font-size: 12px; color: #718096;">
+                <strong>Alcance Municipal DOM:</strong> ${permisosData.notePdf}<br>
                 *Valores paramétricos calculados según m², sistema constructivo y sector. Adjunto encontrarás el documento PDF oficial con el desglose técnico y código QR de agendamiento.
             </p>
         </div>

@@ -396,10 +396,10 @@
                         <div id="qPermisosContainer" class="${initialTipoConfig.showPermisos ? '' : 'hidden'}" style="${initialTipoConfig.showPermisos ? '' : 'display: none;'}">
                             <label id="qPermisosLabel" for="qPermisos" class="block text-sm font-medium text-gray-700 mb-1">Estado de Planos y Permiso Municipal (DOM)</label>
                             <select id="qPermisos" aria-label="Seleccionar estado de planos y permisos" title="Seleccionar estado de planos y permisos" class="w-full px-4 py-3 rounded-md border border-gray-300 focus:border-secondary focus:ring-1 focus:ring-secondary outline-none transition bg-white" ${initialTipoConfig.showPermisos ? 'required' : ''}>
-                                <option value="Idea">Solo tengo la idea (Requiero diseño de planos y gestión DOM completa)</option>
-                                <option value="Planos">Tengo planos de arquitectura (Falta cálculo estructural y permiso DOM)</option>
-                                <option value="PermisoAprobado">Tengo Permiso de Edificación DOM Aprobado (Listo para construir)</option>
-                                <option value="ArquitectoPropio">Tengo arquitecto propio que tramita la DOM (Solo requiero construcción)</option>
+                                <option value="Idea">Solo tengo la idea (Diseño, cálculo y DOM hasta Recepción Final Definitiva)</option>
+                                <option value="Planos">Tengo planos de arquitectura (Cálculo estructural y DOM hasta Recepción Final)</option>
+                                <option value="PermisoAprobado">Tengo Permiso DOM Aprobado (Solo ejecución de obra; Recepción vía patrocinante)</option>
+                                <option value="ArquitectoPropio">Tengo arquitecto propio que tramita la DOM (Solo ejecución de obra)</option>
                             </select>
                             <span id="qPermisosHelpText" class="text-xs text-gray-500 mt-1.5 block ${defaultTipo === 'Quincho' ? '' : 'hidden'}" style="${defaultTipo === 'Quincho' ? '' : 'display: none;'}">Tranquilo: si aún no tienes permisos municipales para tu quincho, selecciona 'Solo tengo la idea' y lo evaluamos en la visita técnica.</span>
                         </div>

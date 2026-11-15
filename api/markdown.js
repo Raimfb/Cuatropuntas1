@@ -267,9 +267,10 @@ Valores referenciales actualizados para construcción residencial llave en mano 
   - **Anillo 4 — Chicureo / Colina (+18%, x1.18):** Colina, Chicureo, Piedra Roja y Chamisero.
   - **Anillo 5 — Sector Oriente (+22%, x1.22):** Las Condes, Vitacura, Lo Barnechea, La Reina y Providencia.
 - **Estado de Planimetría y Permisos DOM:**
-  - **Desde Cero (\`Idea\` — Arquitectura, Cálculo Estructural y Gestión DOM):** **+8% (\`1.08\`)** en Casas Nuevas y Ampliaciones / Segundos Pisos. En Quinchos y Remodelaciones rige evaluación técnica en terreno (\`0%\`, \`1.00\`).
-  - **Con Planos de Arquitectura Listos (\`Planos\`):** **-3% (\`0.97\`)**.
-  - **Permiso DOM Aprobado o Arquitecto Propio:** **-6% (\`0.94\`)**.
+  - **Desde Cero (\`Idea\` — Arquitectura, Cálculo Estructural y Gestión DOM Completa):** **+8% (\`1.08\`)** en Casas Nuevas y Ampliaciones / Segundos Pisos. Cubre todo el ciclo DOM: desde el Permiso de Edificación hasta el Certificado de Recepción Final Definitiva exclusivamente sobre obras ejecutadas por Cuatropuntas según planos aprobados. En Quinchos y Remodelaciones rige evaluación técnica en terreno (\`0%\`, \`1.00\`).
+  - **Con Planos de Arquitectura Listos (\`Planos\`):** **-3% (\`0.97\`)**. Incluye cálculo estructural y gestión DOM completa desde Permiso de Edificación hasta Certificado de Recepción Final Definitiva exclusivamente sobre lo ejecutado por Cuatropuntas.
+  - **Permiso DOM Aprobado o Arquitecto Propio:** **-6% (\`0.94\`)**. Modalidad de **solo ejecución material de obra**; entregamos carpeta técnica del constructor (Libro de Obras, informes de calidad y certificados SEC) bajo patrocinante externo.
+  - **Derechos, Empalmes y Cláusula de Exclusión:** Derechos municipales (\`1,5%\` tabla MINVU) y empalmes definitivos se facturan aparte al costo real. Cuatropuntas **no tramitará la Recepción Final** si el mandante o terceros ejecutan obras anexas no contratadas (quinchos, piscinas, ampliaciones adicionales, paisajismo u obras exteriores) o si el predio mantiene construcciones preexistentes sin regularizar.
 - **Baja Escala (<40 m²):** Ajuste de **+8%** por costos fijos proporcionales de instalación de faena.
 
 ---
@@ -277,7 +278,7 @@ Valores referenciales actualizados para construcción residencial llave en mano 
 ## 8. Garantías Contractuales y Transparencia
 - **Contrato a Suma Alzada:** Itemizado detallado con total transparencia en cada partida, sin cobros imprevistos.
 - **Garantías Legales Art. 18 LGUC:** Hasta 10 años de garantía en la estructura soportante.
-- **Expediente Técnico Completo:** Planos de arquitectura y memoria de cálculo listos para ingreso y recepción municipal en la DOM.
+- **Alcance DOM hasta Recepción Final y Exclusión:** En etapas \`Idea\` y \`Planos\` cubrimos el ciclo completo desde el Permiso de Edificación hasta el Certificado de Recepción Final Definitiva exclusivamente sobre obras ejecutadas por Cuatropuntas (sujeto a normativa vigente y sin obras anexas de terceros/mandante ni preexistencias sin regularizar). En \`-6%\` entregamos carpeta técnica del constructor (solo ejecución). Derechos (\`1,5%\` MINVU) y empalmes aparte al costo real.
 
 ---
 
@@ -343,7 +344,7 @@ Constructora líder en la Región Metropolitana especializada en proyectos resid
 - **Recintos Húmedos:** Baño completo (65-95 UF), Cocina integral (90-160 UF)
 - **Ajustes Paramétricos (Base Anillo 1 Netos +IVA):**
   - **5 Anillos Logísticos RM:** Anillo 1 Santiago Urbano / Puente Alto / La Florida (\`0%\`, \`1.00\`), Anillo 2 Pirque (\`+2%\`, \`1.02\`), Anillo 3 Cordón Lejano RM Buin / Paine / Talagante / Peñaflor / Isla de Maipo / El Monte / Padre Hurtado / Melipilla / Curacaví / Calera de Tango / Lampa / Tiltil (\`+8%\`, \`1.08\`), Anillo 4 Chicureo / Colina (\`+18%\`, \`1.18\`), Anillo 5 Sector Oriente (\`+22%\`, \`1.22\`).
-  - **Planimetría, Cálculo y DOM:** **+8%** por etapa desde cero (\`Idea\`: arquitectura, cálculo y gestión DOM) en Casa Nueva y Ampliación (\`-3%\` con planos, \`-6%\` con permiso aprobado/arquitecto propio; \`0%\` evaluación en terreno en Quinchos/Remodelaciones) y **+8%** en obras \`<40 m²\`.
+  - **Planimetría, Cálculo y DOM:** **+8%** por etapa desde cero (\`Idea\`: arquitectura, cálculo y gestión DOM) o **-3%** con \`Planos\`, cubriendo el ciclo completo desde el Permiso de Edificación hasta el Certificado de Recepción Final Definitiva exclusivamente sobre obras ejecutadas por Cuatropuntas (derechos \`1,5%\` MINVU y empalmes aparte al costo real; excluye obras anexas no contratadas como quinchos/piscinas/exteriores de terceros o preexistencias sin regularizar). En \`-6%\` (permiso aprobado/arquitecto propio) aplica solo ejecución con carpeta técnica del constructor; \`0%\` evaluación en terreno en Quinchos/Remodelaciones; y **+8%** en obras \`<40 m²\`.
 
 ## Recursos para Agentes de Inteligencia Artificial (Agent-Ready)
 - **Matriz de Precios (Markdown):** https://www.cuatropuntas.com/precios (Accept: text/markdown)
