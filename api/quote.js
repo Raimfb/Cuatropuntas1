@@ -480,6 +480,9 @@ async function generatePdfBuffer(data) {
     const maxUF = data.maxUF || quote.maxUF;
     const permisosData = data.permisosData || quote.permisosData;
     const comunaHuman = data.comunaHuman || quote.comunaHuman || getComunaLabel(comuna);
+    const factorComuna = data.factorComuna !== undefined
+        ? Number(data.factorComuna)
+        : (data.comuna !== undefined ? quote.factorComuna : getFactorComuna(data.comunaHuman || ''));
     const notasAlcance = data.notasAlcance || quote.notasAlcance || [];
     const isQuincho = quote.isQuincho;
     const isRemodelacion = tipo.toLowerCase().includes("remodela");
@@ -556,14 +559,17 @@ async function generatePdfBuffer(data) {
     const sec2Top = cardTop + cardHeight + 8;
     doc.fontSize(10).font('Helvetica-Bold').fillColor('#1a202c').text('2. Estimación Económica Referencial (Sin IVA)', 45, sec2Top);
     doc.fontSize(7.5).font('Helvetica').fillColor('#4a5568')
-       .text('Rango paramétrico preliminar calculado según m², sistema constructivo y sector:', 45, sec2Top + 12);
+       .text('Rango paramétrico preliminar calculado según m², tipo de obra y sistema constructivo:', 45, sec2Top + 12);
 
     const priceBoxTop = sec2Top + 24;
+    const priceSubnote = factorComuna > 1
+        ? 'Los valores del presupuesto son estimativos y calculados en base al tipo de obra, tipo de terreno, valor de suelo y lejanía de la urbe de Santiago.'
+        : 'Presupuesto definitivo cerrado a suma alzada sujeto a evaluación técnica en terreno.';
     doc.roundedRect(45, priceBoxTop, 522, 34, 4).fillAndStroke('#fffaf5', '#fed7aa');
     doc.fillColor('#c05621').fontSize(14).font('Helvetica-Bold')
        .text(`${minUF} UF  —  ${maxUF} UF (sin IVA)`, 45, priceBoxTop + 6, { width: 522, align: 'center' });
-    doc.fontSize(7).font('Helvetica').fillColor('#9c4221')
-       .text('Presupuesto definitivo cerrado a suma alzada sujeto a evaluación técnica en terreno.', 45, priceBoxTop + 22, { width: 522, align: 'center' });
+    doc.fontSize(factorComuna > 1 ? 6.4 : 7).font('Helvetica').fillColor('#9c4221')
+       .text(priceSubnote, 45, priceBoxTop + 22, { width: 522, align: 'center' });
 
     // 5. Bloque Garantía y Seguridad Contractual (Art. 18 LGUC) - Espaciado Dinámico
     const sec3Top = priceBoxTop + 40;
@@ -708,6 +714,9 @@ function generateEmailData(data) {
     const maxUF = data.maxUF || quote.maxUF;
     const permisosData = data.permisosData || quote.permisosData;
     const comunaHuman = data.comunaHuman || quote.comunaHuman || getComunaLabel(comuna);
+    const factorComuna = data.factorComuna !== undefined
+        ? Number(data.factorComuna)
+        : (data.comuna !== undefined ? quote.factorComuna : getFactorComuna(data.comunaHuman || ''));
     const notasAlcance = data.notasAlcance || quote.notasAlcance || [];
     const isQuincho = quote.isQuincho;
     const isRemodelacion = tipo.toLowerCase().includes("remodela");
@@ -770,8 +779,8 @@ function generateEmailData(data) {
                 </tr>
             </table>
             <p style="margin: 10px 0 0 0; font-size: 12px; color: #718096;">
-                <strong>Alcance Municipal DOM:</strong> ${permisosData.notePdf}<br>
-                *Valores paramétricos calculados según m², sistema constructivo y sector. Adjunto encontrarás el documento PDF oficial con el desglose técnico y código QR de agendamiento.
+                <strong>Alcance Municipal DOM:</strong> ${permisosData.notePdf}${factorComuna > 1 ? '<br><strong>Nota sobre estimación:</strong> Los valores del presupuesto son estimativos y calculados en base al tipo de obra, tipo de terreno, valor de suelo y lejanía de la urbe de Santiago, aspectos que revisaremos personalmente en la visita a terreno.' : ''}<br>
+                *Valores paramétricos calculados según m², tipo de obra y sistema constructivo. Adjunto encontrarás el documento PDF oficial con el desglose técnico y código QR de agendamiento.
             </p>
         </div>
 
@@ -968,7 +977,9 @@ const quoteHandler = async (req, res) => {
             areaNum,
             pisosNum,
             terminaciones,
+            comuna,
             comunaHuman,
+            factorComuna: quote.factorComuna,
             permisosData,
             minUF,
             maxUF,
@@ -988,7 +999,9 @@ const quoteHandler = async (req, res) => {
             areaNum,
             pisosNum,
             terminaciones,
+            comuna,
             comunaHuman,
+            factorComuna: quote.factorComuna,
             permisosData,
             minUF,
             maxUF,

@@ -5,9 +5,9 @@ const crypto = require('crypto');
 
 const baseDir = path.resolve(__dirname, '..');
 
-test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Sitio, Servicios y Agentes)', () => {
+test.describe('Spec 031 & 036: Coherencia Total de Precios y Reserva Interna Territorial (Sitio, Servicios y Agentes)', () => {
 
-    test('T031.1: api/mcp.js usa matriz SSOT, 5 anillos RM, +8% DOM etapa Idea y valores netos (+IVA)', async () => {
+    test('T031.1: api/mcp.js usa matriz SSOT, cálculo interno RM, +8% DOM etapa Idea y valores netos (+IVA) sin exponer anillos', async () => {
         const mcpHandler = require(path.join(baseDir, 'api', 'mcp.js'));
         const mcpSource = fs.readFileSync(path.join(baseDir, 'api', 'mcp.js'), 'utf8');
 
@@ -46,14 +46,14 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
 
         // 3. POST tools/call across all 5 rings + DOM stages
         const cases = [
-            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '2052 UF', anillo: 'Anillo 1' },
-            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Pirque', permisos: 'Idea' }, expectedUF: '2093 UF', anillo: 'Anillo 2' },
-            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Buin', permisos: 'Idea' }, expectedUF: '2216 UF', anillo: 'Anillo 3' },
-            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Chicureo', permisos: 'Idea' }, expectedUF: '2421 UF', anillo: 'Anillo 4' },
-            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Las Condes', permisos: 'Idea' }, expectedUF: '2503 UF', anillo: 'Anillo 5' },
-            { args: { metros_cuadrados: 60, materialidad: 'sip', tipo_proyecto: 'segundo_piso', comuna: 'Puente Alto', permisos: 'Planos' }, expectedUF: '1397 UF', anillo: 'Anillo 1' },
-            { args: { metros_cuadrados: 25, materialidad: 'sip', tipo_proyecto: 'quincho', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '378 UF', anillo: 'Anillo 1' },
-            { args: { metros_cuadrados: 50, materialidad: 'albanileria', tipo_proyecto: 'remodelacion', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '650 UF', anillo: 'Anillo 1' }
+            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '2052 UF', raised: false },
+            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Pirque', permisos: 'Idea' }, expectedUF: '2093 UF', raised: true },
+            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Buin', permisos: 'Idea' }, expectedUF: '2216 UF', raised: true },
+            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Chicureo', permisos: 'Idea' }, expectedUF: '2421 UF', raised: true },
+            { args: { metros_cuadrados: 100, materialidad: 'metalcom', tipo_proyecto: 'casa_nueva', comuna: 'Las Condes', permisos: 'Idea' }, expectedUF: '2503 UF', raised: true },
+            { args: { metros_cuadrados: 60, materialidad: 'sip', tipo_proyecto: 'segundo_piso', comuna: 'Puente Alto', permisos: 'Planos' }, expectedUF: '1397 UF', raised: false },
+            { args: { metros_cuadrados: 25, materialidad: 'sip', tipo_proyecto: 'quincho', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '378 UF', raised: false },
+            { args: { metros_cuadrados: 50, materialidad: 'albanileria', tipo_proyecto: 'remodelacion', comuna: 'Puente Alto', permisos: 'Idea' }, expectedUF: '650 UF', raised: false }
         ];
 
         for (const c of cases) {
@@ -61,21 +61,25 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
             const text = callRes.payload.result.content[0].text;
             expect(text).toContain(c.expectedUF);
             expect(text).toContain('netos (+IVA)');
-            expect(text).toContain(c.anillo);
+            expect(text).not.toMatch(/Anillo\s*[1-5]|Territorio:|x1\.(22|18|02)|\+22%|\+18%/i);
+            if (c.raised) {
+                expect(text).toContain('valor de suelo y lejanía de la urbe de Santiago');
+            }
         }
     });
 
-    test('T031.2: Coherencia HTML, +IVA, 5 Anillos RM, DOM y WebMCP en precios.html e index.html', async () => {
+    test('T031.2: Coherencia HTML, +IVA, reserva territorial, DOM y WebMCP en precios.html e index.html', async () => {
         const preciosHtml = fs.readFileSync(path.join(baseDir, 'public', 'precios.html'), 'utf8');
         const indexHtml = fs.readFileSync(path.join(baseDir, 'public', 'index.html'), 'utf8');
 
         // precios.html checks
         expect(preciosHtml).not.toContain('hay zonas donde el costo es más accesible');
-        expect(preciosHtml).toContain('5 Anillos Logísticos RM');
-        expect(preciosHtml).toContain('+22%');
-        expect(preciosHtml).toContain('+18%');
+        expect(preciosHtml).not.toContain('5 Anillos Logísticos RM');
+        expect(preciosHtml).not.toContain('+22%');
+        expect(preciosHtml).not.toContain('+18%');
         expect(preciosHtml).toContain('+8%');
-        expect(preciosHtml).toContain('+2%');
+        expect(preciosHtml).not.toContain('+2%');
+        expect(preciosHtml).toContain('valor del suelo');
         expect(preciosHtml).toContain('Desde 19 UF<span class="text-sm font-normal text-gray-500">/m² +IVA</span>');
         expect(preciosHtml).toContain('Desde 22 UF<span class="text-sm font-normal text-gray-500">/m² +IVA</span>');
         expect(preciosHtml).toContain('Desde 12 UF<span class="text-sm font-normal text-gray-500">/m² +IVA</span>');
@@ -90,9 +94,10 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
 
         // index.html checks
         expect(indexHtml).toContain('/m² +IVA</span>');
-        expect(indexHtml).toContain('5 Anillos Logísticos RM');
-        expect(indexHtml).toContain('Anillo 1');
-        expect(indexHtml).toContain('Sector Oriente +22%');
+        expect(indexHtml).not.toContain('5 Anillos Logísticos RM');
+        expect(indexHtml).not.toContain('Anillo 1');
+        expect(indexHtml).not.toContain('Sector Oriente +22%');
+        expect(indexHtml).toContain('valor de suelo');
         expect(indexHtml).toContain('nota_condiciones:');
         expect(indexHtml).toContain('total_estimado_neto_uf:');
 
@@ -114,9 +119,10 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
         for (const item of serviceFiles) {
             const html = fs.readFileSync(path.join(baseDir, 'public', 'servicios', item.file), 'utf8');
             expect(html).toContain('Valores netos (+IVA)');
-            expect(html).toContain('Anillo 1');
-            expect(html).toContain('5 Anillos Logísticos RM');
-            expect(html).toContain('Sector Oriente +22%');
+            expect(html).not.toContain('Anillo 1');
+            expect(html).not.toContain('5 Anillos Logísticos RM');
+            expect(html).not.toContain('Sector Oriente +22%');
+            expect(html).toContain('valor del suelo');
             if (item.isObraNueva) {
                 expect(html).toContain('+8% desde cero');
             } else {
@@ -139,15 +145,16 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
         expect(subsidioHtml).toContain('Desde 19 UF<span class="text-base font-normal text-gray-500">/m² +IVA</span>');
         expect(subsidioHtml).toContain('Desde 21 UF<span class="text-base font-normal text-gray-500">/m² +IVA</span>');
         expect(subsidioHtml).toContain('Desde 25 UF<span class="text-base font-normal text-gray-500">/m² +IVA</span>');
-        expect(subsidioHtml).toContain('5 Anillos Logísticos RM');
+        expect(subsidioHtml).not.toContain('5 Anillos Logísticos RM');
+        expect(subsidioHtml).toContain('valor de suelo');
 
         const politicasHtml = fs.readFileSync(path.join(baseDir, 'public', 'politicas.html'), 'utf8');
-        expect(politicasHtml).toContain('valores netos (+IVA) referenciales base Anillo 1');
-        expect(politicasHtml).toContain('5 Anillos Logísticos de la Región Metropolitana');
+        expect(politicasHtml).toContain('valores netos (+IVA) referenciales de partida');
+        expect(politicasHtml).not.toContain('5 Anillos Logísticos de la Región Metropolitana');
         expect(politicasHtml).toContain('+8% en proyectos desde cero');
     });
 
-    test('T031.4: api/markdown.js, api/whatsapp.js, api/chat.js y lib/agent-consultor.js reflejan 5 anillos RM y +8% DOM', async () => {
+    test('T031.4: api/markdown.js, api/whatsapp.js, api/chat.js y lib/agent-consultor.js ocultan anillos RM y preservan +8% DOM', async () => {
         const markdownHandler = require(path.join(baseDir, 'api', 'markdown.js'));
         const fetchMd = (query) => {
             let body = '';
@@ -159,34 +166,36 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
         };
 
         const preciosMd = fetchMd({ page: 'precios' });
-        expect(preciosMd).toContain('Factores de Calibración Territorial (5 Anillos RM)');
-        expect(preciosMd).toContain('x1.22');
-        expect(preciosMd).toContain('x1.18');
-        expect(preciosMd).toContain('x1.08');
-        expect(preciosMd).toContain('x1.02');
-        expect(preciosMd).toContain('x1.00');
+        expect(preciosMd).toContain('Criterios de Evaluación Técnica y Gestión DOM');
+        expect(preciosMd).not.toContain('Anillo 5');
+        expect(preciosMd).not.toContain('x1.22');
+        expect(preciosMd).not.toContain('x1.18');
+        expect(preciosMd).toContain('`1.08`');
+        expect(preciosMd).not.toContain('x1.02');
+        expect(preciosMd).toContain('`1.00`');
         expect(preciosMd).toContain('+8% (`1.08`)');
 
         const defaultMd = fetchMd({});
         expect(defaultMd).toContain('Ligera Metalcom desde 11 UF/m² | Sólida Albañilería desde 13 UF/m²');
-        expect(defaultMd).toContain('5 Anillos Logísticos RM');
+        expect(defaultMd).toContain('Condiciones de Obra y Emplazamiento RM');
+        expect(defaultMd).not.toContain('5 Anillos Logísticos RM');
         expect(defaultMd).toContain('**+8%** por etapa desde cero');
 
         const whatsappSrc = fs.readFileSync(path.join(baseDir, 'api', 'whatsapp.js'), 'utf8');
-        expect(whatsappSrc).toContain('5 Anillos Logísticos y de Mercado RM');
-        expect(whatsappSrc).toContain('x1.22');
+        expect(whatsappSrc).toContain('PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos');
+        expect(whatsappSrc).not.toContain('x1.22');
         expect(whatsappSrc).toContain('suma +8% (x1.08)');
         const waMatrizMatch = whatsappSrc.match(/### MATRIZ OFICIAL[\s\S]*?(?=### FORMATO DE NEGRITAS)/);
         expect(waMatrizMatch).not.toBeNull();
         expect(waMatrizMatch[0]).not.toContain('**'); // Estricto formato WhatsApp sin negritas dobles
 
         const chatSrc = fs.readFileSync(path.join(baseDir, 'api', 'chat.js'), 'utf8');
-        expect(chatSrc).toContain('5 Anillos Logísticos y de Mercado RM');
+        expect(chatSrc).toContain('PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos');
         expect(chatSrc).toContain('suma +8% (x1.08)');
-        expect(chatSrc).toContain('Anillo 5 Sector Oriente');
+        expect(chatSrc).not.toContain('Anillo 5 Sector Oriente');
 
         const consultorSrc = fs.readFileSync(path.join(baseDir, 'lib', 'agent-consultor.js'), 'utf8');
-        expect(consultorSrc).toContain('5 Anillos Logísticos RM');
+        expect(consultorSrc).toContain('PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos');
         expect(consultorSrc).toContain('+8% desde cero / etapa Idea');
     });
 
@@ -195,7 +204,8 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
         const indexPath = path.join(baseDir, 'public', '.well-known', 'agent-skills', 'index.json');
 
         const skillContent = fs.readFileSync(skillPath, 'utf8');
-        expect(skillContent).toContain('5 Anillos Logísticos y de Mercado RM');
+        expect(skillContent).toContain('Criterios de Obra, Terreno y Emplazamiento RM');
+        expect(skillContent).not.toContain('5 Anillos Logísticos');
         expect(skillContent).toContain('+8%` (`1.08`)');
         expect(skillContent).toContain('desde 19 UF/m²');
         expect(skillContent).toContain('desde 21 UF/m²');
@@ -207,7 +217,7 @@ test.describe('Spec 031: Coherencia Total de Precios y Anillos Territoriales (Si
         expect(entry.digest).toBe(expectedHash);
 
         const curateSrc = fs.readFileSync(path.join(baseDir, 'scripts', 'auto-curate-and-publish.js'), 'utf8');
-        expect(curateSrc).toContain('5 Anillos Logísticos RM');
+        expect(curateSrc).toContain('prohibido exponer anillos logísticos o porcentajes territoriales por comuna');
         expect(curateSrc).toContain('+8% desde cero');
     });
 

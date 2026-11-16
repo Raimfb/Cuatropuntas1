@@ -399,7 +399,7 @@ TEMA: "${topicData.title}"
    - Segundos Pisos y Ampliaciones: Metalcom desde 22 UF/m², SIP desde 24 UF/m², Albañilería desde 27 UF/m².
    - Quinchos de Alto Estándar: Metalcom desde 12 UF/m², Albañilería desde 15 UF/m².
    - Remodelaciones Integrales (>25 m²): desde 11 a 13 UF/m². Baños completos cerrados: 65 a 95 UF. Cocinas integrales: 90 a 160 UF.
-   - Factores Paramétricos Territoriales y DOM: Tarifas base rigen en Anillo 1 (Puente Alto, La Florida y Santiago Urbano: 0%) y se ajustan según los 5 Anillos Logísticos RM (Pirque +2%; Cordón Lejano Buin/Paine/Talagante/Peñaflor/Lampa +8%; Chicureo/Colina +18%; Sector Oriente +22%), por baja escala (<40 m²: +8%) y por etapa de arquitectura/DOM (+8% desde cero en Casas Nuevas y Ampliaciones; -3% con planos; -6% con permiso aprobado o arquitecto propio).
+   - Criterios Estimativos de Obra, Terreno y DOM: Los presupuestos preliminares (+IVA) se estiman en base al tipo de obra, condiciones del terreno, valor de suelo y lejanía de la urbe de Santiago (prohibido exponer anillos logísticos o porcentajes territoriales por comuna), baja escala (<40 m²: +8%) y etapa de arquitectura/DOM (+8% desde cero en Casas Nuevas y Ampliaciones; -3% con planos; -6% con permiso aprobado o arquitecto propio).
 3. Ecosistema Oficial de Telefonía y Canales:
    - WhatsApp Oficial: +56 9 2738 4075 (enlace: https://wa.me/56927384075).
    - Agendamiento Oficial: https://cal.com/cuatropuntas.com/visita-tecnica.

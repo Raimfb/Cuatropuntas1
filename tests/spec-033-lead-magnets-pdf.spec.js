@@ -122,10 +122,10 @@ test.describe('Spec 033: Lead Magnets PDF DOM & Flujo Email-Gate', () => {
         expect(text).toContain('24 UF/m²');
         expect(text).toContain('27 UF/m²');
         expect(text).toContain('+IVA');
-        expect(text).toContain('5 Anillos Logísticos RM');
-        expect(text).toContain('+2%');
-        expect(text).toContain('+18%');
-        expect(text).toContain('+22%');
+        expect(text).toContain('valor de suelo');
+        expect(text).not.toContain('5 Anillos Logísticos RM');
+        expect(text).not.toContain('+18%');
+        expect(text).not.toContain('+22%');
         expect(text).toContain('Suma Alzada');
         expect(text).toContain('+56 9 2738 4075');
 

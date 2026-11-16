@@ -319,7 +319,7 @@ async function buildPermisoEdificacionPdf(outputPath) {
         y2 += boxH + 7;
     }
 
-    // Sección 4: Enfoque Cuatropuntas — Suma Alzada, Etapas DOM y Anillos Logísticos RM
+    // Sección 4: Enfoque Cuatropuntas — Suma Alzada, Etapas DOM y Criterios de Presupuesto
     y2 = drawSectionTitle(
         doc,
         y2 + 6,
@@ -360,7 +360,7 @@ async function buildPermisoEdificacionPdf(outputPath) {
 
     y2 += eH + 8;
 
-    // Caja Matriz SSOT + 5 Anillos RM + Suma Alzada + Cláusula de Exclusión DOM
+    // Caja Matriz SSOT + Criterios de Presupuesto + Suma Alzada + Cláusula de Exclusión DOM
     const ssotH = 148;
     doc.roundedRect(45, y2, 522, ssotH, 6).fillAndStroke(COLORS.white, COLORS.navy);
     doc.rect(45, y2, 522, 22).fill(COLORS.navy);
@@ -370,10 +370,8 @@ async function buildPermisoEdificacionPdf(outputPath) {
     const matrixLines = [
         '• Casas Nuevas (1 Piso): Metalcom desde 19 UF/m²  |  Panel SIP desde 21 UF/m²  |  Albañilería desde 25 UF/m².',
         '• Segundos Pisos y Ampliaciones: Metalcom desde 22 UF/m²  |  Panel SIP desde 24 UF/m²  |  Albañilería desde 27 UF/m².',
-        '• Calibración Territorial (5 Anillos Logísticos RM sobre Base Anillo 1):',
-        '   - Anillo 1 (Puente Alto, La Florida y Santiago Urbano): 0% (Base)   |   Anillo 2 (Pirque): +2%',
-        '   - Anillo 3 (Buin, Paine, Calera de Tango, Talagante, Peñaflor, Isla de Maipo, El Monte, Padre Hurtado, Melipilla, Curacaví, Lampa, Tiltil): +8%',
-        '   - Anillo 4 (Chicureo, Colina, Piedra Roja, Chamisero): +18%   |   Anillo 5 (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia): +22%',
+        '• Quinchos y Terrazas: Metalcom desde 12 UF/m²  |  Albañilería desde 15 UF/m²  ·  Remodelaciones (>25 m²): 11 / 13 UF/m².',
+        '• Criterios de Presupuesto: Los valores son estimativos y se calculan según tipo de obra, tipo de terreno, valor de suelo, lejanía de la urbe de Santiago, escala (<40 m²: +8%) y etapa de planimetría/DOM.',
         '• Nota de Alcance: Derechos municipales (1,5% tabla MINVU) y empalmes se transparentan por separado al costo real del servicio.',
         '• Cláusula de Exclusión DOM: La Recepción Final Definitiva cubre solo obras ejecutadas por Cuatropuntas según planos aprobados; si el mandante/terceros ejecutan obras anexas no contratadas (quinchos, piscinas, ampliaciones o paisajismo/exteriores) o existen preexistencias sin regularizar, Cuatropuntas no tramitará la Recepción Final.'
     ];

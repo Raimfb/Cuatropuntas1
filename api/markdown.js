@@ -257,15 +257,10 @@ Valores referenciales actualizados para construcción residencial llave en mano 
 
 ---
 
-## 7. Factores de Calibración Territorial (5 Anillos RM), Escala y Gestión DOM
-*Las tarifas base por m² anteriores corresponden a valores netos (+IVA) válidos sobre base Anillo 1 y se ajustan paramétricamente según los siguientes factores oficiales:*
+## 7. Criterios de Evaluación Técnica y Gestión DOM
+*Las tarifas base por m² anteriores corresponden a valores netos (+IVA) referenciales y se evalúan preliminarmente según los siguientes parámetros:*
 
-- **5 Anillos Logísticos y de Mercado RM:**
-  - **Anillo 1 — Base Local y Santiago Urbano (0%, x1.00):** Puente Alto, La Florida y resto de comunas urbanas de la RM.
-  - **Anillo 2 — Colindante Base Puente Alto (+2%, x1.02):** Pirque.
-  - **Anillo 3 — Cordón Lejano RM (+8%, x1.08):** Buin, Paine, Calera de Tango, Talagante, Peñaflor, Isla de Maipo, El Monte, Padre Hurtado, Melipilla, Curacaví, Lampa y Tiltil.
-  - **Anillo 4 — Chicureo / Colina (+18%, x1.18):** Colina, Chicureo, Piedra Roja y Chamisero.
-  - **Anillo 5 — Sector Oriente (+22%, x1.22):** Las Condes, Vitacura, Lo Barnechea, La Reina y Providencia.
+- **Tipo de Obra, Terreno y Emplazamiento (RM):** Los valores del presupuesto son estimativos y se calculan según tipo de obra, características del terreno, valor del suelo y lejanía de la urbe de Santiago, aspectos que se precisan personalmente en la visita técnica en terreno.
 - **Estado de Planimetría y Permisos DOM:**
   - **Desde Cero (\`Idea\` — Arquitectura, Cálculo Estructural y Gestión DOM Completa):** **+8% (\`1.08\`)** en Casas Nuevas y Ampliaciones / Segundos Pisos. Cubre todo el ciclo DOM: desde el Permiso de Edificación hasta el Certificado de Recepción Final Definitiva exclusivamente sobre obras ejecutadas por Cuatropuntas según planos aprobados. En Quinchos y Remodelaciones rige evaluación técnica en terreno (\`0%\`, \`1.00\`).
   - **Con Planos de Arquitectura Listos (\`Planos\`):** **-3% (\`0.97\`)**. Incluye cálculo estructural y gestión DOM completa desde Permiso de Edificación hasta Certificado de Recepción Final Definitiva exclusivamente sobre lo ejecutado por Cuatropuntas.
@@ -342,8 +337,8 @@ Constructora líder en la Región Metropolitana especializada en proyectos resid
   - Albañilería en obra: desde 15 UF/m²
 - **Remodelaciones Integrales (>25 m²):** Ligera Metalcom desde 11 UF/m² | Sólida Albañilería desde 13 UF/m²
 - **Recintos Húmedos:** Baño completo (65-95 UF), Cocina integral (90-160 UF)
-- **Ajustes Paramétricos (Base Anillo 1 Netos +IVA):**
-  - **5 Anillos Logísticos RM:** Anillo 1 Santiago Urbano / Puente Alto / La Florida (\`0%\`, \`1.00\`), Anillo 2 Pirque (\`+2%\`, \`1.02\`), Anillo 3 Cordón Lejano RM Buin / Paine / Talagante / Peñaflor / Isla de Maipo / El Monte / Padre Hurtado / Melipilla / Curacaví / Calera de Tango / Lampa / Tiltil (\`+8%\`, \`1.08\`), Anillo 4 Chicureo / Colina (\`+18%\`, \`1.18\`), Anillo 5 Sector Oriente (\`+22%\`, \`1.22\`).
+- **Factores de Presupuesto (Netos +IVA):**
+  - **Condiciones de Obra y Emplazamiento RM:** Valores estimativos calculados según tipo de obra, condiciones del terreno, valor del suelo y lejanía de la urbe de Santiago; el presupuesto definitivo a suma alzada se revisa personalmente en la visita a terreno.
   - **Planimetría, Cálculo y DOM:** **+8%** por etapa desde cero (\`Idea\`: arquitectura, cálculo y gestión DOM) o **-3%** con \`Planos\`, cubriendo el ciclo completo desde el Permiso de Edificación hasta el Certificado de Recepción Final Definitiva exclusivamente sobre obras ejecutadas por Cuatropuntas (derechos \`1,5%\` MINVU y empalmes aparte al costo real; excluye obras anexas no contratadas como quinchos/piscinas/exteriores de terceros o preexistencias sin regularizar). En \`-6%\` (permiso aprobado/arquitecto propio) aplica solo ejecución con carpeta técnica del constructor; \`0%\` evaluación en terreno en Quinchos/Remodelaciones; y **+8%** en obras \`<40 m²\`.
 
 ## Recursos para Agentes de Inteligencia Artificial (Agent-Ready)

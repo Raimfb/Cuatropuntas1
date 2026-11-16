@@ -8,13 +8,6 @@ const TARIFAS_BASE_SSOT = {
   remodelacion: { metalcom: 11, sip: 13, albanileria: 13, label: 'Remodelación Integral' }
 };
 
-function describeAnilloRM(factor) {
-  if (factor >= 1.22) return 'Anillo 5 — Sector Oriente (+22%)';
-  if (factor >= 1.18) return 'Anillo 4 — Chicureo / Colina (+18%)';
-  if (factor >= 1.08) return 'Anillo 3 — Cordón Lejano RM (+8%)';
-  if (factor >= 1.02) return 'Anillo 2 — Pirque (+2%)';
-  return 'Anillo 1 — Base Local / Santiago Urbano (0%)';
-}
 
 const COTIZAR_INPUT_SCHEMA = {
   type: "object",
@@ -28,7 +21,7 @@ const COTIZAR_INPUT_SCHEMA = {
     },
     comuna: {
       type: "string",
-      description: "Comuna de la Región Metropolitana (aplica Anillos Logísticos RM: 0% a +22%)."
+      description: "Comuna de la Región Metropolitana donde se ejecutará la obra."
     },
     permisos: {
       type: "string",
@@ -57,7 +50,7 @@ module.exports = async (req, res) => {
       tools: [
         {
           name: "cotizar_construccion",
-          description: "Calcula presupuesto estimado neto (+IVA) según matriz SSOT, 5 anillos logísticos RM y etapa arquitectura/DOM.",
+          description: "Calcula presupuesto estimado neto (+IVA) según matriz de precios, características de la obra/comuna RM y etapa de arquitectura/DOM.",
           inputSchema: COTIZAR_INPUT_SCHEMA
         },
         {
@@ -85,7 +78,7 @@ module.exports = async (req, res) => {
           tools: [
             {
               name: "cotizar_construccion",
-              description: "Calcula presupuesto estimado neto (+IVA) según matriz SSOT, 5 anillos logísticos RM y etapa arquitectura/DOM.",
+              description: "Calcula presupuesto estimado neto (+IVA) según matriz de precios, características de la obra/comuna RM y etapa de arquitectura/DOM.",
               inputSchema: COTIZAR_INPUT_SCHEMA
             }
           ]
@@ -113,7 +106,7 @@ module.exports = async (req, res) => {
 
         const ufM2Final = Number((tarifaBase * factorEscala * factorComuna * factorPermisos).toFixed(2));
         const totalUF = Math.round(tarifaBase * factorEscala * factorComuna * factorPermisos * m2);
-        const anilloLabel = describeAnilloRM(factorComuna);
+        const notaTerritorial = factorComuna > 1 ? ' Nota: Los valores del presupuesto son estimativos y calculados en base al tipo de obra, tipo de terreno, valor de suelo y lejanía de la urbe de Santiago.' : '';
 
         return res.status(200).json({
           jsonrpc: "2.0",
@@ -122,7 +115,7 @@ module.exports = async (req, res) => {
             content: [
               {
                 type: "text",
-                text: `Cotización preliminar para ${tipoConfig.label} de ${m2} m² en ${matNorm}: ${totalUF} UF netos (+IVA) (~${ufM2Final} UF/m² netos +IVA). Base SSOT: ${tarifaBase} UF/m² | Territorio: ${anilloLabel} (x${factorComuna.toFixed(2)}) | Planimetría/DOM (${permisosKey}): x${factorPermisos.toFixed(2)} — ${permisosData.badgeShort}${factorEscala > 1 ? ' | Escala <40 m² (+8%)' : ''}. Cotizador web: https://www.cuatropuntas.com/#cotizador | WhatsApp: https://wa.me/56927384075`
+                text: `Cotización preliminar para ${tipoConfig.label} de ${m2} m² en ${matNorm}: ${totalUF} UF netos (+IVA) (~${ufM2Final} UF/m² netos +IVA). Base SSOT: ${tarifaBase} UF/m² | Planimetría/DOM (${permisosKey}): x${factorPermisos.toFixed(2)} — ${permisosData.badgeShort}${factorEscala > 1 ? ' | Escala <40 m² (+8%)' : ''}.${notaTerritorial} Cotizador web: https://www.cuatropuntas.com/#cotizador | WhatsApp: https://wa.me/56927384075`
               }
             ]
           }

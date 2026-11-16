@@ -4,7 +4,7 @@
 
 ## Resumen de la Empresa
 - **Nombre Legal:** Constructora Cuatropuntas SpA · **Cobertura:** Toda la Región Metropolitana (Santiago urbano, Sector Oriente, Chicureo/Colina, Pirque y cordón RM).
-- **Especialidades:** Casas nuevas llave en mano (Metalcom desde 19 UF/m², Panel SIP desde 21 UF/m², Albañilería desde 25 UF/m²), Segundos Pisos/Ampliaciones (22 / 24 / 27 UF/m²), Quinchos en obra (12 / 15 UF/m²), Remodelaciones (>25 m²: 11 / 13 UF/m²), Baño Completo (65-95 UF) y Cocina Integral (90-160 UF). Valores netos +IVA base Anillo 1.
+- **Especialidades:** Casas nuevas llave en mano (Metalcom desde 19 UF/m², Panel SIP desde 21 UF/m², Albañilería desde 25 UF/m²), Segundos Pisos/Ampliaciones (22 / 24 / 27 UF/m²), Quinchos en obra (12 / 15 UF/m²), Remodelaciones (>25 m²: 11 / 13 UF/m²), Baño Completo (65-95 UF) y Cocina Integral (90-160 UF). Valores netos referenciales +IVA.
 - **Garantías y Normativa:** Contrato a suma alzada con itemizado detallado; garantías Art. 18 LGUC (10 años estructura, 5 instalaciones, 3 terminaciones); estándar térmico Zona 3 Art. 4.1.10 OGUC.
 - **Alcance Municipal DOM y Exclusión (SSOT):**
   - En Casas Nuevas y Ampliaciones (`Idea` +8% diseño/cálculo/DOM; `Planos` -3% cálculo/DOM), cubrimos el ciclo completo desde Permiso de Edificación hasta **Certificado de Recepción Final Definitiva** únicamente sobre lo ejecutado por Cuatropuntas según planos aprobados.
@@ -13,15 +13,15 @@
 
 ## Enlaces Principales
 - [Inicio y Cotizador](https://www.cuatropuntas.com/): Portal principal, lead magnets (`https://www.cuatropuntas.com/#guias-dom`) y cotizador (`https://www.cuatropuntas.com/#contacto`).
-- [Precios y Tarifas](https://www.cuatropuntas.com/precios): Matriz oficial UF/m² y calibración por 5 Anillos Logísticos RM.
+- [Precios y Tarifas](https://www.cuatropuntas.com/precios): Matriz oficial UF/m², sistemas constructivos y alcance técnico DOM.
 - [Blog Técnico](https://www.cuatropuntas.com/blog): Guías de permisos DOM, suma alzada, normativa térmica OGUC y costos.
 - [Subsidio MINVU DS1](https://www.cuatropuntas.com/subsidio-minvu-sitio-propio): Construcción en Sitio Propio.
 - [Casas Nuevas](https://www.cuatropuntas.com/servicios/casas-nuevas) · [Segundos Pisos](https://www.cuatropuntas.com/servicios/segundos-pisos) · [Quinchos](https://www.cuatropuntas.com/servicios/quinchos) · [Remodelaciones](https://www.cuatropuntas.com/servicios/remodelaciones)
 - [Guía Permiso de Edificación RM (PDF)](https://www.cuatropuntas.com/guias/guia-permiso-edificacion-rm.pdf) · [Checklist Recepción Final DOM (PDF)](https://www.cuatropuntas.com/guias/checklist-recepcion-final-dom.pdf)
 - [Políticas y Términos](https://www.cuatropuntas.com/politicas)
 
-## Calibración 5 Anillos RM (+IVA)
-- Anillo 1 (Puente Alto, La Florida, Santiago Urbano): 0% | Anillo 2 (Pirque): +2% | Anillo 3 (Buin, Paine, Talagante, Peñaflor, Isla de Maipo, El Monte, Padre Hurtado, Melipilla, Curacaví, Calera de Tango, Lampa, Tiltil): +8% | Anillo 4 (Chicureo/Colina): +18% | Anillo 5 (Las Condes, Vitacura, Lo Barnechea, La Reina, Providencia): +22%.
+## Criterios de Presupuesto (+IVA)
+- Los valores del presupuesto son estimativos y se calculan en base al tipo de obra, tipo de terreno, valor de suelo, lejanía de la urbe de Santiago y etapa técnica DOM; el detalle definitivo a suma alzada se revisa personalmente en la visita a terreno.
 
 ## Canales Oficiales y Agentes IA
 - **WhatsApp:** [+56 9 2738 4075](https://wa.me/56927384075) · **Visita Técnica:** https://cal.com/cuatropuntas.com/visita-tecnica
