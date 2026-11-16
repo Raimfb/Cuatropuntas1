@@ -88,8 +88,13 @@ module.exports = async (req, res) => {
             const rawClientPhone = responses.phone || responses.telefono || primaryAttendee.phoneNumber || '';
             const normalizedPhone = leadsState.normalizePhone(rawClientPhone);
 
-            // 1. Localizar y transicionar el lead en la Máquina de Estados
-            const targetPhone = normalizedPhone || clientPhone;
+            // 1. Hidratar desde KV y transicionar el lead en la Máquina de Estados
+            const targetPhone = normalizedPhone || rawClientPhone;
+            if (targetPhone) {
+                await leadsState.hydrateLeadState(targetPhone);
+            } else if (clientEmail) {
+                await leadsState.hydrateLeadState(clientEmail);
+            }
             let existingLead = leadsState.findLeadByPhoneOrEmail(targetPhone || clientEmail);
 
             if (existingLead) {
@@ -98,15 +103,18 @@ module.exports = async (req, res) => {
                     bookingDate: formattedDate,
                     bookingId: payload.uid || payload.id || null
                 });
+                await leadsState.flushLeadState(existingLead.phone);
                 console.log(`✅ [CALCOM WEBHOOK] Lead ${existingLead.phone} transicionado a VISITA_AGENDADA (IA Silenciada)`);
             } else if (targetPhone) {
                 leadsState.setLeadState(targetPhone, {
                     name: clientName,
                     email: clientEmail,
                     estado: 'VISITA_AGENDADA',
+                    hasQuoted: true,
                     bookingTitle: title,
                     bookingDate: formattedDate
                 });
+                await leadsState.flushLeadState(targetPhone);
                 console.log(`✅ [CALCOM WEBHOOK] Nuevo lead ${targetPhone} registrado en VISITA_AGENDADA (IA Silenciada)`);
             }
 

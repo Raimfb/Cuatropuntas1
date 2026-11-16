@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const { isBotSubmission } = require('./_botGuard');
 const { generateQrMatrix } = require('./_qrMatrix');
-const { setLeadState } = require('../lib/leads-state');
+const { setLeadState, flushLeadState } = require('../lib/leads-state');
 
 // Mapeo legible de comunas para presentación ejecutiva
 function getComunaLabel(comunaVal) {
@@ -1093,12 +1093,13 @@ const quoteHandler = async (req, res) => {
             transporter.sendMail(mailToAdmin)
         ]);
 
-        // 4. Siembra en Máquina de Estados (Spec 023: estado inicial COTIZADO)
+        // 4. Siembra en Máquina de Estados (Spec 023: estado inicial COTIZADO, hasQuoted: true)
         try {
             setLeadState(formattedClientPhone, {
                 name: nombre,
                 email: email,
                 estado: 'COTIZADO',
+                hasQuoted: true,
                 tipo: tipo,
                 areaNum: areaNum,
                 comunaHuman: comunaHuman,
@@ -1109,6 +1110,7 @@ const quoteHandler = async (req, res) => {
                 maxUF: maxUF,
                 permisos: permisosData ? permisosData.adminBadge : ''
             });
+            await flushLeadState(formattedClientPhone);
         } catch (stateErr) {
             console.warn('⚠️ No se pudo registrar estado en leads-state:', stateErr.message);
         }

@@ -1,4 +1,11 @@
 const { GoogleGenerativeAI } = require("@google/generative-ai");
+const leadsState = require("../lib/leads-state");
+const { classifyIntent, routeAndGenerateReply } = require("../lib/intent-router");
+const {
+    formatWhatsAppMarkdown,
+    enforceOutputGuardrails,
+    resolveGeminiModelName
+} = require("../lib/agent-guardrails");
 
 // Helper para enviar mensajes a través de Meta WhatsApp Cloud API
 async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = null) {
@@ -47,62 +54,28 @@ async function sendWhatsAppMessage(recipientNumber, textBody, incomingPhoneId = 
     }
 }
 
-// Sanitizador y Formateador Estricto para WhatsApp (1 solo asterisco para negrita)
-function formatWhatsAppMarkdown(text) {
-    if (!text) return "";
-    let cleaned = text;
-
-    // 1. Reemplazar dobles o múltiples asteriscos (**texto** o ***texto***) por 1 solo asterisco (*texto*)
-    cleaned = cleaned.replace(/\*{2,}/g, '*');
-
-    // 2. Limpiar asteriscos impares/huérfanos por línea para evitar texto roto en WhatsApp
-    const lines = cleaned.split('\n');
-    const fixedLines = lines.map(line => {
-        const asteriskMatches = line.match(/\*/g) || [];
-        if (asteriskMatches.length % 2 !== 0) {
-            // Si la línea termina en asterisco descolgado, removerlo
-            if (line.trim().endsWith('*')) {
-                return line.trim().slice(0, -1);
-            }
-            // Si hay un asterisco abierto sin cerrar, cerrarlo al final de la línea
-            return line + '*';
-        }
-        return line;
-    });
-
-    return fixedLines.join('\n');
-}
-
 // Generador Inteligente de Respuestas con Gemini AI para WhatsApp
-async function generateAIWhatsAppResponse(userText, profileName, firstName, from) {
+async function generateAIWhatsAppResponse(userText, profileName, firstName, from, extraContext = {}) {
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) return null;
 
-    const nameQuery = profileName 
-        ? `?name=${encodeURIComponent(profileName)}&phone=${encodeURIComponent(from)}` 
-        : `?phone=${encodeURIComponent(from)}`;
-    const particularLink = `https://www.cuatropuntas.com/precios${nameQuery}`;
-    const subsidioLink = `https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
     const clientNameStr = firstName 
         ? `El cliente se llama ${firstName} (nombre completo en WhatsApp: "${profileName}"). Dirígete a él llamándolo por su nombre de pila (${firstName}).` 
         : "No conocemos el nombre de pila del cliente, salúdalo con un ¡Hola! cálido y profesional.";
 
-    let validModelName = "gemini-1.5-flash";
-    try {
-        const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
-        const listResp = await fetch(listUrl);
-        const listData = await listResp.json();
-        if (listData && listData.models) {
-            const viableModel = listData.models.find(m =>
-                m.supportedGenerationMethods &&
-                m.supportedGenerationMethods.includes("generateContent") &&
-                (m.name.includes("flash") || m.name.includes("pro"))
-            );
-            if (viableModel) {
-                validModelName = viableModel.name.replace("models/", "");
-            }
-        }
-    } catch (e) {}
+    const validModelName = resolveGeminiModelName();
+    const ragBlock = extraContext?.ragContext?.promptContext
+        ? `\n### CONTEXTO DINÁMICO DE CONOCIMIENTO (BLOG Y GUÍAS DOM):\n${extraContext.ragContext.promptContext}`
+        : "";
+    const quoteBlock = extraContext?.quoteResult?.calculated
+        ? `\n### ESTIMACIÓN PARAMÉTRICA PRELIMINAR (NETA +IVA):\n- Proyecto: ${extraContext.quoteResult.proyectoResumen}\n- Ubicación: ${extraContext.quoteResult.comunaHuman}\n- Rango referencial: ${extraContext.quoteResult.minUF} a ${extraContext.quoteResult.maxUF} UF netos (+IVA)\n- Nota obligatoria: ${extraContext.quoteResult.notaTerritorial}\n- Derivar al cotizador oficial para ficha PDF: ${extraContext.quoteResult.cotizadorUrl}`
+        : "";
+    const historyTurns = Array.isArray(extraContext?.leadData?.conversationHistory)
+        ? extraContext.leadData.conversationHistory.slice(-4)
+        : [];
+    const historyBlock = historyTurns.length > 0
+        ? `\n### HISTORIAL RECIENTE:\n${historyTurns.map(t => `- ${t.role}: ${t.text}`).join('\n')}`
+        : "";
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({
@@ -125,6 +98,7 @@ Si el usuario menciona que recibió un correo electrónico de marketing, pregunt
 
 ### MAPA OFICIAL DE URLS CANÓNICAS:
 - Cotizador Web Oficial: https://www.cuatropuntas.com/#cotizador
+- Guías Técnicas DOM en PDF (Descarga Gratuita): https://www.cuatropuntas.com/#guias-dom
 - Casas Nuevas Llave en Mano: https://www.cuatropuntas.com/servicios/casas-nuevas.html
 - Segundos Pisos y Ampliaciones: https://www.cuatropuntas.com/servicios/segundos-pisos.html
 - Remodelaciones Integrales: https://www.cuatropuntas.com/servicios/remodelaciones.html
@@ -135,12 +109,12 @@ Si el usuario menciona que recibió un correo electrónico de marketing, pregunt
 ### FILTROS DE DESCARTE Y CALIFICACIÓN:
 - *Sin Terreno en RM / Fuera de Cobertura*: Nuestra operación se concentra en la Región Metropolitana con terreno o vivienda disponible. Si no cuenta con terreno o está fuera de la RM, acláralo amablemente.
 - *Postulaciones MINVU*: Cuatropuntas NO tramita postulaciones al Serviu; ejecutamos subsidios ya adjudicados en sitio propio (DS1/DS49). Recomienda consultar el portal MINVU si aún no tienen el subsidio.
-- *Solo Curiosos*: Responde amablemente e invítalos al cotizador web https://www.cuatropuntas.com/#cotizador o a revisar el blog.
+- *Solo Curiosos*: Responde amablemente e invítalos al cotizador web https://www.cuatropuntas.com/#cotizador o a revisar las guías en https://www.cuatropuntas.com/#guias-dom.
 
 ### MATRIZ OFICIAL DE INFORMACIÓN Y POLÍTICAS TÉCNICAS CUATROPUNTAS (VALORES NETOS +IVA):
 - *Modalidad Contractual y Garantía*: Todo proyecto formal se ejecuta bajo contrato a suma alzada con itemizado detallado y garantía estructural legal conforme al Art. 18 de la LGUC (hasta 10 años).
 - *Sistemas Constructivos (Tarifas Base Referenciales Netas +IVA)*:
-  1. Metalcon Estructural: Rápido montaje, antisísmico (desde 19 UF/m² +IVA casas, 22 UF/m² +IVA 2dos pisos, 12 UF/m² +IVA quinchos, 11 UF/m² +IVA remodelación ligera).
+  1. Metalcom Estructural: Rápido montaje, antisísmico (desde 19 UF/m² +IVA casas, 22 UF/m² +IVA 2dos pisos, 12 UF/m² +IVA quinchos, 11 UF/m² +IVA remodelación ligera).
   2. Panel SIP: Alta eficiencia y aislación térmica Zona 3 OGUC (desde 21 UF/m² +IVA casas, 24 UF/m² +IVA 2dos pisos, 14 UF/m² +IVA quinchos).
   3. Albañilería Armada / Confinada: Construcción sólida tradicional (desde 25 UF/m² +IVA casas, 27 UF/m² +IVA 2dos pisos, 15 UF/m² +IVA quinchos, 13 UF/m² +IVA remodelación sólida).
 - *Criterios de Estimación en Terreno*: Las tarifas base (+IVA) anteriores son valores referenciales; cualquier presupuesto preliminar contempla el tipo de obra, características del terreno, valor del suelo y lejanía de la urbe de Santiago, aspectos que revisamos personalmente en la visita técnica en terreno. *PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos o comparaciones entre comunas.*
@@ -149,6 +123,9 @@ Si el usuario menciona que recibió un correo electrónico de marketing, pregunt
 - *Remodelaciones y Recintos Húmedos*: En remodelaciones integrales rige el m² (desde 11-13 UF/m² +IVA). En baños y cocinas pequeñas NO se cotiza por metro cuadrado lineal debido a densidad técnica de redes: Baño Completo 65-95 UF +IVA | Cocina Integral 90-160 UF +IVA.
 - *Quinchos y Terrazas de Alto Estándar*: Tarifa base desde 12 UF/m² +IVA (Metalcon) y 15 UF/m² +IVA (Albañilería). Incluye techumbre/cobertizo, radier afinado, asador/parrilla tradicional en obra con ladrillos refractarios y mecanismo elevable con manivela frontal, campana de hojalatería con tiraje y mesón básico. Exclusiones taxativas a presupuestar en terreno: empalmes sanitarios (agua/desagüe), canalización eléctrica y muebles cerrados bajo mesón.
 - *Cobertura*: Región Metropolitana de Santiago.
+${ragBlock}
+${quoteBlock}
+${historyBlock}
 
 ### FORMATO DE NEGRITAS EN WHATSAPP (ESTRICTO):
 - WhatsApp solo soporta 1 solo asterisco (*palabra*) para aplicar negrita.
@@ -159,71 +136,11 @@ Si el usuario menciona que recibió un correo electrónico de marketing, pregunt
 
     const result = await model.generateContent(userText);
     const response = await result.response;
-    return formatWhatsAppMarkdown(response.text());
-}
-
-// Clasificación Ultra Rápida de Intención
-function classifyIntent(userMessage) {
-    const textLower = (userMessage || "").toLowerCase().trim();
-
-    // 1. Descarte de Postulaciones (Prioridad Alta)
-    if (
-        textLower.includes("como postulo") || 
-        textLower.includes("cómo postulo") || 
-        textLower.includes("como postular") || 
-        textLower.includes("cómo postular") || 
-        textLower.includes("ganarme un subsidio") || 
-        textLower.includes("obtener subsidio") || 
-        textLower.includes("postulacion") || 
-        textLower.includes("postulación") ||
-        textLower.includes("quiero saber como")
-    ) {
-        return "ROUTE_3";
-    }
-
-    // 2. Ruta 1: Subsidio Adjudicado
-    if (
-        textLower.includes("subsidio") || 
-        textLower.includes("ds1") || 
-        textLower.includes("ds49") || 
-        textLower.includes("adjudicado") || 
-        textLower.includes("gane") || 
-        textLower.includes("gané") || 
-        textLower.includes("tengo subsidio")
-    ) {
-        return "ROUTE_1";
-    }
-
-    // 3. Ruta 2: Proyectos Particulares
-    if (
-        textLower.includes("segundo piso") || 
-        textLower.includes("casa nueva") || 
-        textLower.includes("parcela") || 
-        textLower.includes("ampliar") || 
-        textLower.includes("ampliacion") || 
-        textLower.includes("ampliación") || 
-        textLower.includes("remodelar") || 
-        textLower.includes("remodelacion") || 
-        textLower.includes("remodelación") || 
-        textLower.includes("quincho") || 
-        textLower.includes("construir") ||
-        textLower.includes("proyecto")
-    ) {
-        return "ROUTE_2";
-    }
-
-    // 4. Saludo Inicial
-    if (
-        textLower === "hola" || 
-        textLower === "hola\\" || 
-        textLower.includes("buenas") || 
-        textLower.includes("cotizar") || 
-        textLower.includes("interesado")
-    ) {
-        return "SALUDO_INICIAL";
-    }
-
-    return "ROUTE_2";
+    const raw = response.text();
+    return {
+        text: enforceOutputGuardrails(raw, { channel: 'whatsapp', allowDirectorPhone: false }),
+        model: validModelName
+    };
 }
 
 module.exports = async (req, res) => {
@@ -262,7 +179,6 @@ module.exports = async (req, res) => {
                     const changes = entry.changes || [];
                     for (const change of changes) {
                         const value = change.value;
-                        // Extraer dinámicamente el ID del número telefónico al que le escribieron
                         const incomingPhoneId = value?.metadata?.phone_number_id || null;
                         const contacts = value?.contacts || [];
                         const messages = value?.messages || [];
@@ -273,48 +189,58 @@ module.exports = async (req, res) => {
 
                             if (!from || !userText) continue;
 
-                            // Extraer nombre de perfil de WhatsApp del cliente
                             const contactObj = contacts.find(c => c.wa_id === from) || contacts[0];
                             const profileName = (contactObj?.profile?.name || "").trim();
                             const firstName = profileName ? profileName.split(' ')[0] : "";
-                            const nameGreeting = firstName ? `, ${firstName}` : "";
-                            const nameQuery = profileName 
-                                ? `?name=${encodeURIComponent(profileName)}&phone=${encodeURIComponent(from)}` 
-                                : `?phone=${encodeURIComponent(from)}`;
-                            const particularLink = `https://www.cuatropuntas.com/precios${nameQuery}`;
-                            const subsidioLink = `https://www.cuatropuntas.com/subsidio-minvu-sitio-propio.html${nameQuery}`;
+                            const particularLink = "https://www.cuatropuntas.com/#cotizador";
 
                             console.log(`📩 Mensaje procesado de ${from} (${profileName || 'Sin Nombre'}) hacia PhoneID ${incomingPhoneId}: "${userText}"`);
 
-                            let responseMsg = "";
+                            await leadsState.hydrateLeadState(from);
 
-                            // 1. Intentar generar respuesta inteligente con Gemini AI
-                            try {
-                                responseMsg = await generateAIWhatsAppResponse(userText, profileName, firstName, from);
-                            } catch (aiErr) {
-                                console.error("⚠️ Error intentando responder con Gemini AI:", aiErr.message);
+                            if (classifyIntent(userText) === 'RESET_QA') {
+                                leadsState.deleteLeadState(from);
+                                await sendWhatsAppMessage(from, '🔄 Memoria reiniciada con éxito. Eres un lead nuevo para el sistema.', incomingPhoneId);
+                                continue;
                             }
 
-                            // 2. Fallback a respuestas estáticas por intenciones si Gemini no genera respuesta
-                            if (!responseMsg) {
-                                console.log("ℹ️ Usando respuesta fallback por intenciones...");
-                                const intent = classifyIntent(userText);
-
-                                if (intent === "SALUDO_INICIAL") {
-                                    responseMsg = firstName
-                                        ? `Hola ${firstName}, bienvenido a Cuatropuntas Constructora. Para orientarte de la mejor forma, cuéntame: ¿qué tipo de proyecto tienes en mente? (Por ejemplo: construcción de casa nueva, segundo piso o ampliación, quincho, remodelación o proyecto con subsidio en terreno propio).`
-                                        : `Hola, bienvenido a Cuatropuntas Constructora. Para orientarte de la mejor forma, cuéntame: ¿qué tipo de proyecto tienes en mente? (Por ejemplo: construcción de casa nueva, segundo piso o ampliación, quincho, remodelación o proyecto con subsidio en terreno propio).`;
-                                } else if (intent === "ROUTE_1") {
-                                    responseMsg = `¡Excelente${nameGreeting}! Felicitaciones por la adjudicación de tu beneficio. En Cuatropuntas nos especializamos en la ejecución de proyectos con subsidios aprobados en terreno propio. Para ingresar los datos técnicos de tu subsidio y revisar el estado de tu terreno, por favor completa este breve formulario oficial en nuestra web: ${subsidioLink}`;
-                                } else if (intent === "ROUTE_2") {
-                                    responseMsg = `Estupendo${nameGreeting}, nos encanta dar vida a proyectos particulares a medida. Para que nuestro equipo de arquitectura evalúe la viabilidad de la obra y los metros cuadrados, ayúdanos rellenando tus datos de diseño aquí: ${particularLink}`;
-                                } else {
-                                    responseMsg = `Comprendo${nameGreeting}. Te aclaro que en Cuatropuntas no funcionamos como entidad patrocinante ni gestionamos postulaciones ante el Serviu; operamos puramente como constructora de las obras ya aprobadas. Te recomendamos revisar el portal oficial del MINVU para ver las fechas de postulación. ¡Mucho éxito!`;
-                                }
+                            if (!leadsState.canBotReply(from)) {
+                                console.log(`🤫 Silencio IA para ${from} (VISITA_AGENDADA).`);
+                                continue;
                             }
 
-                            // Enviar respuesta usando dinámicamente el PhoneID oficial que recibió la solicitud
-                            await sendWhatsAppMessage(from, responseMsg, incomingPhoneId);
+                            let leadData = leadsState.getLeadState(from);
+                            if (!leadData) {
+                                leadData = leadsState.setLeadState(from, {
+                                    phone: from,
+                                    name: profileName,
+                                    estado: 'EN_CONVERSACION',
+                                    hasQuoted: false
+                                });
+                            }
+
+                            const routed = await routeAndGenerateReply({
+                                channel: 'whatsapp',
+                                userText,
+                                from,
+                                profileName,
+                                firstName,
+                                leadData,
+                                generateLLM: ({ ragContext, quoteResult, leadData: currentLead }) =>
+                                    generateAIWhatsAppResponse(userText, profileName, firstName, from, {
+                                        ragContext,
+                                        quoteResult,
+                                        leadData: currentLead
+                                    })
+                            });
+
+                            const finalReply = routed.reply || `Para orientarte con un presupuesto preliminar exacto para tu proyecto, te invito a usar nuestro cotizador oficial: ${particularLink}`;
+
+                            leadsState.appendConversationTurn(from, 'user', userText, { intent: routed.intent });
+                            leadsState.appendConversationTurn(from, 'assistant', finalReply, { intent: routed.intent });
+                            await leadsState.flushLeadState(from);
+
+                            await sendWhatsAppMessage(from, finalReply, incomingPhoneId);
                         }
                     }
                 }
@@ -329,3 +255,7 @@ module.exports = async (req, res) => {
 
     return res.status(405).send('Method Not Allowed');
 };
+
+module.exports.classifyIntent = classifyIntent;
+module.exports.formatWhatsAppMarkdown = formatWhatsAppMarkdown;
+module.exports.generateAIWhatsAppResponse = generateAIWhatsAppResponse;

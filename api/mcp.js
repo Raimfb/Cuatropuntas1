@@ -32,6 +32,24 @@ const COTIZAR_INPUT_SCHEMA = {
   required: ["metros_cuadrados", "materialidad"]
 };
 
+const SUBSIDIO_INPUT_SCHEMA = {
+  type: "object",
+  properties: {
+    tramo: {
+      type: "string",
+      enum: ["tramo1", "tramo2", "tramo3", "ds49"],
+      description: "Tramo del Subsidio DS1 o DS49 Construcción en Sitio Propio ya adjudicado."
+    }
+  }
+};
+
+const SUBSIDIO_INFO_BY_TRAMO = {
+  tramo1: "Subsidio DS1 Tramo 1 en Sitio Propio: costo de construcción referencial hasta 950 UF (proyecto habitacional optimizado).",
+  tramo2: "Subsidio DS1 Tramo 2 en Sitio Propio: costo de construcción hasta 1.400 UF en terreno propio inscrito en el CBR.",
+  tramo3: "Subsidio DS1 Tramo 3 en Sitio Propio: costo de construcción hasta 2.200 UF en terreno propio inscrito en el CBR.",
+  ds49: "Subsidio DS49 Construcción en Sitio Propio: dirigido a familias con terreno propio inscrito y beneficio estatal ya adjudicado."
+};
+
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -55,13 +73,8 @@ module.exports = async (req, res) => {
         },
         {
           name: "consultar_subsidio_minvu",
-          description: "Requisitos de postulación Subsidio DS1 sitio propio.",
-          inputSchema: {
-            type: "object",
-            properties: {
-              tramo: { type: "string", enum: ["tramo1", "tramo2", "tramo3"] }
-            }
-          }
+          description: "Requisitos y tramos de ejecución para Subsidio DS1 / DS49 en Sitio Propio ya adjudicado (no tramita postulaciones).",
+          inputSchema: SUBSIDIO_INPUT_SCHEMA
         }
       ]
     });
@@ -80,6 +93,11 @@ module.exports = async (req, res) => {
               name: "cotizar_construccion",
               description: "Calcula presupuesto estimado neto (+IVA) según matriz de precios, características de la obra/comuna RM y etapa de arquitectura/DOM.",
               inputSchema: COTIZAR_INPUT_SCHEMA
+            },
+            {
+              name: "consultar_subsidio_minvu",
+              description: "Requisitos y tramos de ejecución para Subsidio DS1 / DS49 en Sitio Propio ya adjudicado (no tramita postulaciones).",
+              inputSchema: SUBSIDIO_INPUT_SCHEMA
             }
           ]
         }
@@ -89,6 +107,25 @@ module.exports = async (req, res) => {
     if (method === 'tools/call') {
       const toolName = params?.name;
       const args = params?.arguments || {};
+
+      if (toolName === 'consultar_subsidio_minvu') {
+        const tramoKey = String(args.tramo || '').toLowerCase().trim();
+        const tramoDetalle = SUBSIDIO_INFO_BY_TRAMO[tramoKey]
+          || "Tramos DS1 en Sitio Propio: Tramo 1 (hasta 950 UF), Tramo 2 (hasta 1.400 UF), Tramo 3 (hasta 2.200 UF) y DS49 Sitio Propio.";
+
+        return res.status(200).json({
+          jsonrpc: "2.0",
+          id: id || 1,
+          result: {
+            content: [
+              {
+                type: "text",
+                text: `${tramoDetalle} Requisitos esenciales: (1) Subsidio DS1 o DS49 ya adjudicado y vigente, (2) Terreno propio en la Región Metropolitana inscrito en el CBR a nombre del beneficiario o cónyuge, (3) Factibilidad de servicios básicos y CIP vigente. Importante: Constructora Cuatropuntas NO gestiona postulaciones iniciales ante el Serviu. Información oficial: https://www.cuatropuntas.com/subsidio-minvu-sitio-propio | Cotizador: https://www.cuatropuntas.com/#cotizador | WhatsApp: https://wa.me/56927384075`
+              }
+            ]
+          }
+        });
+      }
 
       if (toolName === 'cotizar_construccion') {
         const m2 = Math.max(1, Number(args.metros_cuadrados) || 50);

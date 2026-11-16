@@ -1,66 +1,16 @@
-
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-// Necesitamos 'node-fetch' si node es viejo, pero en node 18+ fetch es nativo.
-// Asumiremos node 18+ o que el usuario instala node-fetch.
-// Mejor usamos la propia SDK o https puro si podemos, pero un fetch simple es lo mas robusto.
+const { routeAndGenerateReply } = require("../lib/intent-router");
+const { resolveGeminiModelName } = require("../lib/agent-guardrails");
 
-module.exports = async (req, res) => {
-    // CORS Setup
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-    res.setHeader(
-        'Access-Control-Allow-Headers',
-        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-    );
+function buildChatSystemInstruction(extraContext = {}) {
+    const ragBlock = extraContext?.ragContext?.promptContext
+        ? `\n### CONTEXTO DINÁMICO DE CONOCIMIENTO (BLOG Y GUÍAS DOM):\n${extraContext.ragContext.promptContext}`
+        : "";
+    const quoteBlock = extraContext?.quoteResult?.calculated
+        ? `\n### ESTIMACIÓN PARAMÉTRICA PRELIMINAR (NETA +IVA):\n- Proyecto: ${extraContext.quoteResult.proyectoResumen}\n- Ubicación: ${extraContext.quoteResult.comunaHuman}\n- Rango referencial: ${extraContext.quoteResult.minUF} a ${extraContext.quoteResult.maxUF} UF netos (+IVA)\n- Nota obligatoria: ${extraContext.quoteResult.notaTerritorial}\n- Derivar al cotizador oficial: ${extraContext.quoteResult.cotizadorUrl}`
+        : "";
 
-    if (req.method === 'OPTIONS') {
-        res.status(200).end();
-        return;
-    }
-
-    try {
-        const { message } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
-
-        if (!apiKey) {
-            throw new Error('API Key no configurada');
-        }
-
-        // --- AUTO-DESCUBRIMIENTO DE MODELO ---
-        // Consultamos la API REST directamente para ver qué modelos tiene PERMISO esta clave.
-        let validModelName = "gemini-1.5-flash"; // Default backup
-
-        try {
-            console.log("🔍 Auto-descubriendo modelos disponibles...");
-            const listUrl = `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`;
-            const listResp = await fetch(listUrl);
-            const listData = await listResp.json();
-
-            if (listData && listData.models) {
-                // Buscamos modelos que soporten 'generateContent'
-                const viableModel = listData.models.find(m =>
-                    m.supportedGenerationMethods &&
-                    m.supportedGenerationMethods.includes("generateContent") &&
-                    (m.name.includes("flash") || m.name.includes("pro")) // Preferencia
-                );
-
-                if (viableModel) {
-                    // La API devuelve "models/gemini-1.5-flash", a veces el SDK quiere solo "gemini-1.5-flash"
-                    // Pero el SDK moderno acepta "models/..." también.
-                    validModelName = viableModel.name.replace("models/", "");
-                    console.log(`✅ Modelo seleccionado: ${validModelName}`);
-                }
-            }
-        } catch (discoveryError) {
-            console.warn("⚠️ Falló el auto-descubrimiento, usando default:", discoveryError.message);
-        }
-
-        // --- INICIA CHAT ---
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({
-            model: validModelName,
-            systemInstruction: `
+    return `
 Eres el **Asesor Comercial y SDR de Embudo** de Constructora Cuatropuntas SpA en Santiago de Chile.
 
 ### Tu Objetivo Principal:
@@ -78,6 +28,7 @@ Si el usuario menciona que recibió un correo electrónico de marketing, pregunt
 
 ### MAPA OFICIAL DE URLS CANÓNICAS:
 - Cotizador Web Oficial: https://www.cuatropuntas.com/#cotizador
+- Guías Técnicas DOM en PDF (Descarga Gratuita): https://www.cuatropuntas.com/#guias-dom
 - Casas Nuevas Llave en Mano: https://www.cuatropuntas.com/servicios/casas-nuevas.html
 - Segundos Pisos y Ampliaciones: https://www.cuatropuntas.com/servicios/segundos-pisos.html
 - Remodelaciones Integrales: https://www.cuatropuntas.com/servicios/remodelaciones.html
@@ -96,7 +47,7 @@ Para enlaces en el chat web, puedes usar etiquetas <a> estilizadas o links direc
 - **Segundos Pisos y Ampliaciones (Valores Base +IVA)**: Metalcom desde 22 UF/m² +IVA | Panel SIP desde 24 UF/m² +IVA | Albañilería desde 27 UF/m² +IVA. Montaje rápido en seco planificado para minimizar tiempos de obra e impacto en la rutina diaria, bajo protocolos de faena limpia (cero promesas de habitabilidad ininterrumpida).
 - **Quinchos y Terrazas (Valores Base +IVA)**: Metalcom desde 12 UF/m² +IVA | Panel SIP desde 14 UF/m² +IVA | Albañilería en obra desde 15 UF/m² +IVA. Incluye radier afinado, techumbre, asador/parrilla en obra con refractarios y manivela elevable, campana de hojalatería con tiraje y mesón básico. Empalmes sanitarios (agua/desagüe), canalización eléctrica y muebles cerrados bajo mesón son adicionales que se presupuestan en terreno según factibilidad técnica.
 - **Remodelaciones Integrales (>25-30 m², Valores Base +IVA)**: Ligera Metalcom desde 11 UF/m² +IVA | Albañilería desde 13 UF/m² +IVA.
-- **Criterios de Estimación Territorial y de Obra**: Las tarifas base (+IVA) anteriores son referenciales; los valores estimativos de un proyecto contemplan tipo de obra, tipo de terreno, valor de suelo y lejanía de la urbe de Santiago (aspectos revisados personalmente en visita técnica en terreno). PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos o comparaciones entre comunas.
+- **Criterios de Estimación Territorial y de Obra**: Las tarifas base (+IVA) anteriores son valores referenciales; los valores estimativos de un proyecto contemplan tipo de obra, tipo de terreno, valor de suelo y lejanía de la urbe de Santiago (aspectos revisados personalmente en visita técnica en terreno). PROHIBIDO mencionar anillos logísticos, porcentajes territoriales internos o comparaciones entre comunas.
 - **Planimetría, Cálculo y Gestión DOM (+8% Etapa Idea)**: En Casas Nuevas y Segundos Pisos/Ampliaciones, iniciar **desde cero (etapa Idea: arquitectura, cálculo y gestión DOM) suma +8% (x1.08)** y tener planos listos resta -3%; ambas cubren todo el ciclo desde el Permiso de Edificación hasta el **Certificado de Recepción Final Definitiva** exclusivamente sobre lo ejecutado por Cuatropuntas según planos aprobados (derechos municipales 1,5% tabla MINVU y empalmes aparte al costo real). Con permiso aprobado o arquitecto propio resta -6% y es **solo ejecución de obra** con entrega de carpeta técnica del constructor. En Quinchos y Remodelaciones rige evaluación técnica en terreno (0%). Proyectos menores a 40 m² suman +8% por escala. **Exclusión taxativa**: si el mandante o terceros ejecutan obras anexas no contratadas (quinchos, piscinas, ampliaciones adicionales o paisajismo/obras exteriores) o existen construcciones preexistentes sin regularizar, Cuatropuntas no tramitará la Recepción Final.
 - **Remodelación de Baños y Cocinas**: Los recintos húmedos pequeños no se cobran por metro cuadrado lineal debido a la alta densidad de redes de agua/desagüe, impermeabilización, cortes finos y revisión de cañerías preexistentes. Valores referenciales netos (+IVA):
   * **Baño Completo**: 65 a 95 UF referencial (shower door de vidrio templado, retiro de tina, fontanería nueva, impermeabilización y revestimientos).
@@ -112,13 +63,74 @@ Si un usuario pregunta qué incluye la tarifa base de un quincho (12 o 15 UF/m²
 
 ### Tono e Identidad:
 - Orientador comercial cálido, empático, experto y resolutivo. Si el usuario se presenta o menciona su nombre, dirígete a él de forma personalizada.
-`
+${ragBlock}
+${quoteBlock}
+`;
+}
+
+module.exports = async (req, res) => {
+    // CORS Setup
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader(
+        'Access-Control-Allow-Headers',
+        'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+    );
+
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return;
+    }
+
+    if (req.method !== 'POST') {
+        res.status(405).json({ error: 'Method Not Allowed' });
+        return;
+    }
+
+    try {
+        let body = req.body;
+        if (typeof body === 'string') {
+            try { body = JSON.parse(body); } catch (e) { body = {}; }
+        } else if (Buffer.isBuffer(body)) {
+            try { body = JSON.parse(body.toString('utf-8')); } catch (e) { body = {}; }
+        }
+        body = body && typeof body === 'object' ? body : {};
+
+        const message = body.message;
+        const clientId = (req.headers && (req.headers['x-forwarded-for'] || req.headers['x-real-ip'])) || 'web-anon';
+        const apiKey = process.env.GEMINI_API_KEY;
+
+        const routed = await routeAndGenerateReply({
+            channel: 'web',
+            userText: message,
+            from: String(clientId),
+            generateLLM: apiKey
+                ? async ({ userText, ragContext, quoteResult }) => {
+                    const validModelName = resolveGeminiModelName();
+                    const genAI = new GoogleGenerativeAI(apiKey);
+                    const model = genAI.getGenerativeModel({
+                        model: validModelName,
+                        systemInstruction: buildChatSystemInstruction({ ragContext, quoteResult })
+                    });
+                    const result = await model.generateContent(userText);
+                    const response = await result.response;
+                    return {
+                        text: response.text(),
+                        model: validModelName
+                    };
+                }
+                : null
         });
 
-        const result = await model.generateContent(message);
-        const response = await result.response;
-        res.status(200).json({ reply: response.text() });
+        if (routed.blocked && routed.statusCode === 400) {
+            return res.status(400).json({ error: 'Mensaje inválido o vacío.' });
+        }
+        if (routed.blocked && routed.statusCode === 429) {
+            return res.status(429).json({ error: routed.reply, reply: routed.reply });
+        }
 
+        return res.status(200).json({ reply: routed.reply });
     } catch (error) {
         console.error('Error final chat:', error);
         res.status(500).json({ error: 'Error procesando solicitud', details: error.message });

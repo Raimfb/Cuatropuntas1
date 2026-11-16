@@ -14,6 +14,8 @@
 const leadsState = require('../../lib/leads-state');
 const metaClient = require('../../lib/meta-client');
 const agentConsultor = require('../../lib/agent-consultor');
+const { classifyIntent, routeAndGenerateReply } = require('../../lib/intent-router');
+const { generateAIWhatsAppResponse } = require('../whatsapp');
 
 module.exports = async (req, res) => {
     // 1. HANDSHAKE DE VERIFICACIÓN DE META (GET)
@@ -53,6 +55,7 @@ module.exports = async (req, res) => {
                     for (const change of changes) {
                         const value = change.value;
                         const incomingPhoneId = value?.metadata?.phone_number_id || null;
+                        const contacts = value?.contacts || [];
                         const messages = value?.messages || [];
 
                         for (const messageObj of messages) {
@@ -61,11 +64,17 @@ module.exports = async (req, res) => {
 
                             if (!from || !userText) continue;
 
+                            const contactObj = contacts.find(c => c.wa_id === from) || contacts[0];
+                            const profileName = (contactObj?.profile?.name || '').trim();
+                            const firstName = profileName ? profileName.split(' ')[0] : '';
+
                             console.log(`📩 [WHATSAPP WEBHOOK] Mensaje entrante de ${from}: "${userText}"`);
 
+                            // 0. Hidratación bilateral desde Redis/KV en entorno serverless
+                            await leadsState.hydrateLeadState(from);
+
                             // 1. COMANDO BACKDOOR / QA: reset o #reset
-                            const cleanCommand = userText.toLowerCase().trim();
-                            if (cleanCommand === 'reset' || cleanCommand === '#reset') {
+                            if (classifyIntent(userText) === 'RESET_QA') {
                                 leadsState.deleteLeadState(from);
                                 console.log(`🔄 [WHATSAPP WEBHOOK] Memoria reiniciada para lead ${from}`);
                                 const resetMsg = '🔄 Memoria reiniciada con éxito. Eres un lead nuevo para el sistema.';
@@ -80,37 +89,68 @@ module.exports = async (req, res) => {
                             }
 
                             // 3. Revisar si es lead existente o lead nuevo / expirado
-                            const existingLead = leadsState.getLeadState(from);
+                            let existingLead = leadsState.getLeadState(from);
+                            let isFirstColdTurn = false;
 
                             if (!existingLead) {
-                                // Lead nuevo o expirado: registrar como EN_CONVERSACION y responder como SDR/Calificador inicial
-                                leadsState.setLeadState(from, {
+                                // Lead nuevo o expirado: registrar en EN_CONVERSACION con hasQuoted = false
+                                isFirstColdTurn = true;
+                                existingLead = leadsState.setLeadState(from, {
                                     phone: from,
-                                    estado: 'EN_CONVERSACION'
+                                    name: profileName || '',
+                                    estado: 'EN_CONVERSACION',
+                                    hasQuoted: false
                                 });
+                            } else {
+                                // Preservar estado hasQuoted explícito (nunca ascender a consultor sin cotización real)
+                                existingLead = leadsState.updateLeadState(from, 'EN_CONVERSACION', {
+                                    hasQuoted: Boolean(
+                                        existingLead.hasQuoted ||
+                                        (existingLead.areaNum && Number(existingLead.areaNum) > 0) ||
+                                        existingLead.minUF ||
+                                        existingLead.tipo
+                                    )
+                                });
+                            }
 
-                                const sdrReply = `¡Hola! Bienvenido(a) a *Constructora Cuatropuntas*.
+                            // 4. Enrutar según estado real del lead (hasQuoted: true -> Consultor Cal.com; false -> SDR hacia #cotizador / #guias-dom)
+                            let replyText = '';
+                            const hasQuoted = Boolean(existingLead && existingLead.hasQuoted);
+
+                            if (!hasQuoted && isFirstColdTurn && classifyIntent(userText) === 'SALUDO_INICIAL') {
+                                const sdrGreeting = `¡Hola${firstName ? ` ${firstName}` : ''}! Bienvenido(a) a *Constructora Cuatropuntas*.
 
 Nos especializamos en construcción de casas nuevas llave en mano, segundos pisos, ampliaciones, quinchos de alto estándar y remodelaciones en toda la Región Metropolitana.
 
 Para entregarte una estimación técnica y de costos precisa según los metros cuadrados, comuna y características de tu proyecto, te invito a generar tu presupuesto preliminar en nuestro cotizador web oficial:
-👉 https://www.cuatropuntas.com
+👉 https://www.cuatropuntas.com/#cotizador
 
 Al cotizar, recibirás de inmediato tu estimación en UF con Ficha Técnica en PDF, y nuestro equipo de arquitectura tomará contacto para evaluar tu terreno y coordinar la visita técnica.`;
-
-                                const formattedSdr = agentConsultor.formatWhatsAppMarkdown 
-                                    ? agentConsultor.formatWhatsAppMarkdown(sdrReply) 
-                                    : sdrReply;
-
-                                await metaClient.sendWhatsAppMessage(from, formattedSdr, incomingPhoneId);
-                                continue;
+                                replyText = agentConsultor.formatWhatsAppMarkdown
+                                    ? agentConsultor.formatWhatsAppMarkdown(sdrGreeting)
+                                    : sdrGreeting;
+                            } else {
+                                const routed = await routeAndGenerateReply({
+                                    channel: 'whatsapp',
+                                    userText,
+                                    from,
+                                    profileName,
+                                    firstName,
+                                    leadData: existingLead,
+                                    generateLLM: ({ ragContext, quoteResult, leadData: currentLead }) =>
+                                        generateAIWhatsAppResponse(userText, profileName, firstName, from, {
+                                            ragContext,
+                                            quoteResult,
+                                            leadData: currentLead
+                                        })
+                                });
+                                replyText = routed.reply;
                             }
 
-                            // 4. Lead activo con cotización previa (COTIZADO o EN_CONVERSACION)
-                            leadsState.updateLeadState(from, 'EN_CONVERSACION');
-                            const leadData = leadsState.getLeadState(from) || {};
+                            leadsState.appendConversationTurn(from, 'user', userText);
+                            leadsState.appendConversationTurn(from, 'assistant', replyText);
+                            await leadsState.flushLeadState(from);
 
-                            const replyText = await agentConsultor.generateConsultativeReply(userText, leadData);
                             await metaClient.sendWhatsAppMessage(from, replyText, incomingPhoneId);
                         }
                     }

@@ -191,3 +191,6 @@ module.exports = async function handler(req, res) {
         emailSent
     });
 };
+
+module.exports.GUIDES = GUIDES;
+module.exports.GUIDE_ALIASES = GUIDE_ALIASES;
