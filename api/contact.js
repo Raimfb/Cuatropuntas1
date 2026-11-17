@@ -1,9 +1,23 @@
 const nodemailer = require('nodemailer');
 
 module.exports = async (req, res) => {
+    const action = req.query && req.query.action ? String(req.query.action) : '';
+    const rawUrl = String(req.url || '');
+    const pathname = rawUrl.split('?')[0];
+
+    if (action === 'nurturing-cron' || pathname === '/api/nurturing-cron') {
+        const { handleCronRequest } = require('./_emailNurturing');
+        return handleCronRequest(req, res);
+    }
+
+    if (action === 'unsubscribe' || pathname === '/api/unsubscribe') {
+        const { handleUnsubscribeRequest } = require('./_emailNurturing');
+        return handleUnsubscribeRequest(req, res);
+    }
+
     const isLeadMagnet =
-        (req.query && req.query.action === 'lead-magnet') ||
-        String(req.url || '').includes('lead-magnet') ||
+        action === 'lead-magnet' ||
+        rawUrl.includes('lead-magnet') ||
         Boolean(req.body && typeof req.body === 'object' && req.body.guia);
     if (isLeadMagnet) {
         const leadMagnetHandler = require('./_leadMagnet');

@@ -82,40 +82,66 @@ module.exports = async (req, res) => {
             const attendees = payload.attendees || [];
             const primaryAttendee = attendees[0] || {};
             const clientName = primaryAttendee.name || payload.name || 'Cliente';
-            const clientEmail = primaryAttendee.email || payload.email || '';
+            const rawClientEmail = primaryAttendee.email || payload.email || '';
+            const clientEmail = leadsState.normalizeEmail(rawClientEmail);
 
             const responses = payload.responses || {};
             const rawClientPhone = responses.phone || responses.telefono || primaryAttendee.phoneNumber || '';
             const normalizedPhone = leadsState.normalizePhone(rawClientPhone);
 
-            // 1. Hidratar desde KV y transicionar el lead en la Máquina de Estados
+            // 1. Hidratar desde KV ambos identificadores y transicionar el lead en la Máquina de Estados
             const targetPhone = normalizedPhone || rawClientPhone;
             if (targetPhone) {
-                await leadsState.hydrateLeadState(targetPhone);
-            } else if (clientEmail) {
-                await leadsState.hydrateLeadState(clientEmail);
+                await leadsState.hydrateLeadState(targetPhone, { bypassCache: true });
             }
-            let existingLead = leadsState.findLeadByPhoneOrEmail(targetPhone || clientEmail);
+            if (clientEmail) {
+                await leadsState.hydrateLeadState(clientEmail, { bypassCache: true });
+            }
 
-            if (existingLead) {
-                leadsState.updateLeadState(existingLead.phone, 'VISITA_AGENDADA', {
-                    bookingTitle: title,
-                    bookingDate: formattedDate,
-                    bookingId: payload.uid || payload.id || null
-                });
-                await leadsState.flushLeadState(existingLead.phone);
-                console.log(`✅ [CALCOM WEBHOOK] Lead ${existingLead.phone} transicionado a VISITA_AGENDADA (IA Silenciada)`);
-            } else if (targetPhone) {
-                leadsState.setLeadState(targetPhone, {
-                    name: clientName,
-                    email: clientEmail,
-                    estado: 'VISITA_AGENDADA',
-                    hasQuoted: true,
-                    bookingTitle: title,
-                    bookingDate: formattedDate
-                });
+            const existingPhoneLead = targetPhone ? leadsState.getLeadState(targetPhone) : null;
+            const existingEmailLead = clientEmail ? leadsState.findLeadByPhoneOrEmail(clientEmail) : null;
+            const existingLead = existingPhoneLead || existingEmailLead;
+
+            const bookingPatch = {
+                bookingTitle: title,
+                bookingDate: formattedDate,
+                bookingId: payload.uid || payload.id || null
+            };
+            if (clientEmail) {
+                bookingPatch.email = clientEmail;
+            }
+
+            if (targetPhone) {
+                if (existingPhoneLead) {
+                    leadsState.updateLeadState(existingPhoneLead.phone, 'VISITA_AGENDADA', bookingPatch);
+                } else {
+                    leadsState.setLeadState(targetPhone, {
+                        name: clientName,
+                        email: clientEmail,
+                        estado: 'VISITA_AGENDADA',
+                        hasQuoted: true,
+                        ...bookingPatch
+                    });
+                }
                 await leadsState.flushLeadState(targetPhone);
-                console.log(`✅ [CALCOM WEBHOOK] Nuevo lead ${targetPhone} registrado en VISITA_AGENDADA (IA Silenciada)`);
+                console.log(`✅ [CALCOM WEBHOOK] Lead ${targetPhone} transicionado a VISITA_AGENDADA (IA Silenciada)`);
+            }
+
+            if (clientEmail) {
+                const syncedEmailLead = await leadsState.syncEmailLeadByEmail(clientEmail, {
+                    estado: 'VISITA_AGENDADA',
+                    ...bookingPatch
+                });
+                if (!targetPhone && !syncedEmailLead) {
+                    await leadsState.persistEmailLead(clientEmail, {
+                        name: clientName,
+                        estado: 'VISITA_AGENDADA',
+                        ...bookingPatch
+                    });
+                }
+                if (!targetPhone) {
+                    console.log(`✅ [CALCOM WEBHOOK] Lead email ${clientEmail} transicionado a VISITA_AGENDADA (IA Silenciada)`);
+                }
             }
 
             // 2. Enviar Confirmación por WhatsApp al Cliente Formalizando al Director Técnico (+56 9 7909 2027)

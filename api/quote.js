@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const PDFDocument = require('pdfkit');
 const { isBotSubmission } = require('./_botGuard');
 const { generateQrMatrix } = require('./_qrMatrix');
-const { setLeadState, flushLeadState } = require('../lib/leads-state');
+const { setLeadState, flushLeadState, hydrateLeadState, normalizeEmail, syncEmailLeadByEmail } = require('../lib/leads-state');
 
 // Mapeo legible de comunas para presentación ejecutiva
 function getComunaLabel(comunaVal) {
@@ -1093,13 +1093,20 @@ const quoteHandler = async (req, res) => {
             transporter.sendMail(mailToAdmin)
         ]);
 
-        // 4. Siembra en Máquina de Estados (Spec 023: estado inicial COTIZADO, hasQuoted: true)
+        // 4. Siembra en Máquina de Estados (Spec 023 & Spec 038: hidratación previa, quotedAt y permisosKey)
         try {
+            const existingPhoneLead = await hydrateLeadState(formattedClientPhone, { bypassCache: true });
+            const normalizedEmail = normalizeEmail(email);
+            const nowTs = Date.now();
+            const preservedEstado = existingPhoneLead?.estado === 'VISITA_AGENDADA' ? 'VISITA_AGENDADA' : 'COTIZADO';
+
             setLeadState(formattedClientPhone, {
                 name: nombre,
-                email: email,
-                estado: 'COTIZADO',
+                email: normalizedEmail,
+                estado: preservedEstado,
                 hasQuoted: true,
+                quotedAt: nowTs,
+                initialEmailSent: true,
                 tipo: tipo,
                 areaNum: areaNum,
                 comunaHuman: comunaHuman,
@@ -1108,9 +1115,19 @@ const quoteHandler = async (req, res) => {
                 proyectoResumen: commercial.proyectoResumen,
                 minUF: minUF,
                 maxUF: maxUF,
-                permisos: permisosData ? permisosData.adminBadge : ''
+                permisos: permisosData ? permisosData.adminBadge : '',
+                permisosKey: permisos || 'Idea'
             });
             await flushLeadState(formattedClientPhone);
+
+            if (normalizedEmail) {
+                await syncEmailLeadByEmail(normalizedEmail, {
+                    hasQuoted: true,
+                    quotedAt: nowTs,
+                    tipo: tipo,
+                    permisosKey: permisos || 'Idea'
+                });
+            }
         } catch (stateErr) {
             console.warn('⚠️ No se pudo registrar estado en leads-state:', stateErr.message);
         }

@@ -1,10 +1,24 @@
 {
   "cleanUrls": true,
   "trailingSlash": false,
+  "crons": [
+    {
+      "path": "/api/contact?action=nurturing-cron",
+      "schedule": "0 13 * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/lead-magnet",
       "destination": "/api/contact?action=lead-magnet"
+    },
+    {
+      "source": "/api/nurturing-cron",
+      "destination": "/api/contact?action=nurturing-cron"
+    },
+    {
+      "source": "/api/unsubscribe",
+      "destination": "/api/contact?action=unsubscribe"
     },
     {
       "source": "/",
